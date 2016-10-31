@@ -175,3 +175,7 @@ bh_unicode_properties.cache
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
 
+# own ignore files
+work/
+vivado*
+webtalk*
