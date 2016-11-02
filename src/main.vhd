@@ -18,9 +18,6 @@
 -- 
 ----------------------------------------------------------------------------------
 
--- TEST
-
---
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.std_logic_unsigned.all;
@@ -35,17 +32,17 @@ use ieee.std_logic_unsigned.all;
 --use UNISIM.VComponents.all;
 
 entity main is
-  Port ( 
-    O_BIT1: out std_logic
+  Port (
+    CLK: in std_logic;
+    O_BIT1: out std_logic;
+    O_BIT2: out std_logic;
+    BTN1: in std_logic
   );
 end main;
 
 architecture Behavioral of main is
     signal BIT1: std_logic;
-    signal CLK : std_logic := '0';
 begin
-    clk <= not clk after 1 ns; 
-
     ToggleProcess: process(CLK)
     begin
         if rising_edge(CLK) then
@@ -56,7 +53,8 @@ begin
             end if;
         end if;
     end process;
-      
+    
     O_BIT1 <= BIT1;
-
+    O_BIT2 <= BTN1;
+    
 end Behavioral;
