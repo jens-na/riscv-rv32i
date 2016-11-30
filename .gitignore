@@ -35,6 +35,9 @@
 *.brf
 *.run.xml
 
+## Vivado
+*.str
+
 ## Build tool auxiliary files:
 *.fdb_latexmk
 *.synctex
