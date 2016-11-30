@@ -6,14 +6,11 @@ use work.opcodes.all;
 
 package interfaces is
 
-    --
-    -- ALU
-    --
     type alu_req is record
-        par1 : cpu_word;
-        par2 : cpu_word;
-        op: opcode;
-        res : cpu_word;
+        op : alu_op;
+        rs1 : cpu_word;
+        rs2 : cpu_word;
+        imm : cpu_word;
     end record;
     
 end package;

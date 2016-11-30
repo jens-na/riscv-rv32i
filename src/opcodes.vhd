@@ -10,17 +10,116 @@ package opcodes is
     --
     -- Opcodes
     --
-    constant OP_LUI : opcode := "0110111";
-    constant OP_JAL : opcode := "1101111";
-    constant OP_JALR : opcode := "1100111";
-    constant OP_BEQ : opcode := "1100011";
-    constant OP_BNE : opcode := "1100011";
-    constant OP_ADDI : opcode := "0010011";
-
+    constant I_TYPE_AL : opcode := "0010011"; -- Register/Immediate (ADDI, ...)
+    constant I_TYPE_LOAD : opcode := "0000011"; -- Loads
+    constant I_TYPE_JALR : opcode := "1100111"; -- JALR only
+    constant R_TYPE : opcode := "0110011"; -- Register/Register (ADD, ...)
+    constant S_TYPE : opcode := "0100011"; -- Store
+    constant SB_TYPE : opcode := "1100011"; -- Branch
+    constant U_TYPE_LUI : opcode := "0110111"; -- Upper immediate
+    constant U_TYPE_AUIPC : opcode := "0010111"; -- Upper immediate
+    constant UJ_TYPE : opcode := "1101111"; --Jump and Link
+    
+    type alu_op is (
+        ALU_ADDI, 
+        ALU_SLTI,
+        ALU_SLTIU,
+        ALU_XORI,
+        ALU_ORI,
+        ALU_ANDI,
+        ALU_SLLI,
+        ALU_SRLI,
+        ALU_SRAI,
+        ALU_ADD,
+        ALU_SUB,
+        ALU_OP_SLL,
+        ALU_SLT,
+        ALU_SLTU,
+        ALU_XOR,
+        ALU_SRL,
+        ALU_SRA,
+        ALU_OR,
+        ALU_AND
+    );
+    
+    function is_i_type(val : in opcode) return boolean;
+    function is_r_type(val : in opcode) return boolean;
+    function is_s_type(val : in opcode) return boolean;
+    function is_sb_type(val : in opcode) return boolean;
+    function is_u_type(val : in opcode) return boolean;
+    function is_uj_type(val : in opcode) return boolean;
+    
 end opcodes;
 
 package body opcodes is 
 
-    -- Function for opcode use
+    -- Checks if the given opcode belongs to an I-type instruction
+    -- Input: val : opcode
+    -- Output: boolean
+    function is_i_type(val : in opcode) return boolean is
+    begin
+        case val is
+            when I_TYPE_AL => return true;
+            when I_TYPE_LOAD => return true;
+            when I_TYPE_JALR => return true;
+            when others => return false;
+        end case;
+    end function is_i_type;
+    
+    -- Checks if the given opcode belongs to an R-type instruction
+    -- Input: val : opcode
+    -- Output: boolean
+    function is_r_type(val : in opcode) return boolean is
+    begin
+        case val is
+            when R_TYPE => return true;
+            when others => return false;
+        end case;
+    end function is_r_type;
+    
+    -- Checks if the given opcode belongs to an S-type instruction
+    -- Input: val : opcode
+    -- Output: boolean
+    function is_s_type(val : in opcode) return boolean is
+    begin
+        case val is
+            when S_TYPE => return true;
+            when others => return false;
+        end case;
+    end function is_s_type;
+    
+     -- Checks if the given opcode belongs to an SB-type instruction
+     -- Input: val : opcode
+     -- Output: boolean
+     function is_sb_type(val : in opcode) return boolean is
+     begin
+         case val is
+             when SB_TYPE => return true;
+             when others => return false;
+         end case;
+     end function is_sb_type;
+     
+     -- Checks if the given opcode belongs to an U-type instruction
+     -- Input: val : opcode
+     -- Output: boolean
+     function is_u_type(val : in opcode) return boolean is
+     begin
+         case val is
+             when U_TYPE_LUI => return true;
+             when U_TYPE_AUIPC => return true;
+             when others => return false;
+         end case;
+     end function is_u_type;
+     
+     -- Checks if the given opcode belongs to an UJ-type instruction
+     -- Input: val : opcode
+     -- Output: boolean
+     function is_uj_type(val : in opcode) return boolean is
+     begin
+         case val is
+             when UJ_TYPE => return true;
+             when others => return false;
+         end case;
+     end function is_uj_type;
     
 end opcodes;
