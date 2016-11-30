@@ -3,7 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 use work.utils.all;
 use work.opcodes.all;
-use work.interfaces.all;
 
 -- LUI => nichts
 -- AUIPC => ADDI (Addieren Upper Immediate auf PC)
@@ -44,9 +43,11 @@ use work.interfaces.all;
 -- AND => trivial
 entity alu is
   Port (
-    clk: in std_logic;
-    req: in alu_req;
-    res: out cpu_word
+    clk : in std_logic;
+    data_in1 : in cpu_word;
+    data_in2 : in cpu_word;
+    op_in : in alu_op;
+    result : out cpu_word
 );
 end alu;
 

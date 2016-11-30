@@ -6,8 +6,13 @@ use work.opcodes.all;
 package utils is
 
     -- Constant and type definitions
+    
     constant cpu_word_length : natural := 32;
     subtype cpu_word is std_logic_vector(cpu_word_length - 1 downto 0);
+    
+    constant reg_idx_length : natural := 5;
+    subtype reg_idx is std_logic_vector(reg_idx_length - 1 downto 0);
+
     
 end package;
 

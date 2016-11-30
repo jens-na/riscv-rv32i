@@ -1,43 +1,24 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 11/28/2016 10:17:13 AM
--- Design Name: 
--- Module Name: decode - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+use work.utils.all;
+use work.opcodes.all;
 
 entity decode is
---  Port ( );
+  Port (
+    clk : in std_logic;
+    instr : in cpu_word;
+    rs1 : out reg_idx;
+    rs2 : out reg_idx;
+    rd : out reg_idx;
+    alu_out : out alu_op;
+    en_imm : out std_logic;
+    imm : out cpu_word
+  );
 end decode;
 
 architecture Behavioral of decode is
 
 begin
-
 
 end Behavioral;

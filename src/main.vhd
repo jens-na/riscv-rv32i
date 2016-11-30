@@ -4,7 +4,6 @@ use ieee.std_logic_unsigned.all;
 
 use work.utils.all;
 use work.opcodes.all;
-use work.interfaces.all;
 
 entity main is
   Port (
