@@ -46,11 +46,11 @@ entity alu is
   Port (
     clk: in std_logic;
     req: in alu_req;
-    res: out cpu_word;
+    res: out cpu_word
 );
 end alu;
 
-architecture Behavioral of main is
+architecture Behavioral of alu is
 begin
      
 end Behavioral;
