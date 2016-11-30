@@ -21,15 +21,6 @@ package opcodes is
     constant UJ_TYPE : opcode := "1101111"; --Jump and Link
     
     type alu_op is (
-        ALU_ADDI, 
-        ALU_SLTI,
-        ALU_SLTIU,
-        ALU_XORI,
-        ALU_ORI,
-        ALU_ANDI,
-        ALU_SLLI,
-        ALU_SRLI,
-        ALU_SRAI,
         ALU_ADD,
         ALU_SUB,
         ALU_OP_SLL,
