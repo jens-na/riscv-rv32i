@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 
 use work.utils.all;
 use work.opcodes.all;
@@ -47,11 +48,38 @@ entity alu is
     data_in1 : in cpu_word;
     data_in2 : in cpu_word;
     op_in : in alu_op;
-    result : out cpu_word
+    result : out cpu_word;
+    zero_flag : out std_logic
 );
 end alu;
 
 architecture Behavioral of alu is
 begin
-     
+    process(clk, data_in1, data_in2, op_in) is 
+    begin
+        if(rising_edge(clk)) then
+            case op_in is
+                when ALU_ADD =>
+                    result <= cpu_word(signed(data_in1) + signed(data_in2));
+                when ALU_SUB =>
+                    result <= cpu_word(signed(data_in1) - signed(data_in2));
+                when ALU_OP_SLL =>
+                    result <= (others => '0');
+                when ALU_SLT =>
+                    result <= (others => '0');
+                when ALU_SLTU =>
+                    result <= (others => '0');
+                when ALU_XOR =>
+                    result <= (others => '0');
+                when ALU_SRL =>
+                    result <= (others => '0');
+                when ALU_SRA =>
+                    result <= (others => '0');
+                when ALU_OR =>
+                    result <= (others => '0');       
+                when ALU_AND =>
+                    result <= (others => '0');                                                                                                                                             
+            end case;
+        end if;
+    end process;
 end Behavioral;
