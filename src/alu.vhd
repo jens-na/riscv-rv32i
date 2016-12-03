@@ -55,7 +55,7 @@ end alu;
 
 architecture Behavioral of alu is
 begin
-    process(clk, data_in1, data_in2, op_in) is 
+    process(clk) is 
     begin
         if(rising_edge(clk)) then
             case op_in is
