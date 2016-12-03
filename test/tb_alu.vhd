@@ -42,15 +42,24 @@ clk <=  '1' after 0.5 ns when clk = '0' else
     
     process
     begin
+        --wait for 10ns;
+        --x <= (2 downto 0 => '1', others => '0');
+        --y <= (1 downto 0 => '1', others => '0');
+        --o <= ALU_ADD;
+        --wait for 10ns;
+        --o <= ALU_SUB;
+        --x <= (4 downto 2 => '1', others => '0');
+        --y <= (2 downto 0 => '1', others => '0');
+        --wait for 10ns;
+        --o <= ALU_AND;
+        --x <= (4 downto 2 => '1', others => '0');
+        --y <= (2 downto 0 => '1', others => '0');
+        --wait for 10ns;
         wait for 10ns;
-        x <= (2 downto 0 => '1', others => '0');
-        y <= (1 downto 0 => '1', others => '0');
-        o <= ALU_ADD;
-        wait for 10ns;
-        o <= ALU_SUB;
-        x <= (4 downto 2 => '1', others => '0');
+        o <= ALU_SRA;
+        x <= (12 downto 2 => '1', others => '0');
         y <= (2 downto 0 => '1', others => '0');
-        
+        wait for 10ns;
     end process;
 
 end Behavioral;
