@@ -19,6 +19,96 @@ end decode;
 
 architecture Behavioral of decode is
 
+signal opc : opcode;
+signal funct3 : std_logic_vector(2 downto 0);
+signal funct7 : std_logic_vector(6 downto 0);
+signal funct10 : std_logic_vector (9 downto 0);
+signal rs1_next, rs2_next, rd_next,
+		rs1_cur, rs2_cur, rd_cur: reg_idx;
+signal alu_out_cur, alu_out_next : alu_op;
+signal en_imm_cur, en_imm_next : std_logic;
+signal imm_cur, imm_next : cpu_word;
+
 begin
+	process(clk)
+	begin
+		if (rising_edge(clk)) then 
+			rs1_cur <= rs1_next;
+			rs2_cur <= rs2_next;
+			rd_cur <= rd_next;
+			alu_out_cur <= alu_out_next;
+			en_imm_cur <= en_imm_next;
+			imm_cur <= imm_next;
+		end if;
+	end process;
+
+	-- next state logic
+
+	rs1_next <= instr(19 downto 15);
+	rs2_next <= instr(24 downto 20);
+	rd_next <= instr(11 downto 7);
+	opc <= instr(6 downto 0); 
+	funct3 <= instr(14 downto 12);
+	funct7 <= instr(31 downto 25);
+
+	process(opc, instr)
+	begin
+		case opc is
+			-------------------------------------------
+			when I_TYPE_AL =>
+
+				en_imm_next <= '1';
+
+				-- alu_out
+				case funct3 is
+					when "000" =>
+						alu_out_next <= ALU_ADD;
+					when "010" => 
+						alu_out_next <= ALU_SLT;
+					when "011" => 
+						alu_out_next <= ALU_SLTU;
+					when "100" => 
+						alu_out_next <= ALU_XOR;
+					when "110" => 
+						alu_out_next <= ALU_OR;
+					when "111" => 
+						alu_out_next <= ALU_AND;
+					when "001" => 
+						alu_out_next <= ALU_SLL;
+					when others => 
+						case funct7 is
+							when "0000000" =>
+								alu_out_next <= ALU_SRL;
+							when others =>
+								alu_out_next <= ALU_SRA;
+						end case;
+				end case;
+
+				-- imm
+				case funct3 is
+					when "001" | "101" =>
+						imm_next(31 downto 5) <= (others => '0');
+						imm_next(4 downto 0) <= instr(24 downto 20);
+					when others =>
+						imm_next(31 downto 12) <= (others => '0');
+						imm_next(11 downto 0) <= instr(31 downto 20);
+				end case;
+
+
+
+			when others =>
+				en_imm_next <= '0';
+				imm_next <= (others => '0');
+		end case;
+	end process;
+
+
+	-- output logic	
+	rs1 <= rs1_cur;
+	rs2 <= rs2_cur;
+	rd <= rd_cur;
+	alu_out <= alu_out_cur;
+	en_imm <= en_imm_cur;
+	imm <= imm_cur;
 
 end Behavioral;
