@@ -1,7 +1,9 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 use work.utils.all;
+
 
 entity registerfile is
   Port (
@@ -17,6 +19,9 @@ entity registerfile is
 end registerfile;
 
 architecture Behavioral of registerfile is
+-- Array of 31 register blocks: zero is not created as this always returns 0
+type reg_block_t is array (1 to 2**reg_idx_length) of std_logic_vector(cpu_word_length - 1 downto 0);
+signal reg_blocks : reg_block_t;
 
 begin
 
