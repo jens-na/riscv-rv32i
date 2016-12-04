@@ -25,5 +25,12 @@ signal reg_blocks : reg_block_t;
 
 begin
 
+--Asynchronous write to outputs:
+data_out1 <= reg_blocks(to_integer(unsigned(rs1)));
+data_out2 <= reg_blocks(to_integer(unsigned(rs2)));
+
+--Synchronous read from input:
+
+
 
 end Behavioral;
