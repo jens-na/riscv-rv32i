@@ -16,7 +16,7 @@ architecture Behavioral of tb_alu is
             data_in2 : in cpu_word;
             op_in : in alu_op;
             result : out cpu_word;
-            zero_flag : out std_logic
+            zero_flag : out boolean
         );
     end component;
     
@@ -25,7 +25,7 @@ architecture Behavioral of tb_alu is
     signal y : cpu_word;
     signal o : alu_op;
     signal result : cpu_word;
-    signal zero_flag : std_logic;
+    signal zero_flag : boolean;
     
 begin
 clk <=  '1' after 0.5 ns when clk = '0' else
