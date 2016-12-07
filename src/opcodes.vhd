@@ -21,17 +21,16 @@ package opcodes is
     constant UJ_TYPE : opcode := "1101111"; --Jump and Link
     
     type alu_op is (
-        ALU_ADD,
-        ALU_SUB,
-        ALU_OP_SLL,
-        ALU_SLT,
-        ALU_SLTU,
-        ALU_XOR,
-		ALU_SLL,
-        ALU_SRL,
-        ALU_SRA,
-        ALU_OR,
-        ALU_AND
+        ALU_ADD, -- Add
+        ALU_SUB, -- Substract
+        ALU_SLL, -- Shift left logical
+        ALU_SLT, -- set less than
+        ALU_SLTU, -- set less than (unsigned)
+        ALU_XOR, -- logical xor
+        ALU_SRL, -- shift right logical
+        ALU_SRA, -- shift right arithmetic
+        ALU_OR, -- logical or
+        ALU_AND -- logical and
     );
     
     function is_i_type(val : in opcode) return boolean;
