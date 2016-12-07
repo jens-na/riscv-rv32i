@@ -27,18 +27,32 @@ type reg_block_t is array (1 to 2**reg_idx_length) of std_logic_vector(cpu_word_
 signal reg_blocks : reg_block_t;
 
 begin
-
-    --Asynchronous write to outputs:
-    data_out1 <= reg_blocks(to_integer(unsigned(rs1))) when (unsigned(rs1) = 0) else (others => '0');
-    data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (unsigned(rs2) = 0) else (others => '0');
-    -- data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (rs2 /= zero_reg) else (others => '0');
-
-    --Synchronous read from input:
+    
+    --Asymc write:
+    --data_out1 <= reg_blocks(to_integer(unsigned(rs1))) when (unsigned(rs1) = 0) else (others => '0');
+    --data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (unsigned(rs2) = 0) else (others => '0');
+     -- data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (rs2 /= zero_reg) else (others => '0');
 
     process(clk)
     begin
+    
+        --sync read out
         if rising_edge(clk) then
+            if (unsigned(rs1) /= 0) then
+                data_out1 <= reg_blocks(to_integer(unsigned(rs1)));
+            else
+                data_out1 <= (others => '0');
+            end if;
+            
+            if (unsigned(rs2) /= 0) then
+                data_out2 <= reg_blocks(to_integer(unsigned(rs2)));
+            else
+                data_out2 <= (others => '0');
+            end if;
+            
+            --sync write to register
             reg_blocks(to_integer(unsigned(rd))) <= data_in;
+            --data_out1 <= (others => '1');
         end if;
         
     end process;
