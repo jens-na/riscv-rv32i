@@ -1,35 +1,16 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 01.12.2016 16:27:47
--- Design Name: 
--- Module Name: decoder_tb - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 use work.utils.all;
 use work.opcodes.all;
 
-entity decoder_tb is
+entity decode_tb is
 --  Port ( );
-end decoder_tb;
+end decode_tb;
 
-architecture Behavioral of decoder_tb is
+architecture Behavioral of decode_tb is
 
 	constant clk_period : time := 10 ns;
 	signal clk, en_imm : std_logic;
@@ -44,7 +25,7 @@ begin
 
 	process
 	begin
-		wait for 1 ns;
+		wait for 10 ns;
 		clk <= '1';
 		wait for clk_period / 2;
 
@@ -57,23 +38,25 @@ begin
 
 		-- ADDI
 		instr <= (others => '0');
-		instr(22 downto 20) <= "111"; -- immediate == 7
-		instr(19 downto 15) <= "00001"; -- rs1 == 1
-		instr(11 downto 7) <= "00011"; -- rd == 3
+		instr(31 downto 20) <= std_logic_vector(to_unsigned(0, 12)); --immediate
+		instr(19 downto 15) <= std_logic_vector(to_unsigned(1, 5)); -- rs1
+		instr(11 downto 7) <= std_logic_vector(to_unsigned(2,5)); -- rd 
 		instr(6 downto 0) <= I_TYPE_AL;
 
 		wait until falling_edge(clk);
-		
+
 		-- SLTI
 		instr <= (others => '0');
 		instr(14 downto 12) <= "010"; -- funct3 SLTI
-		instr(22 downto 20) <= "110"; -- immediate == 6
-		instr(19 downto 15) <= "00010"; -- rs1 == 2
-		instr(11 downto 7) <= "00111"; -- rd == 7
+		instr(31 downto 20) <= std_logic_vector(to_unsigned(1,12)); --immediate
+		instr(19 downto 15) <= std_logic_vector(to_unsigned(2,5)); --rs1
+		instr(11 downto 7) <= std_logic_vector(to_unsigned(3,5)); --rd
 		instr(6 downto 0) <= I_TYPE_AL;
-		
 
 		wait until falling_edge(clk);
 
+
+
+		
 	end process;
 end Behavioral;

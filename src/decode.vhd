@@ -23,22 +23,21 @@ signal opc : opcode;
 signal funct3 : std_logic_vector(2 downto 0);
 signal funct7 : std_logic_vector(6 downto 0);
 signal funct10 : std_logic_vector (9 downto 0);
-signal rs1_next, rs2_next, rd_next,
-		rs1_cur, rs2_cur, rd_cur: reg_idx;
-signal alu_out_cur, alu_out_next : alu_op;
-signal en_imm_cur, en_imm_next : std_logic;
-signal imm_cur, imm_next : cpu_word;
+signal rs1_next, rs2_next, rd_next : reg_idx;
+signal alu_out_next : alu_op;
+signal en_imm_next : std_logic;
+signal imm_next : cpu_word;
 
 begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then 
-			rs1_cur <= rs1_next;
-			rs2_cur <= rs2_next;
-			rd_cur <= rd_next;
-			alu_out_cur <= alu_out_next;
-			en_imm_cur <= en_imm_next;
-			imm_cur <= imm_next;
+			rs1 <= rs1_next;
+			rs2 <= rs2_next;
+			rd <= rd_next;
+			alu_out <= alu_out_next;
+			en_imm <= en_imm_next;
+			imm <= imm_next;
 		end if;
 	end process;
 
@@ -51,7 +50,7 @@ begin
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
 
-	process(opc, instr)
+	process(instr)
 	begin
 		case opc is
 			-------------------------------------------
@@ -60,10 +59,10 @@ begin
 				en_imm_next <= '1';
 
 				-- alu_out
-				case funct3 is
+				case instr(14 downto 12) is
 					when "000" =>
 						alu_out_next <= ALU_ADD;
-					when "010" => 
+					when "010" =>  
 						alu_out_next <= ALU_SLT;
 					when "011" => 
 						alu_out_next <= ALU_SLTU;
@@ -76,7 +75,7 @@ begin
 					when "001" => 
 						alu_out_next <= ALU_SLL;
 					when others => 
-						case funct7 is
+						case instr(31 downto 25) is
 							when "0000000" =>
 								alu_out_next <= ALU_SRL;
 							when others =>
@@ -95,7 +94,40 @@ begin
 				end case;
 
 
+			when R_TYPE =>
 
+				en_imm_next <= '0';
+
+				-- alu_out
+				case instr(14 downto 12) is
+					when "000" =>
+						case instr(31 downto 25) is
+							when (others => '0') =>
+								alu_out_next <= ALU_ADD;
+							when others =>
+								alu_out_next <= ALU_SUB;
+						end case;
+					when "001" =>
+						alu_out_next <= ALU_SLL;
+					when "010" =>
+						alu_out_next <= ALU_SLT;
+					when "011" =>
+						alu_out_next <= ALU_SLTU;
+					when "100" =>
+						alu_out_next <= ALU_XOR;
+					when "101" =>
+						case instr(31 downto 25) is
+							when (others => '0') =>
+								alu_out_next <= ALU_SRL;
+							when others =>
+								alu_out_next <= ALU_SRA;
+						end case;
+					when "110" =>
+						alu_out_next <= ALU_OR;
+					when others =>
+						alu_out_next <= ALU_AND;
+				end case;
+				
 			when others =>
 				en_imm_next <= '0';
 				imm_next <= (others => '0');
@@ -103,12 +135,5 @@ begin
 	end process;
 
 
-	-- output logic	
-	rs1 <= rs1_cur;
-	rs2 <= rs2_cur;
-	rd <= rd_cur;
-	alu_out <= alu_out_cur;
-	en_imm <= en_imm_cur;
-	imm <= imm_cur;
 
 end Behavioral;
