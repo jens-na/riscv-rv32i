@@ -27,6 +27,7 @@ package opcodes is
         ALU_SLT,
         ALU_SLTU,
         ALU_XOR,
+		ALU_SLL,
         ALU_SRL,
         ALU_SRA,
         ALU_OR,
