@@ -5,15 +5,17 @@ use work.utils.all;
 
 entity fetch is
   Port ( 
-    clk : in std_logic;
     addr_in : in cpu_word;
-    instr_out : out cpu_word
+    ram_addr : out cpu_word;
+    ram_write : out boolean;
+    ram_enable : out boolean
   );
 end fetch;
 
 architecture Behavioral of fetch is
-  -- Fetch instruction from BRAM
+
 begin
-
-
+  ram_addr <= addr_in;
+  ram_write <= false;
+  ram_enable <= true;
 end Behavioral;
