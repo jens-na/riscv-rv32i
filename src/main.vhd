@@ -8,7 +8,30 @@ use work.opcodes.all;
 entity main is
   Port (
     clk: in std_logic;
-    reset: in std_logic
+    reset: in std_logic;
+    pp_s_pc_out : out cpu_word;
+    pp_s_set : out std_logic;
+    pp_s_reset : out std_logic;
+    pp_s_set_value : out cpu_word;
+    pp_s_fetch_out : out cpu_word;
+    pp_s_fetch_write_out : out boolean;
+    pp_s_fetch_enable_out : out boolean;
+    pp_s_rs1 : out reg_idx;
+    pp_s_rs2 : out reg_idx;
+    pp_s_rd : out reg_idx;
+    pp_s_alu_out : out alu_op;
+    pp_s_en_imm : out std_logic_vector(3 downto 0);
+    pp_s_imm : out cpu_word;
+    pp_s_ram_data_in : out cpu_word;
+    pp_s_ram_en_write : out std_logic;
+    pp_s_ram_enable : out std_logic;
+    pp_s_ram_data_out : out cpu_word;
+    pp_s_decode_register_alu_mux_selector : out std_logic_vector(3 downto 0);
+    pp_s_decode_register_alu_mux_x : out cpu_word_1x16;
+    pp_s_decode_register_alu_mux_out : out cpu_word;
+    pp_s_reg_data_in : out cpu_word;
+    pp_s_reg_data_out2 : out cpu_word;
+    pp_s_zero_flag : out boolean
   );
 end main;
 
@@ -182,5 +205,34 @@ begin
         c_x =>  s_decode_register_alu_mux_x,
         c_y => s_decode_register_alu_mux_out
     );
-      
+    
+    pp_s_pc_out <= s_pc_out;
+    pp_s_set <= s_set;
+    pp_s_reset <= s_reset;
+    pp_s_set_value  <= s_set_value;
+    
+    pp_s_fetch_out  <= s_fetch_out;
+    pp_s_fetch_write_out <= s_fetch_write_out;
+    pp_s_fetch_enable_out <= s_fetch_enable_out;
+    
+    pp_s_rs1 <= s_rs1;
+    pp_s_rs2 <= s_rs2;
+    pp_s_rd <= s_rd;
+    pp_s_alu_out <= s_alu_out;
+    pp_s_en_imm <= s_en_imm;
+    pp_s_imm <= s_imm;
+    
+    pp_s_ram_data_in <= s_ram_data_in;
+    pp_s_ram_en_write <= s_ram_en_write;
+    pp_s_ram_enable <= s_ram_enable;
+    pp_s_ram_data_out <= s_ram_data_out;
+    
+    pp_s_decode_register_alu_mux_selector <= s_decode_register_alu_mux_selector;
+    pp_s_decode_register_alu_mux_x <= s_decode_register_alu_mux_x;
+    pp_s_decode_register_alu_mux_out <= s_decode_register_alu_mux_out;
+    
+    pp_s_reg_data_in <= s_reg_data_in;
+    pp_s_reg_data_out2 <= s_reg_data_out2;
+    
+    pp_s_zero_flag <= s_zero_flag;
 end Structural;
