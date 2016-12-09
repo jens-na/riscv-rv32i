@@ -12,6 +12,9 @@ package utils is
     
     constant reg_idx_length : natural := 5;
     subtype reg_idx is std_logic_vector(reg_idx_length - 1 downto 0);
+    
+    type cpu_word_1x2 is array (1 downto 0) of cpu_word;
+    type cpu_word_1x16 is array (15 downto 0) of cpu_word;
 
     function to_cpu_word(b : in boolean) return cpu_word;
     function to_cpu_word(v : in bit_vector) return cpu_word;
