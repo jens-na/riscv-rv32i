@@ -54,7 +54,39 @@ architecture Behavioral of main_tb is
     -- alu
     signal s_zero_flag : boolean;
 begin
-    UUT : entity work.main port map(clk => clk, reset => reset);
+    UUT : entity work.main port map(
+        clk => clk, 
+        reset => reset, 
+        pp_s_pc_out => s_pc_out,
+        pp_s_set => s_set,
+        pp_s_reset => s_reset,
+        pp_s_set_value => s_set_value,
+        
+        pp_s_fetch_out => s_fetch_out,
+        pp_s_fetch_write_out => s_fetch_write_out,
+        pp_s_fetch_enable_out => s_fetch_enable_out,
+        
+        pp_s_rs1 => s_rs1,
+        pp_s_rs2 => s_rs2,
+        pp_s_rd => s_rd,
+        pp_s_alu_out => s_alu_out,
+        pp_s_en_imm => s_en_imm,
+        pp_s_imm => s_imm,
+        
+        pp_s_ram_data_in => s_ram_data_in,
+        pp_s_ram_en_write => s_ram_en_write,
+        pp_s_ram_enable => s_ram_enable,
+        pp_s_ram_data_out => s_ram_data_out,
+        
+        pp_s_decode_register_alu_mux_selector => s_decode_register_alu_mux_selector,
+        pp_s_decode_register_alu_mux_x => s_decode_register_alu_mux_x,
+        pp_s_decode_register_alu_mux_out => s_decode_register_alu_mux_out,
+        
+        pp_s_reg_data_in => s_reg_data_in,
+        pp_s_reg_data_out2 => s_reg_data_out2,
+
+        pp_s_zero_flag => s_zero_flag
+        );
 
 	process
 	begin
