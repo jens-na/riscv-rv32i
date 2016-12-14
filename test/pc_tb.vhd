@@ -12,10 +12,9 @@ end pc_tb;
 architecture Behavioral of pc_tb is
 
 	constant clk_period : time := 10 ns;
-	constant N : integer := 32;
 
     signal clk, set, reset : std_logic;
-	signal set_value, value_out : std_logic_vector(N-1 downto 0);
+	signal set_value, value_out : cpu_word;
 
 begin
 	UUT : entity work.pc port map (clk => clk, set => set, reset => reset,
@@ -34,7 +33,7 @@ begin
 	begin
 		set <= '0';
 		set_value <= (others => '1');
-		reset <= '1';
+		reset <= '0';
 		wait until falling_edge(clk);
 		reset <= '0';
 		wait until falling_edge(clk);

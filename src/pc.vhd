@@ -8,21 +8,19 @@ use work.opcodes.all;
 
 entity pc is
 
-	generic(N : integer := 32;
-		    M : integer := 4);
 
     Port ( clk : in std_logic;
 		   set : in std_logic;
-           set_value : in std_logic_vector(N-1 downto 0);
+           set_value : in cpu_word;
 		   reset : in std_logic;
-		   value_out: out std_logic_vector(N-1 downto 0)
+		   value_out: out cpu_word
 	   );
 end pc;
 
 architecture Behavioral of pc is
 
-	signal cnt_reg : std_logic_vector(N-1 downto 0);
-	signal cnt_next : std_logic_vector(N-1 downto 0);
+	signal cnt_reg : cpu_word;
+	signal cnt_next : cpu_word;
 
 begin
 	process(clk, reset)
@@ -39,9 +37,9 @@ begin
 	end process;
 
 	-- next state logic
-	cnt_next <= std_logic_vector(unsigned(cnt_reg) + M);
+	cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
 	
 	-- output logic
-	value_out <= cnt_next;
+	value_out <= cnt_reg;
 
 end Behavioral;
