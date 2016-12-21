@@ -36,7 +36,7 @@ use work.utils.all;
 entity block_ram is
 	generic (
 		ram_size : integer := 1024;
-		address_bits : integer := 8
+		address_bits : integer := cpu_word_length
 	);
     port ( clk : in std_logic;
            reset : in std_logic;
