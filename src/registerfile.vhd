@@ -40,8 +40,7 @@ begin
     process(clk)
     begin
     
-        --sync read out
-        if rising_edge(clk) then
+        --async read out
             if (unsigned(rs1) /= 0) then
                 data_out1 <= reg_blocks(to_integer(unsigned(rs1)));
             else
@@ -54,6 +53,7 @@ begin
                 data_out2 <= (others => '0');
             end if;
             
+        if rising_edge(clk) then
             --sync write to register
             
             if (unsigned(rd) /= 0) then

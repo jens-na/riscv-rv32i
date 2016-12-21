@@ -44,7 +44,7 @@ use work.opcodes.all;
 -- AND => trivial
 entity alu is
   Port (
-    clk : in std_logic;
+--    clk : in std_logic;
     data_in1 : in cpu_word;
     data_in2 : in cpu_word;
     op_in : in alu_op;
@@ -54,39 +54,36 @@ entity alu is
 end alu;
 
 architecture Behavioral of alu is
-    signal result_next : cpu_word;
     signal zero_flag_next : boolean;
 begin
-    process(clk, data_in1, data_in2, op_in) is 
+    process(data_in1, data_in2, op_in) is 
     begin
-        if(rising_edge(clk)) then
-            result <= result_next;
-            zero_flag <= zero_flag_next;
-        end if;
     
         case op_in is
                 when ALU_ADD =>
-                    result_next <= cpu_word(signed(data_in1) + signed(data_in2));
+                    result <= cpu_word(signed(data_in1) + signed(data_in2));
                 when ALU_SUB =>
-                    result_next <= cpu_word(signed(data_in1) - signed(data_in2));
+                    result <= cpu_word(signed(data_in1) - signed(data_in2));
                 when ALU_SLL =>
-                    result_next <= cpu_word(signed(data_in1) sll to_integer(signed(data_in2)));
+                    result <= cpu_word(signed(data_in1) sll to_integer(signed(data_in2)));
                 when ALU_SLT =>
                     zero_flag_next <= signed(data_in1) < signed(data_in2);
-                    result_next <= to_cpu_word(zero_flag_next);
+					zero_flag <= zero_flag_next;
+                    result <= to_cpu_word(zero_flag_next);
                 when ALU_SLTU =>
                     zero_flag_next <= unsigned(data_in1) < unsigned(data_in2);
-                    result_next <= to_cpu_word(zero_flag_next);
+					zero_flag <= zero_flag_next;
+                    result <= to_cpu_word(zero_flag_next);
                 when ALU_XOR =>
-                    result_next <= cpu_word(signed(data_in1) xor signed(data_in2));
+                    result <= cpu_word(signed(data_in1) xor signed(data_in2));
                 when ALU_SRL =>
-                    result_next <= cpu_word(signed(data_in1) srl to_integer(signed(data_in2)));
+                    result <= cpu_word(signed(data_in1) srl to_integer(signed(data_in2)));
                 when ALU_SRA =>
-                    result_next <= to_cpu_word(to_bitvector(data_in1) sra to_integer(signed(data_in2)));
+                    result <= to_cpu_word(to_bitvector(data_in1) sra to_integer(signed(data_in2)));
                 when ALU_OR =>
-                    result_next <= cpu_word(signed(data_in1) or signed(data_in2));
+                    result <= cpu_word(signed(data_in1) or signed(data_in2));
                 when ALU_AND =>
-                    result_next <= cpu_word(signed(data_in1) and signed(data_in2));                                                                                                                                          
+                    result <= cpu_word(signed(data_in1) and signed(data_in2));                                                                                                                                          
         end case;
     end process;
 end Behavioral;

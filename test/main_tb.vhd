@@ -40,9 +40,9 @@ begin
     begin
 		wait until falling_edge(s_clk);
 		s_pc_reset <= '1';
-		wait until falling_edge(s_clk);
-		wait until falling_edge(s_clk);
-		wait until falling_edge(s_clk);
+		wait for 3ns;
+		s_pc_reset <= '0';
+		wait for 50ns;
     end process;
 
 end Behavioral;
