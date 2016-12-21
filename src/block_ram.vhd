@@ -42,8 +42,8 @@ entity block_ram is
            reset : in std_logic;
            data_in : in cpu_word;
            addr : in cpu_word;
-           en_write : in std_logic;
-           enable : in std_logic;
+           en_write : in boolean;
+           enable : in boolean;
            data_out : out cpu_word
            );
        end block_ram;
@@ -60,8 +60,8 @@ begin
 			if Reset = '1' then
 				-- clear data_out on reset
 				data_out <= (others => '0');
-			elsif Enable = '1' then
-				if en_write = '1' then
+			elsif enable = true then
+				if en_write = true then
 					-- If en_write pass through data_in
 					data_out <= data_in;
 				else
@@ -81,8 +81,8 @@ begin
 				for i in memory'Range loop
 					Memory(i) <= (others => '0');
 				end loop;
-			elsif enable = '1' then
-				if en_write = '1' then
+			elsif enable = true then
+				if en_write = true then
 					-- Store DataIn to Current Memory Address
 					memory(to_integer(unsigned(addr))) <= data_in;
 				end if;
