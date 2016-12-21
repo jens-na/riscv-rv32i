@@ -30,7 +30,7 @@ architecture Structural of main is
      
     signal s_fetch_ram_addr : cpu_word;
     signal s_fetch_ram_write : boolean;
-    signal s_fetch_ram_enable : boolean;
+    --signal s_fetch_ram_enable : boolean;
     component fetch port(
         addr_in : in cpu_word;
         ram_addr : out cpu_word;
@@ -66,7 +66,7 @@ architecture Structural of main is
         data_in : in cpu_word;
         addr : in cpu_word;
         en_write : in boolean;
-        enable : in boolean;
+        --enable : in boolean;
         data_out : out cpu_word
     );
     end component;
@@ -110,8 +110,8 @@ begin
     c_fetch : fetch port map(
         addr_in => s_pc_value_out,
         ram_addr => s_fetch_ram_addr,
-        ram_write => s_fetch_ram_write,
-        ram_enable => s_fetch_ram_enable
+        ram_write => s_fetch_ram_write
+        --ram_enable => s_fetch_ram_enable
     );
     
     c_decode : decode port map(
@@ -130,7 +130,7 @@ begin
         reset => m_bram_reset,
         data_in => m_bram_data_in,
         addr => s_fetch_ram_addr,
-        enable => s_fetch_ram_enable,
+        --enable => s_fetch_ram_enable,
         en_write => s_fetch_ram_write,
         data_out => s_bram_data_out
     );

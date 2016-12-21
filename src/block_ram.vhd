@@ -42,14 +42,17 @@ entity block_ram is
            reset : in std_logic;
            data_in : in cpu_word;
            addr : in cpu_word;
-           en_write : in std_logic;
+           en_write : in boolean;
            data_out : out cpu_word
            );
        end block_ram;
 
 architecture Behavioral of block_ram is
 	type memory_t is array ((ram_size) - 1 downto 0) of std_logic_vector (address_bits - 1 downto 0);
-	signal memory : memory_t;
+	signal memory : memory_t := ( 
+       0 => "00000000001000001000000110110011",
+       others => (others => '0')
+    );
 begin
 
 	-- read
@@ -62,7 +65,7 @@ begin
 				data_out <= (others => '0');
 			end if;
 				
-			if en_write = '1' then
+			if en_write = true then
 				-- If en_write pass through data_in
 				memory(to_integer(unsigned(addr))) <= data_in;
 		    end if;
