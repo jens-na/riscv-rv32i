@@ -46,7 +46,6 @@ architecture Behavioral of ram_tb is
                data_in : in cpu_word;
                addr : in cpu_word;
                en_write : in std_logic;
-               enable : in std_logic;
                data_out : out cpu_word
                );
     end component;
@@ -56,7 +55,6 @@ architecture Behavioral of ram_tb is
     signal reset : std_logic := '0';
     signal data_in : cpu_word;
     signal addr : cpu_word;
-    signal enable : std_logic := '1';
     signal en_write : std_logic;
     signal data_out : cpu_word;
       
@@ -66,7 +64,7 @@ architecture Behavioral of ram_tb is
 begin
 
     UUT: block_ram port map(clk => clk, reset => reset, data_in => data_in, addr => addr,
-    enable => enable, en_write => en_write, data_out => data_out);
+    en_write => en_write, data_out => data_out);
 
 
     clk <=  '1' after clk_period when clk = '0' else

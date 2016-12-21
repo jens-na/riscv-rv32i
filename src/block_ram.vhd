@@ -43,7 +43,6 @@ entity block_ram is
            data_in : in cpu_word;
            addr : in cpu_word;
            en_write : in std_logic;
-           enable : in std_logic;
            data_out : out cpu_word
            );
        end block_ram;
@@ -57,37 +56,38 @@ begin
 	process (clk)
 	begin
 		if rising_edge(clk) then
-			if Reset = '1' then
+			
+			if reset = '1' then
 				-- clear data_out on reset
 				data_out <= (others => '0');
-			elsif Enable = '1' then
-				if en_write = '1' then
-					-- If en_write pass through data_in
-					data_out <= data_in;
-				else
-					-- read mem
-					data_out <= memory(to_integer(unsigned(addr)));
-				end if;
 			end if;
+				
+			if en_write = '1' then
+				-- If en_write pass through data_in
+				memory(to_integer(unsigned(addr))) <= data_in;
+		    end if;
+				
+			-- read mem
+			data_out <= memory(to_integer(unsigned(addr)));
 		end if;
 	end process;
 
-	-- Write process
-	process (clk)
-	begin
-		if rising_edge(clk) then
-			if reset = '1' then
-				-- Clear Memory on Reset
-				for i in memory'Range loop
-					Memory(i) <= (others => '0');
-				end loop;
-			elsif enable = '1' then
-				if en_write = '1' then
-					-- Store DataIn to Current Memory Address
-					memory(to_integer(unsigned(addr))) <= data_in;
-				end if;
-			end if;
-		end if;
-	end process;
+--	-- Write process
+--	process (clk)
+--	begin
+--		if rising_edge(clk) then
+--			if reset = '1' then
+--				-- Clear Memory on Reset
+--				for i in memory'Range loop
+--					Memory(i) <= (others => '0');
+--				end loop;
+--			elsif enable = '1' then
+--				if en_write = '1' then
+--					-- Store DataIn to Current Memory Address
+--					memory(to_integer(unsigned(addr))) <= data_in;
+--				end if;
+--			end if;
+--		end if;
+--	end process;
 
 end Behavioral;
