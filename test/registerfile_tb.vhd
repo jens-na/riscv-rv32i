@@ -76,20 +76,17 @@ begin
     stim_process : process
     begin
     
-        rd <= std_logic_vector(to_unsigned(3, 5));
-
+        
         wait for 23ns;
         
         data_in <= std_logic_vector(to_unsigned(1000, 32));
-        
-        wait for 22ns;
-
         rd <= std_logic_vector(to_unsigned(5, 5));
         
         wait for 22ns;
         
         data_in <= std_logic_vector(to_unsigned(10000, 32));
-        
+        rd <= std_logic_vector(to_unsigned(3, 5));
+
         wait for 22ns;
         
         rs1 <= std_logic_vector(to_unsigned(5, 5));
