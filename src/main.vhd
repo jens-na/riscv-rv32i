@@ -10,14 +10,7 @@ entity main is
     m_pc_reset : in std_logic;
     m_bram_reset : in std_logic;
     m_register_reset : in std_logic;
-    
     m_bram_data_in : in cpu_word
-    --m_set : in std_logic;
-    --m_set_value : in cpu_word;
-    --m_reset : in std_logic;
-    --m_ram_addr : out cpu_word;
-    --m_ram_write : out boolean;
-    --m_ram_enable : out boolean
   );
 end main;
 
@@ -161,5 +154,7 @@ begin
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
     );
+    
+    
         
 end Structural;

@@ -11,66 +11,38 @@ end main_tb;
 architecture Behavioral of main_tb is
 
 	constant clk_period : time := 10 ns;
-    signal m_clk : std_logic;
-
-    signal m_set : std_logic;
-    signal m_set_value : cpu_word;
-    signal m_reset : std_logic;
-    signal m_ram_addr : cpu_word;
-    signal m_ram_write : boolean;
-    signal m_ram_enable : boolean;
-    
+    signal s_clk : std_logic;
+    signal s_pc_reset : std_logic;
+    signal s_bram_reset : std_logic;
+    signal s_register_reset : std_logic;
+    signal s_bram_data_in : cpu_word;
 begin
 
-    UUT : entity work.main port map (
-        m_clk => m_clk,
-        m_set => m_set,
-        m_set_value => m_set_value,
-        m_reset => m_reset,
-        m_ram_addr => m_ram_addr,
-        m_ram_write => m_ram_write,
-        m_ram_enable => m_ram_enable
+    uut : entity work.main port map (
+        m_clk => s_clk,
+        m_pc_reset => s_pc_reset,
+        m_bram_reset => s_bram_reset,
+        m_register_reset => s_register_reset,
+        m_bram_data_in => s_bram_data_in
     );
     
     process
     begin
-        m_clk <= '1';
+        s_clk <= '1';
         wait for clk_period / 2;
 
-        m_clk <= '0';
+        s_clk <= '0';
         wait for clk_period / 2;
     end process;
     
     process
+    
     begin
-    	m_set <= '0';
-        m_set_value <= (others => '1');
-        m_reset <= '1';
-        wait until falling_edge(m_clk);
-        m_reset <= '0';
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        m_set <= '1';
-        wait until falling_edge(m_clk);
-        m_set <= '0';
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
-        wait until falling_edge(m_clk);
+		wait until falling_edge(s_clk);
+		s_pc_reset <= '1';
+		wait until falling_edge(s_clk);
+		wait until falling_edge(s_clk);
+		wait until falling_edge(s_clk);
     end process;
 
 end Behavioral;
