@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 12/04/2016 04:11:40 PM
+-- Create Date: 12/21/2016 12:44:24 PM
 -- Design Name: 
--- Module Name: registerfile_tb - Behavioral
+-- Module Name: ram_tb - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -25,6 +25,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 use work.utils.all;
 
+
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -34,40 +35,36 @@ use work.utils.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity registerfile_tb is
+entity ram_tb is
 --  Port ( );
-end registerfile_tb;
+end ram_tb;
 
-architecture Behavioral of registerfile_tb is
-    component registerfile
-        port(
-        clk : in std_logic;
-        reset : in std_logic;
-        rs1 : in reg_idx;
-        rs2 : in reg_idx;
-        rd : in reg_idx;
-        data_in : in cpu_word;
-        data_out1 : out cpu_word;
-        data_out2 : out cpu_word);
+architecture Behavioral of ram_tb is
+    component block_ram
+        port ( clk : in std_logic;
+               reset : in std_logic;
+               data_in : in cpu_word;
+               addr : in cpu_word;
+               en_write : in std_logic;
+               data_out : out cpu_word
+               );
     end component;
-      
+    
     --signals
     signal clk : std_logic := '0';
     signal reset : std_logic := '0';
-    signal rs1 : reg_idx;
-    signal rs2 : reg_idx;
-    signal rd : reg_idx;
     signal data_in : cpu_word;
-    signal data_out1 : cpu_word;
-    signal data_out2 : cpu_word;
+    signal addr : cpu_word;
+    signal en_write : std_logic;
+    signal data_out : cpu_word;
       
     --clock cycle
     constant clk_period : time := 10ns;
-
+    
 begin
 
-    UUT: registerfile port map(clk => clk, reset => reset, rs1 => rs1, rs2 => rs2,
-        rd => rd, data_in => data_in, data_out1 => data_out1, data_out2 => data_out2);
+    UUT: block_ram port map(clk => clk, reset => reset, data_in => data_in, addr => addr,
+    en_write => en_write, data_out => data_out);
 
 
     clk <=  '1' after clk_period when clk = '0' else
@@ -75,25 +72,29 @@ begin
 
     stim_process : process
     begin
-    
+        en_write <= '1';
         
-        wait for 23ns;
-        
-        data_in <= std_logic_vector(to_unsigned(1000, 32));
-        rd <= std_logic_vector(to_unsigned(5, 5));
+        addr <= std_logic_vector(to_unsigned(5, 32));
+        data_in <= (others => '1');
         
         wait for 22ns;
         
-        data_in <= std_logic_vector(to_unsigned(10000, 32));
-        rd <= std_logic_vector(to_unsigned(3, 5));
+        addr <= std_logic_vector(to_unsigned(3, 32));
+        data_in <= (others => '0');
 
         wait for 22ns;
         
-        rs1 <= std_logic_vector(to_unsigned(5, 5));
-        rs2 <= std_logic_vector(to_unsigned(3, 5));
+        addr <= std_logic_vector(to_unsigned(5, 32));
+        en_write <= '0';
+        
+        wait for 22ns;
+        
+        addr <= std_logic_vector(to_unsigned(3, 32));
         
         wait for 22ns;
         
     end process;
     
+    
+
 end Behavioral;

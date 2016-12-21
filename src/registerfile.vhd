@@ -51,7 +51,11 @@ begin
             end if;
             
             --sync write to register
-            reg_blocks(to_integer(unsigned(rd))) <= data_in;
+            
+            if (unsigned(rd) /= 0) then
+                reg_blocks(to_integer(unsigned(rd))) <= data_in;
+            end if;
+            
             --data_out1 <= (others => '1');
         end if;
         
