@@ -55,47 +55,47 @@ architecture Behavioral of registerfile_tb is
     signal clk : std_logic := '0';
     signal reset : std_logic := '0';
     signal rs1 : reg_idx;
-    signal rs1 : reg_idx;
+    signal rs2 : reg_idx;
     signal rd : reg_idx;
     signal data_in : cpu_word;
     signal data_out1 : cpu_word;
     signal data_out2 : cpu_word;
       
     --clock cycle
-    constant clk_period : time := 1000ns;
+    constant clk_period : time := 10ns;
 
 begin
 
     UUT: registerfile port map(clk => clk, reset => reset, rs1 => rs1, rs2 => rs2,
         rd => rd, data_in => data_in, data_out1 => data_out1, data_out2 => data_out2);
 
-    clk_process : process
-    begin
-        clk <= '0';
-        wait for clk_period/2;
-        clk <= '1';
-        wait for clk_period/2;
-    end process;
+
+    clk <=  '1' after clk_period when clk = '0' else
+        '0' after clk_period when clk = '1';
 
     stim_process : process
     begin
-        wait for 2300ns;
-        
-        rd <= '3';
-        data_in <= (0 => '1', 1 => '0', 2 => '1', others => '0');
-        
-        wait for 2300ns;
+    
+        rd <= std_logic_vector(to_unsigned(3, 5));
 
-        rd <= '5';
-        data_in <= (0 => '0', 1 => '1', 2 => '0', others => '1');
+        wait for 23ns;
         
-        wait for 2300ns;
+        data_in <= std_logic_vector(to_unsigned(1000, 32));
         
-        data_out1 <= '3';
-        data_out2 <= '5';
+        wait for 22ns;
+
+        rd <= std_logic_vector(to_unsigned(5, 5));
         
-       wait for 2300ns;
+        wait for 22ns;
         
+        data_in <= std_logic_vector(to_unsigned(10000, 32));
+        
+        wait for 22ns;
+        
+        rs1 <= std_logic_vector(to_unsigned(5, 5));
+        rs2 <= std_logic_vector(to_unsigned(3, 5));
+        
+        wait for 22ns;
         
     end process;
     
