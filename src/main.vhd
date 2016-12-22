@@ -88,7 +88,6 @@ architecture Structural of main is
     signal s_alu_result : cpu_word;
     signal s_alu_zero_flag : boolean;
     component alu port (
-        clk : in std_logic;
         data_in1 : in cpu_word;
         data_in2 : in cpu_word;
         op_in : in alu_op;
@@ -147,7 +146,6 @@ begin
     );
     
     c_alu : alu port map(
-        clk => m_clk,
         data_in1 => s_register_data_out1,
         data_in2 => s_register_data_out2,
         op_in => s_decode_alu_out,
