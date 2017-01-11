@@ -50,7 +50,9 @@ entity block_ram is
 architecture Behavioral of block_ram is
 	type memory_t is array ((ram_size) - 1 downto 0) of std_logic_vector (address_bits - 1 downto 0);
 	signal memory : memory_t := ( 
-       0 => "00000000001000001000000110110011",
+       -- 0 => "00000000001000001000000110110011", -- Register/Register test
+       0 => "00000000011100001000000110010011", -- Register/Immediate test
+       
        others => (others => '0')
     );
 begin

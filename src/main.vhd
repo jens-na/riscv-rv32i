@@ -96,6 +96,15 @@ architecture Structural of main is
     );
     end component;
     
+    signal s_mux_decode_register_alu_x : cpu_word_1x16;
+    signal s_mux_decode_register_alu_y : cpu_word;
+    component mux16 port (
+        selector : in std_logic_vector(3 downto 0);
+        x : in cpu_word_1x16;
+        y : out cpu_word
+    );
+    end component;
+    
 begin
 
     c_pc : pc port map(
@@ -121,7 +130,7 @@ begin
         rd => s_decode_rd,
         alu_out => s_decode_alu_out,
         en_imm => s_decode_en_imm,
-        imm => s_decode_imm
+        imm => s_mux_decode_register_alu_x(1)
     );
     
     c_bram : block_ram port map(
@@ -141,16 +150,25 @@ begin
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
         data_in => s_alu_result,
-        data_out1 => s_register_data_out1,
+        data_out1 => s_mux_decode_register_alu_x(0),
         data_out2 => s_register_data_out2
     );
     
     c_alu : alu port map(
-        data_in1 => s_register_data_out1,
+        data_in1 => s_mux_decode_register_alu_y,
         data_in2 => s_register_data_out2,
         op_in => s_decode_alu_out,
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
+    );
+    
+    c_mux_decode_register_alu : mux16 port map(
+        selector(0) => s_decode_en_imm,
+        selector(1) => '0',
+        selector(2) => '0',
+        selector(3) => '0',
+        x => s_mux_decode_register_alu_x,
+        y => s_mux_decode_register_alu_y
     );
     
     
