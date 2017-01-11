@@ -50,7 +50,7 @@ begin
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
 
-	process(instr)
+	process(instr, funct3, funct7, opc)
 	begin
 		case opc is
 			-------------------------------------------
@@ -59,7 +59,7 @@ begin
 				en_imm_next <= '1';
 
 				-- alu_out
-				case instr(funct3) is
+				case funct3 is
 					when "000" =>
 						alu_out_next <= ALU_ADD;
 					when "010" =>  
@@ -75,7 +75,7 @@ begin
 					when "001" => 
 						alu_out_next <= ALU_SLL;
 					when others => 
-						case instr(funct7) is
+						case funct7 is
 							when "0000000" =>
 								alu_out_next <= ALU_SRL;
 							when others =>
@@ -99,9 +99,9 @@ begin
 				en_imm_next <= '0';
 
 				-- alu_out
-				case instr(funct3) is
+				case funct3 is
 					when "000" =>
-						case instr(funct7) is
+						case funct7 is
 							when (others => '0') =>
 								alu_out_next <= ALU_ADD;
 							when others =>
@@ -116,7 +116,7 @@ begin
 					when "100" =>
 						alu_out_next <= ALU_XOR;
 					when "101" =>
-						case instr(funct7) is
+						case funct7 is
 							when (others => '0') =>
 								alu_out_next <= ALU_SRL;
 							when others =>
