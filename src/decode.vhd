@@ -59,7 +59,7 @@ begin
 				en_imm_next <= '1';
 
 				-- alu_out
-				case instr(14 downto 12) is
+				case instr(funct3) is
 					when "000" =>
 						alu_out_next <= ALU_ADD;
 					when "010" =>  
@@ -75,7 +75,7 @@ begin
 					when "001" => 
 						alu_out_next <= ALU_SLL;
 					when others => 
-						case instr(31 downto 25) is
+						case instr(funct7) is
 							when "0000000" =>
 								alu_out_next <= ALU_SRL;
 							when others =>
@@ -99,9 +99,9 @@ begin
 				en_imm_next <= '0';
 
 				-- alu_out
-				case instr(14 downto 12) is
+				case instr(funct3) is
 					when "000" =>
-						case instr(31 downto 25) is
+						case instr(funct7) is
 							when (others => '0') =>
 								alu_out_next <= ALU_ADD;
 							when others =>
@@ -116,7 +116,7 @@ begin
 					when "100" =>
 						alu_out_next <= ALU_XOR;
 					when "101" =>
-						case instr(31 downto 25) is
+						case instr(funct7) is
 							when (others => '0') =>
 								alu_out_next <= ALU_SRL;
 							when others =>
