@@ -13,7 +13,11 @@ entity decode is
     rd : out reg_idx;
     alu_out : out alu_op;
     en_imm : out std_logic;
-    imm : out cpu_word
+    imm : out cpu_word;
+  	en_write_ram : out boolean;
+	width_ram : out std_logic_vector(2 downto 0);
+    mem_instr : out boolean  -- if true, result of alu is mapped to ram
+  	
   );
 end decode;
 
@@ -27,6 +31,9 @@ signal rs1_next, rs2_next, rd_next : reg_idx;
 signal alu_out_next : alu_op;
 signal en_imm_next : std_logic;
 signal imm_next : cpu_word;
+signal en_write_ram_next : boolean;
+signal width_ram_next : std_logic_vector(2 downto 0);
+signal mem_instr_next : boolean;
 
 begin
 	process(clk)
@@ -38,14 +45,21 @@ begin
 			alu_out <= alu_out_next;
 			en_imm <= en_imm_next;
 			imm <= imm_next;
+			en_write_ram <= en_write_ram_next;
+			width_ram <= width_ram_next;
+            mem_instr <= mem_instr_next;
 		end if;
 	end process;
 
 	-- next state logic
 
+    -- same for every instruction
 	rs1_next <= instr(19 downto 15);
 	rs2_next <= instr(24 downto 20);
 	rd_next <= instr(11 downto 7);
+    width_ram_next <= instr(14 downto 12);
+
+    -- for use in the process
 	opc <= instr(6 downto 0); 
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
@@ -57,6 +71,8 @@ begin
 			when I_TYPE_AL =>
 
 				en_imm_next <= '1';
+                en_write_ram_next <= false;
+                mem_instr_next <= false;
 
 				-- alu_out
 				case funct3 is
@@ -97,6 +113,8 @@ begin
 			when R_TYPE =>
 
 				en_imm_next <= '0';
+                en_write_ram_next <= false;
+                mem_instr_next <= false;
 
 				-- alu_out
 				case funct3 is
@@ -127,6 +145,16 @@ begin
 					when others =>
 						alu_out_next <= ALU_AND;
 				end case;
+
+
+			when I_TYPE_LOAD =>
+
+				alu_out_next <= ALU_ADD;
+				en_imm_next <= '1';
+				imm_next(31 downto 12) <= (others => '0');
+				imm_next(11 downto 0) <= instr(31 downto 20);
+				en_write_ram_next <= false;
+                mem_instr_next <= true;
 				
 			when others =>
 				en_imm_next <= '0';
