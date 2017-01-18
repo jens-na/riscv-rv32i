@@ -28,16 +28,6 @@ architecture Structural of main is
     );
     end component;
      
-    signal s_fetch_ram_addr : cpu_word;
-    signal s_fetch_ram_write : boolean;
-    --signal s_fetch_ram_enable : boolean;
-    component fetch port(
-        addr_in : in cpu_word;
-        ram_addr : out cpu_word;
-        ram_write : out boolean;
-        ram_enable : out boolean
-    );
-    end component;
      
      
     signal s_decode_rs1 : reg_idx;
@@ -46,6 +36,8 @@ architecture Structural of main is
     signal s_decode_alu_out : alu_op;
     signal s_decode_en_imm : std_logic;
     signal s_decode_imm : cpu_word;
+    signal s_decode_width_ram : std_logic_vector(2 downto 0);
+    signal s_decode_en_write_ram : boolean;
     component decode port(
         clk : in std_logic;
         instr : in cpu_word;
@@ -54,7 +46,9 @@ architecture Structural of main is
         rd : out reg_idx;
         alu_out : out alu_op;
         en_imm : out std_logic;
-        imm : out cpu_word
+        imm : out cpu_word;
+        width_ram : out std_logic_vector(2 downto 0);
+        en_write_ram : out boolean
     );
     end component;
     
@@ -67,7 +61,8 @@ architecture Structural of main is
         addr : in cpu_word;
         en_write : in boolean;
         --enable : in boolean;
-        data_out : out cpu_word
+        data_out : out cpu_word;
+        width : in std_logic_vector(2 downto 0)
     );
     end component;
     
@@ -106,12 +101,6 @@ begin
         value_out => s_pc_value_out
     );
     
-    c_fetch : fetch port map(
-        addr_in => s_pc_value_out,
-        ram_addr => s_fetch_ram_addr,
-        ram_write => s_fetch_ram_write
-        --ram_enable => s_fetch_ram_enable
-    );
     
     c_decode : decode port map(
         clk => m_clk,
@@ -121,17 +110,18 @@ begin
         rd => s_decode_rd,
         alu_out => s_decode_alu_out,
         en_imm => s_decode_en_imm,
-        imm => s_decode_imm
+        imm => s_decode_imm,
+        width_ram => s_decode_width_ram
     );
     
     c_bram : block_ram port map(
         clk => m_clk,
         reset => m_bram_reset,
         data_in => m_bram_data_in,
-        addr => s_fetch_ram_addr,
-        --enable => s_fetch_ram_enable,
-        en_write => s_fetch_ram_write,
-        data_out => s_bram_data_out
+        addr => s_pc_value_out,
+        en_write => s_decode_en_write_ram,
+        data_out => s_bram_data_out,
+        width => s_decode_width_ram
     );
     
     c_registerfile : registerfile port map(

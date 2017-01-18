@@ -28,36 +28,20 @@ signal funct3 : std_logic_vector(2 downto 0);
 signal funct7 : std_logic_vector(6 downto 0);
 signal funct10 : std_logic_vector (9 downto 0);
 signal rs1_next, rs2_next, rd_next : reg_idx;
-signal alu_out_next : alu_op;
-signal en_imm_next : std_logic;
-signal imm_next : cpu_word;
-signal en_write_ram_next : boolean;
+signal alu_out : alu_op;
+signal en_imm : std_logic;
+signal imm : cpu_word;
+signal en_write_ram : boolean;
 signal width_ram_next : std_logic_vector(2 downto 0);
-signal mem_instr_next : boolean;
+signal mem_instr : boolean;
 
 begin
-	process(clk)
-	begin
-		if (rising_edge(clk)) then 
-			rs1 <= rs1_next;
-			rs2 <= rs2_next;
-			rd <= rd_next;
-			alu_out <= alu_out_next;
-			en_imm <= en_imm_next;
-			imm <= imm_next;
-			en_write_ram <= en_write_ram_next;
-			width_ram <= width_ram_next;
-            mem_instr <= mem_instr_next;
-		end if;
-	end process;
-
-	-- next state logic
 
     -- same for every instruction
-	rs1_next <= instr(19 downto 15);
-	rs2_next <= instr(24 downto 20);
-	rd_next <= instr(11 downto 7);
-    width_ram_next <= instr(14 downto 12);
+	rs1 <= instr(19 downto 15);
+	rs2 <= instr(24 downto 20);
+	rd <= instr(11 downto 7);
+    width_ram <= instr(14 downto 12);
 
     -- for use in the process
 	opc <= instr(6 downto 0); 
@@ -70,95 +54,95 @@ begin
 			-------------------------------------------
 			when I_TYPE_AL =>
 
-				en_imm_next <= '1';
-                en_write_ram_next <= false;
-                mem_instr_next <= false;
+				en_imm <= '1';
+                en_write_ram <= false;
+                mem_instr <= false;
 
 				-- alu_out
 				case funct3 is
 					when "000" =>
-						alu_out_next <= ALU_ADD;
+						alu_out <= ALU_ADD;
 					when "010" =>  
-						alu_out_next <= ALU_SLT;
+						alu_out <= ALU_SLT;
 					when "011" => 
-						alu_out_next <= ALU_SLTU;
+						alu_out <= ALU_SLTU;
 					when "100" => 
-						alu_out_next <= ALU_XOR;
+						alu_out <= ALU_XOR;
 					when "110" => 
-						alu_out_next <= ALU_OR;
+						alu_out <= ALU_OR;
 					when "111" => 
-						alu_out_next <= ALU_AND;
+						alu_out <= ALU_AND;
 					when "001" => 
-						alu_out_next <= ALU_SLL;
+						alu_out <= ALU_SLL;
 					when others => 
 						case funct7 is
 							when "0000000" =>
-								alu_out_next <= ALU_SRL;
+								alu_out <= ALU_SRL;
 							when others =>
-								alu_out_next <= ALU_SRA;
+								alu_out <= ALU_SRA;
 						end case;
 				end case;
 
 				-- imm
 				case funct3 is
 					when "001" | "101" =>
-						imm_next(31 downto 5) <= (others => '0');
-						imm_next(4 downto 0) <= instr(24 downto 20);
+						imm(31 downto 5) <= (others => '0');
+						imm(4 downto 0) <= instr(24 downto 20);
 					when others =>
-						imm_next(31 downto 12) <= (others => '0');
-						imm_next(11 downto 0) <= instr(31 downto 20);
+						imm(31 downto 12) <= (others => '0');
+						imm(11 downto 0) <= instr(31 downto 20);
 				end case;
 
 
 			when R_TYPE =>
 
-				en_imm_next <= '0';
-                en_write_ram_next <= false;
-                mem_instr_next <= false;
+				en_imm <= '0';
+                en_write_ram <= false;
+                mem_instr <= false;
 
 				-- alu_out
 				case funct3 is
 					when "000" =>
 						case funct7 is
 							when (others => '0') =>
-								alu_out_next <= ALU_ADD;
+								alu_out <= ALU_ADD;
 							when others =>
-								alu_out_next <= ALU_SUB;
+								alu_out <= ALU_SUB;
 						end case;
 					when "001" =>
-						alu_out_next <= ALU_SLL;
+						alu_out <= ALU_SLL;
 					when "010" =>
-						alu_out_next <= ALU_SLT;
+						alu_out <= ALU_SLT;
 					when "011" =>
-						alu_out_next <= ALU_SLTU;
+						alu_out <= ALU_SLTU;
 					when "100" =>
-						alu_out_next <= ALU_XOR;
+						alu_out <= ALU_XOR;
 					when "101" =>
 						case funct7 is
 							when (others => '0') =>
-								alu_out_next <= ALU_SRL;
+								alu_out <= ALU_SRL;
 							when others =>
-								alu_out_next <= ALU_SRA;
+								alu_out <= ALU_SRA;
 						end case;
 					when "110" =>
-						alu_out_next <= ALU_OR;
+						alu_out <= ALU_OR;
 					when others =>
-						alu_out_next <= ALU_AND;
+						alu_out <= ALU_AND;
 				end case;
 
 
 			when I_TYPE_LOAD =>
 
-				alu_out_next <= ALU_ADD;
-				en_imm_next <= '1';
-				imm_next(31 downto 12) <= (others => '0');
-				imm_next(11 downto 0) <= instr(31 downto 20);
-				en_write_ram_next <= false;
-                mem_instr_next <= true;
+				alu_out <= ALU_ADD;
+				en_imm <= '1';
+				imm(31 downto 12) <= (others => '0');
+				imm(11 downto 0) <= instr(31 downto 20);
+				en_write_ram <= false;
+                mem_instr <= true;
 				
 			when others =>
-				en_imm_next <= '0';
-				imm_next <= (others => '0');
+				en_imm <= '0';
+				imm <= (others => '0');
 		end case;
 	end process;
 
