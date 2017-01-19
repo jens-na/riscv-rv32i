@@ -21,7 +21,7 @@ package utils is
     function to_cpu_word(v : in bit_vector) return cpu_word;
 
     function ceillog2(n : in natural) return natural;
-    
+        
 end package;
 
 package body utils is 
