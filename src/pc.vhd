@@ -37,9 +37,14 @@ begin
 	end process;
 
 	-- next state logic
-	cnt_next <= std_logic_vector(unsigned(cnt_reg) + 2);
-	
+    
+    cnt_next <= std_logic_vector(unsigned(cnt_reg) + 2);
+
+            
+
 	-- output logic
-	value_out <= cnt_reg;
+	value_out <= cnt_reg when 
+                (( to_integer(unsigned(cnt_reg))) mod 4) = 0 else
+                std_logic_vector(unsigned(cnt_reg) - 2);
 
 end Behavioral;
