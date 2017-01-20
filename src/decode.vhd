@@ -18,7 +18,6 @@ entity decode is
   	en_write_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
     ctrl_register : out std_logic_vector(1 downto 0)
-  	
   );
 end decode;
 
@@ -33,6 +32,9 @@ constant PC : std_logic_vector(1 downto 0) := "10";
 constant REG : std_logic_vector(0 downto 0) := "0";
 constant IMMED : std_logic_vector(0 downto 0) := "1";
 
+-- mux bram
+constant ALU_BRAM : std_logic_vector(0 downto 0) := "0";
+constant PC_BRAM : std_logic_vector(0 downto 0) := "1";
 
 signal opc : opcode;
 signal funct3 : std_logic_vector(2 downto 0);

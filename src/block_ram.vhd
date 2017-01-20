@@ -43,8 +43,10 @@ entity block_ram is
         reset : in std_logic;
         data_in : in cpu_word;
         addr : in cpu_word;
+        pc_in : in cpu_word;
         en_write : in boolean;
         width : in std_logic_vector(2 downto 0);
+        instr_out : out cpu_word;
         data_out : out cpu_word
     );
     end block_ram;
@@ -68,20 +70,28 @@ architecture Behavioral of block_ram is
        -- end ADD
 
        -- values loaded in registerfile
-       20 => "00000001",
+       21 => "00000011",
        others => (others => '0')
     );
 begin
 
-	process (clk)
+	process (clk, pc_in)
 	begin
+
+        if ((to_integer(unsigned(pc_in)) mod 4) = 0) then
+            instr_out(7 downto 0) <= memory(to_integer(unsigned(pc_in)));
+            instr_out(15 downto 8) <= memory(to_integer(unsigned(pc_in) + 1));
+            instr_out(23 downto 16) <= memory(to_integer(unsigned(pc_in) + 2));
+            instr_out(31 downto 24) <= memory(to_integer(unsigned(pc_in) + 3));
+        end if;
+
 		if rising_edge(clk) then
 			
 			if reset = '1' then
 				-- clear data_out on reset
 				data_out <= (others => '0');
 			end if;
-				
+
 			if en_write = true then
 
                 case width is
@@ -106,9 +116,12 @@ begin
                         null;
 
                 end case;
-		    end if;
+		    end if; --en_write
+        end if; -- rising_edge
 
-            -- read mem
+        if en_write = false then
+
+            -- read mem asynchronus
             case width is
 
                 -- load sign extended byte
@@ -145,29 +158,9 @@ begin
                     null;
 
             end case;
-				
+        end if;	-- en_write
 
 
-			-- read mem
-		end if;
 	end process;
-
---	-- Write process
---	process (clk)
---	begin
---		if rising_edge(clk) then
---			if reset = '1' then
---				-- Clear Memory on Reset
---				for i in memory'Range loop
---					Memory(i) <= (others => '0');
---				end loop;
---			elsif enable = '1' then
---				if en_write = '1' then
---					-- Store DataIn to Current Memory Address
---					memory(to_integer(unsigned(addr))) <= data_in;
---				end if;
---			end if;
---		end if;
---	end process;
 
 end Behavioral;
