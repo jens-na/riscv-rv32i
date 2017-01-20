@@ -37,7 +37,7 @@ begin
 	end process;
 
 	-- next state logic
-	cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
+	cnt_next <= std_logic_vector(unsigned(cnt_reg) + 2);
 	
 	-- output logic
 	value_out <= cnt_reg;

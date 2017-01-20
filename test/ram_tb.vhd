@@ -41,13 +41,15 @@ end ram_tb;
 
 architecture Behavioral of ram_tb is
     component block_ram
-        port ( clk : in std_logic;
-               reset : in std_logic;
-               data_in : in cpu_word;
-               addr : in cpu_word;
-               en_write : in std_logic;
-               data_out : out cpu_word
-               );
+        port ( 
+            clk : in std_logic;
+            reset : in std_logic;
+            data_in : in cpu_word;
+            addr : in cpu_word;
+            en_write : in boolean;
+            width : in std_logic_vector(2 downto 0);
+            data_out : out cpu_word
+       );
     end component;
     
     --signals
@@ -55,7 +57,8 @@ architecture Behavioral of ram_tb is
     signal reset : std_logic := '0';
     signal data_in : cpu_word;
     signal addr : cpu_word;
-    signal en_write : std_logic;
+    signal en_write : boolean;
+    signal width : std_logic_vector(2 downto 0);
     signal data_out : cpu_word;
       
     --clock cycle
@@ -64,7 +67,7 @@ architecture Behavioral of ram_tb is
 begin
 
     UUT: block_ram port map(clk => clk, reset => reset, data_in => data_in, addr => addr,
-    en_write => en_write, data_out => data_out);
+    en_write => en_write, width => width, data_out => data_out);
 
 
     clk <=  '1' after clk_period when clk = '0' else
@@ -72,20 +75,31 @@ begin
 
     stim_process : process
     begin
-        en_write <= '1';
+        -- store word 
+        en_write <= true;
+        width <= "010";
         
         addr <= std_logic_vector(to_unsigned(5, 32));
         data_in <= (others => '1');
         
         wait for 22ns;
         
-        addr <= std_logic_vector(to_unsigned(3, 32));
-        data_in <= (others => '0');
+        -- store halfword
+        width <= "001";
+        addr <= std_logic_vector(to_unsigned(0, 32));
 
         wait for 22ns;
         
-        addr <= std_logic_vector(to_unsigned(5, 32));
-        en_write <= '0';
+        -- store byte
+        width <= "000";
+        addr <= std_logic_vector(to_unsigned(3, 32));
+
+        wait for 22ns;
+
+        -- make sure id doesn't write
+        addr <= std_logic_vector(to_unsigned(10, 32));
+        data_in <= (others => '1');
+        en_write <= false;
         
         wait for 22ns;
         

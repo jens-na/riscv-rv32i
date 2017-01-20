@@ -9,12 +9,14 @@ entity main is
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
     m_bram_reset : in std_logic;
-    m_register_reset : in std_logic;
-    m_bram_data_in : in cpu_word
+    m_register_reset : in std_logic
   );
 end main;
 
 architecture Structural of main is
+    
+    --FIXME: remove
+    signal s_dummy : cpu_word;
     
     signal s_pc_value_out : cpu_word;
     signal s_pc_set : std_logic;
@@ -28,24 +30,17 @@ architecture Structural of main is
     );
     end component;
      
-    signal s_fetch_ram_addr : cpu_word;
-    signal s_fetch_ram_write : boolean;
-    --signal s_fetch_ram_enable : boolean;
-    component fetch port(
-        addr_in : in cpu_word;
-        ram_addr : out cpu_word;
-        ram_write : out boolean;
-        ram_enable : out boolean
-    );
-    end component;
      
      
     signal s_decode_rs1 : reg_idx;
     signal s_decode_rs2 : reg_idx;
     signal s_decode_rd : reg_idx;
     signal s_decode_alu_out : alu_op;
-    signal s_decode_en_imm : std_logic;
+    signal s_decode_en_imm : std_logic_vector(0 downto 0);
     signal s_decode_imm : cpu_word;
+    signal s_decode_width_ram : std_logic_vector(2 downto 0);
+    signal s_decode_en_write_ram : boolean;
+    signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
     component decode port(
         clk : in std_logic;
         instr : in cpu_word;
@@ -53,20 +48,26 @@ architecture Structural of main is
         rs2 : out reg_idx;
         rd : out reg_idx;
         alu_out : out alu_op;
-        en_imm : out std_logic;
-        imm : out cpu_word
+        en_imm : out std_logic_vector(0 downto 0);
+        imm : out cpu_word;
+        width_ram : out std_logic_vector(2 downto 0);
+        en_write_ram : out boolean;
+        ctrl_register : out std_logic_vector(1 downto 0)
     );
     end component;
     
     signal s_bram_data_out : cpu_word;
     signal s_bram_addr : cpu_word;
+    signal s_bram_instr_out : cpu_word;
     component block_ram port(
         clk : in std_logic;
         reset : in std_logic;
         data_in : in cpu_word;
         addr : in cpu_word;
+        pc_in : in cpu_word;
         en_write : in boolean;
-        --enable : in boolean;
+        width : in std_logic_vector(2 downto 0);
+        instr_out : out cpu_word;
         data_out : out cpu_word
     );
     end component;
@@ -95,8 +96,36 @@ architecture Structural of main is
         zero_flag : out boolean
     );
     end component;
+
+    signal s_mux_register_result : cpu_word;
+    signal s_mux_alu_result : cpu_word;
+    component mux
+        generic (N : natural);
+        port(
+        selector : in std_logic_vector((ceillog2(N)-1) downto 0);
+        x : in cpu_word_arr;
+        y : out cpu_word
+        );
+    end component;
     
 begin
+    c_mux_register : mux
+        generic map(N => 4)
+        port map(
+        selector => s_decode_ctrl_register,
+        x(0) =>  s_alu_result,
+        x(1) =>  s_bram_data_out,
+        y => s_mux_register_result
+        );
+
+    c_mux_alu : mux
+        generic map(N => 2)
+        port map(
+        selector => s_decode_en_imm,
+        x(0) =>  s_register_data_out2,
+        x(1) => s_decode_imm,
+        y => s_mux_alu_result
+        );
 
     c_pc : pc port map(
         clk => m_clk,
@@ -106,32 +135,30 @@ begin
         value_out => s_pc_value_out
     );
     
-    c_fetch : fetch port map(
-        addr_in => s_pc_value_out,
-        ram_addr => s_fetch_ram_addr,
-        ram_write => s_fetch_ram_write
-        --ram_enable => s_fetch_ram_enable
-    );
     
     c_decode : decode port map(
         clk => m_clk,
-        instr => s_bram_data_out,
+        instr => s_bram_instr_out,
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
         alu_out => s_decode_alu_out,
         en_imm => s_decode_en_imm,
-        imm => s_decode_imm
+        imm => s_decode_imm,
+        width_ram => s_decode_width_ram,
+        ctrl_register => s_decode_ctrl_register
     );
     
     c_bram : block_ram port map(
         clk => m_clk,
         reset => m_bram_reset,
-        data_in => m_bram_data_in,
-        addr => s_fetch_ram_addr,
-        --enable => s_fetch_ram_enable,
-        en_write => s_fetch_ram_write,
-        data_out => s_bram_data_out
+        data_in => s_dummy,
+        addr => s_alu_result,
+        pc_in => s_pc_value_out,
+        en_write => s_decode_en_write_ram,
+        data_out => s_bram_data_out,
+        width => s_decode_width_ram,
+        instr_out => s_bram_instr_out
     );
     
     c_registerfile : registerfile port map(
@@ -140,14 +167,14 @@ begin
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
-        data_in => s_alu_result,
+        data_in => s_mux_register_result,
         data_out1 => s_register_data_out1,
         data_out2 => s_register_data_out2
     );
     
     c_alu : alu port map(
-        data_in1 => s_register_data_out1,
-        data_in2 => s_register_data_out2,
+        data_in1 => s_mux_alu_result,
+        data_in2 => s_register_data_out1,
         op_in => s_decode_alu_out,
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
