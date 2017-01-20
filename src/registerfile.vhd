@@ -37,7 +37,7 @@ begin
     --data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (unsigned(rs2) = 0) else (others => '0');
      -- data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (rs2 /= zero_reg) else (others => '0');
 
-    process(clk)
+    process(clk, rs1, rs2, rd)
     begin
     
         --async read out

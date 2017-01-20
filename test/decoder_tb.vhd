@@ -17,11 +17,14 @@ architecture Behavioral of decode_tb is
 	signal instr, imm : cpu_word;
 	signal rs1, rs2, rd : reg_idx;
 	signal alu_out : alu_op;
+    signal en_write_ram, mem_instr : boolean;
+    signal width_ram : std_logic_vector(2 downto 0);
 
 begin
 	UUT : entity work.decode port map (clk => clk, en_imm => en_imm, instr => instr,
 										imm => imm, rs1 => rs1, rs2 => rs2, rd => rd,
-										alu_out => alu_out);
+										alu_out => alu_out, en_write_ram => en_write_ram,
+                                        width_ram => width_ram, mem_instr => mem_instr);
 
 	process
 	begin
