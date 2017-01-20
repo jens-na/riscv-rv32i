@@ -78,12 +78,10 @@ begin
 	process (clk, pc_in)
 	begin
 
-        if ((to_integer(unsigned(pc_in)) mod 4) = 0) then
-            instr_out(7 downto 0) <= memory(to_integer(unsigned(pc_in)));
-            instr_out(15 downto 8) <= memory(to_integer(unsigned(pc_in) + 1));
-            instr_out(23 downto 16) <= memory(to_integer(unsigned(pc_in) + 2));
-            instr_out(31 downto 24) <= memory(to_integer(unsigned(pc_in) + 3));
-        end if;
+        instr_out(7 downto 0) <= memory(to_integer(unsigned(pc_in)));
+        instr_out(15 downto 8) <= memory(to_integer(unsigned(pc_in) + 1));
+        instr_out(23 downto 16) <= memory(to_integer(unsigned(pc_in) + 2));
+        instr_out(31 downto 24) <= memory(to_integer(unsigned(pc_in) + 3));
 
 		if rising_edge(clk) then
 			
