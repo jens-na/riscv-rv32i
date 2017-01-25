@@ -31,34 +31,10 @@ begin
 
 	process
 	begin
-		set <= '0';
-		set_value <= (others => '1');
+		reset <= '1';
+		wait for 3ns;
 		reset <= '0';
-		wait until falling_edge(clk);
-		reset <= '0';
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		set <= '1';
-		wait until falling_edge(clk);
-		set <= '0';
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
-		wait until falling_edge(clk);
+		wait for 100ns;
 	end process;
 	
 end Behavioral;
