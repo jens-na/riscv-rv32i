@@ -17,6 +17,7 @@ entity decode is
     imm : out cpu_word;
   	en_write_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
+    en_write_reg : out boolean;
     ctrl_register : out std_logic_vector(1 downto 0)
   );
 end decode;
@@ -47,6 +48,7 @@ begin
 	rs1 <= instr(19 downto 15);
 	rs2 <= instr(24 downto 20);
 	rd <= instr(11 downto 7);
+    width_ram <= instr(14 downto 12);
 
     -- for use in the process
 	opc <= instr(6 downto 0); 
@@ -62,7 +64,7 @@ begin
 				en_imm <= IMMED;
                 en_write_ram <= false;
                 ctrl_register <= ALU;
-                width_ram <= "010";
+                en_write_reg <= true;
 
 				-- alu_out
 				case funct3 is
@@ -105,7 +107,7 @@ begin
 				en_imm <= REG;
                 en_write_ram <= false;
                 ctrl_register <= ALU;
-                width_ram <= "010";
+                en_write_reg <= true;
 
 				-- alu_out
 				case funct3 is
@@ -146,12 +148,22 @@ begin
 				imm(11 downto 0) <= instr(31 downto 20);
 				en_write_ram <= false;
                 ctrl_register <= BRAM;
-                width_ram <= instr(14 downto 12);
+                en_write_reg <= true;
 				
+            when S_TYPE =>
+
+                alu_out <= ALU_ADD;
+                en_imm <= IMMED;
+				imm(31 downto 12) <= (others => '0');
+                imm(11 downto 5) <= instr(31 downto 25);
+                imm(4 downto 0) <= instr(11 downto 7);
+                en_write_ram <= true;
+                en_write_reg <= false;
+
+
 			when others =>
 				en_imm <= REG;
 				imm <= (others => '0');
-                width_ram <= "010";
 
 		end case;
 	end process;

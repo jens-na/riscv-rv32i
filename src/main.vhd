@@ -15,9 +15,6 @@ end main;
 
 architecture Structural of main is
     
-    --FIXME: remove
-    signal s_dummy : cpu_word;
-    
     signal s_pc_value_out : cpu_word;
     signal s_pc_set : std_logic;
     signal s_pc_set_value : cpu_word;
@@ -41,6 +38,7 @@ architecture Structural of main is
     signal s_decode_width_ram : std_logic_vector(2 downto 0);
     signal s_decode_en_write_ram : boolean;
     signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
+    signal s_decode_en_write_reg : boolean;
     component decode port(
         clk : in std_logic;
         instr : in cpu_word;
@@ -52,6 +50,7 @@ architecture Structural of main is
         imm : out cpu_word;
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
+        en_write_reg : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0)
     );
     end component;
@@ -81,6 +80,7 @@ architecture Structural of main is
         rs2 : in reg_idx;
         rd : in reg_idx;
         data_in : in cpu_word;
+        en_write : in boolean;
         data_out1 : out cpu_word;
         data_out2 : out cpu_word
     );
@@ -146,13 +146,15 @@ begin
         en_imm => s_decode_en_imm,
         imm => s_decode_imm,
         width_ram => s_decode_width_ram,
-        ctrl_register => s_decode_ctrl_register
+        en_write_ram => s_decode_en_write_ram,
+        ctrl_register => s_decode_ctrl_register,
+        en_write_reg => s_decode_en_write_reg
     );
     
     c_bram : block_ram port map(
         clk => m_clk,
         reset => m_bram_reset,
-        data_in => s_dummy,
+        data_in => s_register_data_out2,
         addr => s_alu_result,
         pc_in => s_pc_value_out,
         en_write => s_decode_en_write_ram,
@@ -169,7 +171,8 @@ begin
         rd => s_decode_rd,
         data_in => s_mux_register_result,
         data_out1 => s_register_data_out1,
-        data_out2 => s_register_data_out2
+        data_out2 => s_register_data_out2,
+        en_write => s_decode_en_write_reg
     );
     
     c_alu : alu port map(

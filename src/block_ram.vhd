@@ -1,37 +1,7 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 12/07/2016 02:49:09 PM
--- Design Name: 
--- Module Name: block_ram - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use work.utils.all;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity block_ram is
 	generic (
@@ -54,23 +24,54 @@ entity block_ram is
 architecture Behavioral of block_ram is
 	type memory_t is array ((ram_size) - 1 downto 0) of std_logic_vector (7 downto 0);
 	signal memory : memory_t := ( 
-        -- LW rs1=1 rd=1 imm=20
+-- helper for building instructions
+--00000000 00110000 00101110 00100011
+
+        -- LW rs1=0 rd=1 imm=20
        0 => "10000011",
-       1 => "10100000",
+       1 => "00100000",
        2 => "01000000",
        3 => "00000001",
        -- end LW
 
+        -- LW rs1=0 rd=2 imm=24
+       4 => "00000011",
+       5 => "00100001",
+       6 => "10000000",
+       7 => "00000001",
+       -- end LW
+
 
         --ADD rs1=1 rs2=2 rd=3
---       0 => "10110011",
---       1 => "10000001",
---       2 => "00100000",
---       3 => "00000000",
+       8 => "10110011",
+       9 => "10000001",
+       10 => "00100000",
+       11 => "00000000",
        -- end ADD
 
-       -- values loaded in registerfile
-       21 => "00000011",
+       -- SW rs1=0 rs2=3 imm=28
+       12 => "00100011",
+       13 => "00101110",
+       14 => "00110000",
+       15 => "00000000",
+       --end SW
+
+       -- word loaded by first instr
+       20 => "00000011",
+       21 => "00000000",
+       22 => "00000000",
+       23 => "00000000",
+       -- word loaded by 2nd instr
+       24 => "00000101",
+       25 => "00000000",
+       26 => "00000000",
+       27 => "00000000",
+       -- word stored by 3rd instr => don't use 
+       28 => "00000000",
+       29 => "00000000",
+       30 => "00000000",
+       31 => "00000000",
+
        others => (others => '0')
     );
 begin
