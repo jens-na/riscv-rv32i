@@ -13,7 +13,8 @@ entity pc is
 		   set : in std_logic;
            set_value : in cpu_word;
 		   reset : in std_logic;
-		   value_out: out cpu_word
+		   value_out: out cpu_word;
+		   value_out_next: out cpu_word
 	   );
 end pc;
 
@@ -21,6 +22,9 @@ architecture Behavioral of pc is
 
 	signal cnt_reg : cpu_word;
 	signal cnt_next : cpu_word;
+	signal out_s: cpu_word;
+	signal enable: std_logic := '1';
+	signal enable_next: std_logic;
 
 begin
 	process(clk, reset)
@@ -28,23 +32,29 @@ begin
 		if (reset = '1') then
 			cnt_reg <= (others => '0');
 		elsif (rising_edge(clk)) then
-			if (set = '1') then
-				cnt_reg <= set_value;
-			else
-				cnt_reg <= cnt_next;
-			end if;
+		    if (enable = '1') then
+                if (set = '0') then
+                    cnt_reg <= cnt_next;
+                else
+                    cnt_reg <= std_logic_vector(signed(cnt_next) + signed(set_value));
+                end if; 
+            end if;
 		end if;
 	end process;
+	
+	process(clk)
+	begin
+	   enable <= enable_next;
+	end process;
 
-	-- next state logic
+    enable_next <= not enable;
     
-    cnt_next <= std_logic_vector(unsigned(cnt_reg) + 2);
+    -- next state logic
+    cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
 
-            
-
+                
 	-- output logic
-	value_out <= cnt_reg when 
-                (( to_integer(unsigned(cnt_reg))) mod 4) = 0 else
-                std_logic_vector(unsigned(cnt_reg) - 2);
-
+	value_out <= cnt_reg;            
+    value_out_next <= cnt_next;
+    
 end Behavioral;
