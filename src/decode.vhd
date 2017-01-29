@@ -13,12 +13,15 @@ entity decode is
     rs2 : out reg_idx;
     rd : out reg_idx;
     alu_out : out alu_op;
+    zero_flag : in boolean;
     en_imm : out std_logic_vector(0 downto 0);
     imm : out cpu_word;
   	en_write_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
     en_write_reg : out boolean;
-    ctrl_register : out std_logic_vector(1 downto 0)
+    ctrl_register : out std_logic_vector(1 downto 0);
+    add_offset : out cpu_word; 
+    pc_set : out std_logic
   );
 end decode;
 
@@ -47,7 +50,10 @@ begin
     -- same for every instruction
 	rs1 <= instr(19 downto 15);
 	rs2 <= instr(24 downto 20);
-	rd <= instr(11 downto 7);
+    with opc select rd <=
+        "00001" when SB_TYPE, -- ra register when branch
+        instr(11 downto 7) when others;
+
     width_ram <= instr(14 downto 12);
 
     -- for use in the process
@@ -160,14 +166,43 @@ begin
                 en_write_ram <= true;
                 en_write_reg <= false;
 
+            when SB_TYPE =>
+                case funct3 is
+
+                    when "000" => -- BEQ
+                        alu_out <= ALU_AND;
+                        en_imm <= REG; 
+                        en_write_ram <= false;
+                        en_write_reg <= false;
+                        ctrl_register <= PC;
+
+                        -- if rs1 and rs2 are equal
+                        if zero_flag = true then
+                            add_offset(31 downto 12) <= (others => '0');                   
+                            add_offset(11) <= instr(7);
+                            add_offset(10 downto 5) <= instr(30 downto 25);
+                            add_offset(4 downto 1) <= instr(11 downto 8);
+                            add_offset(0) <= '0';
+                            pc_set <= '1';
+                        else
+                             add_offset <= (others => '0');
+                             pc_set <= '0';
+                        end if;
+
+                    when "001" => -- BNE
+                    when "100" => -- BLT
+                    when "101" => -- BGE
+                    when others =>
+
+
+                end case;
 
 			when others =>
 				en_imm <= REG;
 				imm <= (others => '0');
+                add_offset <= (others => '0');
+                pc_set <= '0';
 
 		end case;
 	end process;
-
-
-
 end Behavioral;

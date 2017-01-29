@@ -68,11 +68,11 @@ begin
                     result <= cpu_word(signed(data_in1) sll to_integer(signed(data_in2)));
                 when ALU_SLT =>
                     zero_flag_next <= signed(data_in1) < signed(data_in2);
-					zero_flag <= zero_flag_next;
+					--zero_flag <= zero_flag_next;
                     result <= to_cpu_word(zero_flag_next);
                 when ALU_SLTU =>
                     zero_flag_next <= unsigned(data_in1) < unsigned(data_in2);
-					zero_flag <= zero_flag_next;
+					--zero_flag <= zero_flag_next;
                     result <= to_cpu_word(zero_flag_next);
                 when ALU_XOR =>
                     result <= cpu_word(signed(data_in1) xor signed(data_in2));
@@ -83,7 +83,10 @@ begin
                 when ALU_OR =>
                     result <= cpu_word(signed(data_in1) or signed(data_in2));
                 when ALU_AND =>
-                    result <= cpu_word(signed(data_in1) and signed(data_in2));                                                                                                                                          
+                    zero_flag_next <= signed(data_in1) = signed(data_in2);
+                    --zero_flag <= zero_flag_next;
+                    result <= cpu_word(signed(data_in1) and signed(data_in2));
         end case;
     end process;
+    zero_flag <= zero_flag_next;
 end Behavioral;
