@@ -176,6 +176,7 @@ begin
 				imm(31 downto 12) <= instr(31 downto 12);
                 imm(11 downto 0) <= (others => '0');
                 en_write_ram <= false;
+                en_read_ram <= false;
                 en_write_reg <= true;
                 ctrl_register <= ALU;
 
