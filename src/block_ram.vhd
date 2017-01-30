@@ -15,6 +15,7 @@ entity block_ram is
         addr : in cpu_word;
         pc_in : in cpu_word;
         en_write : in boolean;
+        en_read : in boolean;
         width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
@@ -56,6 +57,13 @@ architecture Behavioral of block_ram is
        15 => "00000000",
        --end SW
 
+       -- lui rd=4 imm=0x00025000
+       16 => x"37",
+       17 => x"52",
+       18 => x"02",
+       19 => x"00",
+       --end lui
+
        -- word loaded by first instr
        20 => "00000011",
        21 => "00000000",
@@ -66,7 +74,7 @@ architecture Behavioral of block_ram is
        25 => "00000000",
        26 => "00000000",
        27 => "00000000",
-       -- word stored by 3rd instr => don't use 
+       -- word stored by 4th instr => don't use 
        28 => "00000000",
        29 => "00000000",
        30 => "00000000",
@@ -118,7 +126,7 @@ begin
 		    end if; --en_write
         end if; -- rising_edge
 
-        if en_write = false then
+        if en_read = true then
 
             -- read mem asynchronus
             case width is
@@ -157,7 +165,7 @@ begin
                     null;
 
             end case;
-        end if;	-- en_write
+        end if;	-- en_read
 
 
 	end process;
