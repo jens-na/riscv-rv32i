@@ -15,6 +15,7 @@ entity block_ram is
         addr : in cpu_word;
         pc_in : in cpu_word;
         en_write : in boolean;
+        en_read : in boolean;
         width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
@@ -136,7 +137,7 @@ begin
 		    end if; --en_write
         end if; -- rising_edge
 
-        if en_write = false then
+        if en_read = true then
 
             -- read mem asynchronus
             case width is
@@ -175,7 +176,7 @@ begin
                     null;
 
             end case;
-        end if;	-- en_write
+        end if;	-- en_read
 
 
 	end process;

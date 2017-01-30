@@ -17,6 +17,7 @@ entity decode is
     en_imm : out std_logic_vector(0 downto 0);
     imm : out cpu_word;
   	en_write_ram : out boolean;
+  	en_read_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
     en_write_reg : out boolean;
     ctrl_register : out std_logic_vector(1 downto 0);
@@ -48,7 +49,6 @@ signal funct10 : std_logic_vector (9 downto 0);
 begin
 
     -- same for every instruction
-	rs1 <= instr(19 downto 15);
 	rs2 <= instr(24 downto 20);
     with opc select rd <=
         "00001" when SB_TYPE, -- ra register when branch
@@ -67,8 +67,10 @@ begin
 			-------------------------------------------
 			when I_TYPE_AL =>
 
+                rs1 <= instr(19 downto 15);
 				en_imm <= IMMED;
                 en_write_ram <= false;
+                en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
 
@@ -110,8 +112,10 @@ begin
 
 			when R_TYPE =>
 
+                rs1 <= instr(19 downto 15);
 				en_imm <= REG;
                 en_write_ram <= false;
+                en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
 
@@ -148,23 +152,39 @@ begin
 
 			when I_TYPE_LOAD =>
 
+                rs1 <= instr(19 downto 15);
 				alu_out <= ALU_ADD;
 				en_imm <= IMMED;
 				imm(31 downto 12) <= (others => '0');
 				imm(11 downto 0) <= instr(31 downto 20);
 				en_write_ram <= false;
+                en_read_ram <= true;
                 ctrl_register <= BRAM;
                 en_write_reg <= true;
 				
             when S_TYPE =>
 
+                rs1 <= instr(19 downto 15);
                 alu_out <= ALU_ADD;
                 en_imm <= IMMED;
 				imm(31 downto 12) <= (others => '0');
                 imm(11 downto 5) <= instr(31 downto 25);
                 imm(4 downto 0) <= instr(11 downto 7);
                 en_write_ram <= true;
+                en_read_ram <= false;
                 en_write_reg <= false;
+
+            when U_TYPE_LUI =>
+
+                rs1 <= (others => '0');
+                alu_out <= ALU_ADD;
+                en_imm <= IMMED;
+				imm(31 downto 12) <= instr(31 downto 12);
+                imm(11 downto 0) <= (others => '0');
+                en_write_ram <= false;
+                en_read_ram <= false;
+                en_write_reg <= true;
+                ctrl_register <= ALU;
 
             when SB_TYPE =>
                 case funct3 is
@@ -173,7 +193,7 @@ begin
                         alu_out <= ALU_AND;
                         en_imm <= REG; 
                         en_write_ram <= false;
-                        en_write_reg <= false;
+                        en_write_reg <= true;
                         ctrl_register <= PC;
 
                         -- if rs1 and rs2 are equal
@@ -196,7 +216,6 @@ begin
 
 
                 end case;
-
 			when others =>
 				en_imm <= REG;
 				imm <= (others => '0');

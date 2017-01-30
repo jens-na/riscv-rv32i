@@ -37,6 +37,7 @@ architecture Structural of main is
     signal s_decode_imm : cpu_word;
     signal s_decode_width_ram : std_logic_vector(2 downto 0);
     signal s_decode_en_write_ram : boolean;
+    signal s_decode_en_read_ram : boolean;
     signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
     signal s_decode_en_write_reg : boolean;
     signal s_decode_add_offset : cpu_word;
@@ -53,6 +54,7 @@ architecture Structural of main is
         imm : out cpu_word;
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
+        en_read_ram : out boolean;
         en_write_reg : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
         add_offset : out cpu_word;
@@ -70,6 +72,7 @@ architecture Structural of main is
         addr : in cpu_word;
         pc_in : in cpu_word;
         en_write : in boolean;
+        en_read : in boolean;
         width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
@@ -155,6 +158,7 @@ begin
         imm => s_decode_imm,
         width_ram => s_decode_width_ram,
         en_write_ram => s_decode_en_write_ram,
+        en_read_ram => s_decode_en_read_ram,
         ctrl_register => s_decode_ctrl_register,
         en_write_reg => s_decode_en_write_reg,
         pc_set => s_pc_set,
@@ -168,6 +172,7 @@ begin
         addr => s_alu_result,
         pc_in => s_pc_value_out,
         en_write => s_decode_en_write_ram,
+        en_read => s_decode_en_read_ram,
         data_out => s_bram_data_out,
         width => s_decode_width_ram,
         instr_out => s_bram_instr_out
@@ -186,8 +191,8 @@ begin
     );
     
     c_alu : alu port map(
-        data_in1 => s_mux_alu_result,
-        data_in2 => s_register_data_out1,
+        data_in1 => s_register_data_out1,
+        data_in2 => s_mux_alu_result,
         op_in => s_decode_alu_out,
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
