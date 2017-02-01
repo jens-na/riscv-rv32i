@@ -17,7 +17,9 @@ entity decode is
     imm : out cpu_word;
   	en_write_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
-    ctrl_register : out std_logic_vector(1 downto 0)
+    ctrl_register : out std_logic_vector(1 downto 0);
+    add_pc_offset : out cpu_word;
+    en_pc_set : out std_logic
   );
 end decode;
 
@@ -148,6 +150,17 @@ begin
                 ctrl_register <= BRAM;
                 width_ram <= instr(14 downto 12);
 				
+		    when UJ_TYPE =>
+		         ctrl_register <= PC;
+		         en_pc_set <= '1'; --TBD: sonst auf 0!
+		         
+		         add_pc_offset(31 downto 20) <= (others => instr(31));
+		         add_pc_offset(19 downto 12) <= instr(19 downto 12);
+		         add_pc_offset(11) <= instr(20);
+		         add_pc_offset(10 downto 5) <= instr(30 downto 25);
+                 add_pc_offset(4 downto 1) <= instr(24 downto 21);
+                 add_pc_offset(0) <= '0';
+                 		   
 			when others =>
 				en_imm <= REG;
 				imm <= (others => '0');

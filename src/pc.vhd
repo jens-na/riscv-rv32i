@@ -52,7 +52,6 @@ begin
     -- next state logic
     cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
 
-                
 	-- output logic
 	value_out <= cnt_reg;            
     value_out_next <= cnt_next;
