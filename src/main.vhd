@@ -54,9 +54,9 @@ architecture Structural of main is
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
-        en_pc_set : out std_logic
+        en_pc_set : out std_logic;
         en_read_ram : out boolean;
-        en_write_reg : out boolean;
+        en_write_reg : out boolean
     );
     end component;
     
@@ -155,7 +155,7 @@ begin
         imm => s_decode_imm,
         width_ram => s_decode_width_ram,
         ctrl_register => s_decode_ctrl_register,
-        en_pc_set => s_pc_set
+        en_pc_set => s_pc_set,
         en_write_ram => s_decode_en_write_ram,
         en_read_ram => s_decode_en_read_ram,
         en_write_reg => s_decode_en_write_reg

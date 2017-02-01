@@ -19,7 +19,7 @@ entity decode is
   	en_read_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
     add_pc_offset : out cpu_word;
-    en_pc_set : out std_logic
+    en_pc_set : out std_logic;
     en_write_reg : out boolean;
     ctrl_register : out std_logic_vector(1 downto 0)
   );
