@@ -33,10 +33,11 @@ begin
 			cnt_reg <= (others => '0');
 		elsif (rising_edge(clk)) then
 		    if (enable = '1') then
-                if (set = '0' or set ='U') then
+                if (set = '0' or set = 'U') then
                     cnt_reg <= cnt_next;
                 else
-                    cnt_reg <= std_logic_vector(signed(cnt_next) + signed(set_value));
+                    cnt_reg <= std_logic_vector(signed(cnt_next) +
+                               signed(set_value));
                 end if; 
             end if;
 		end if;
