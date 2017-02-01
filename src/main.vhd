@@ -19,7 +19,6 @@ architecture Structural of main is
     signal s_pc_value_out_next : cpu_word;
     signal s_pc_set : std_logic;
     signal s_pc_set_value : cpu_word;
-    signal s_pc_value_out_next : cpu_word;
     component pc port(
         clk : in std_logic;
         set : in std_logic;
@@ -56,10 +55,8 @@ architecture Structural of main is
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
-        en_pc_set : out std_logic;
         en_read_ram : out boolean;
         en_write_reg : out boolean;
-        ctrl_register : out std_logic_vector(1 downto 0);
         add_offset : out cpu_word;
         pc_set : out std_logic
     );
@@ -161,10 +158,8 @@ begin
         imm => s_decode_imm,
         width_ram => s_decode_width_ram,
         ctrl_register => s_decode_ctrl_register,
-        en_pc_set => s_pc_set,
         en_write_ram => s_decode_en_write_ram,
         en_read_ram => s_decode_en_read_ram,
-        ctrl_register => s_decode_ctrl_register,
         en_write_reg => s_decode_en_write_reg,
         pc_set => s_pc_set,
         add_offset => s_pc_set_value 
