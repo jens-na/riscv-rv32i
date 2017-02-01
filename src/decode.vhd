@@ -95,11 +95,13 @@ begin
 
 				-- imm
 				case funct3 is
+                    --shift
 					when "001" | "101" =>
-						imm(31 downto 5) <= (others => '0');
+						imm(31 downto 12) <= (others => instr(31));
+						imm(11 downto 5) <= instr(31 downto 25);
 						imm(4 downto 0) <= instr(24 downto 20);
 					when others =>
-						imm(31 downto 12) <= (others => '0');
+						imm(31 downto 12) <= (others => instr(31));
 						imm(11 downto 0) <= instr(31 downto 20);
 				end case;
 
@@ -149,7 +151,7 @@ begin
                 rs1 <= instr(19 downto 15);
 				alu_out <= ALU_ADD;
 				en_imm <= IMMED;
-				imm(31 downto 12) <= (others => '0');
+				imm(31 downto 12) <= (others => instr(31));
 				imm(11 downto 0) <= instr(31 downto 20);
 				en_write_ram <= false;
                 en_read_ram <= true;
@@ -161,7 +163,7 @@ begin
                 rs1 <= instr(19 downto 15);
                 alu_out <= ALU_ADD;
                 en_imm <= IMMED;
-				imm(31 downto 12) <= (others => '0');
+				imm(31 downto 12) <= (others => instr(31));
                 imm(11 downto 5) <= instr(31 downto 25);
                 imm(4 downto 0) <= instr(11 downto 7);
                 en_write_ram <= true;
