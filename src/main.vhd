@@ -15,9 +15,6 @@ end main;
 
 architecture Structural of main is
     
-    --FIXME: remove
-    signal s_dummy : cpu_word;
-    
     signal s_pc_value_out : cpu_word;
     signal s_pc_set : std_logic;
     signal s_pc_set_value : cpu_word;
@@ -42,8 +39,9 @@ architecture Structural of main is
     signal s_decode_imm : cpu_word;
     signal s_decode_width_ram : std_logic_vector(2 downto 0);
     signal s_decode_en_write_ram : boolean;
+    signal s_decode_en_read_ram : boolean;
     signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
-    --signal s_decode_en_pc_set : std_logic;
+    signal s_decode_en_write_reg : boolean;
     component decode port(
         clk : in std_logic;
         instr : in cpu_word;
@@ -57,6 +55,8 @@ architecture Structural of main is
         en_write_ram : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
         en_pc_set : out std_logic
+        en_read_ram : out boolean;
+        en_write_reg : out boolean;
     );
     end component;
     
@@ -70,6 +70,7 @@ architecture Structural of main is
         addr : in cpu_word;
         pc_in : in cpu_word;
         en_write : in boolean;
+        en_read : in boolean;
         width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
@@ -85,6 +86,7 @@ architecture Structural of main is
         rs2 : in reg_idx;
         rd : in reg_idx;
         data_in : in cpu_word;
+        en_write : in boolean;
         data_out1 : out cpu_word;
         data_out2 : out cpu_word
     );
@@ -154,15 +156,19 @@ begin
         width_ram => s_decode_width_ram,
         ctrl_register => s_decode_ctrl_register,
         en_pc_set => s_pc_set
+        en_write_ram => s_decode_en_write_ram,
+        en_read_ram => s_decode_en_read_ram,
+        en_write_reg => s_decode_en_write_reg
     );
     
     c_bram : block_ram port map(
         clk => m_clk,
         reset => m_bram_reset,
-        data_in => s_dummy,
+        data_in => s_register_data_out2,
         addr => s_alu_result,
         pc_in => s_pc_value_out,
         en_write => s_decode_en_write_ram,
+        en_read => s_decode_en_read_ram,
         data_out => s_bram_data_out,
         width => s_decode_width_ram,
         instr_out => s_bram_instr_out
@@ -176,12 +182,13 @@ begin
         rd => s_decode_rd,
         data_in => s_mux_register_result,
         data_out1 => s_register_data_out1,
-        data_out2 => s_register_data_out2
+        data_out2 => s_register_data_out2,
+        en_write => s_decode_en_write_reg
     );
     
     c_alu : alu port map(
-        data_in1 => s_mux_alu_result,
-        data_in2 => s_register_data_out1,
+        data_in1 => s_register_data_out1,
+        data_in2 => s_mux_alu_result,
         op_in => s_decode_alu_out,
         result => s_alu_result,
         zero_flag => s_alu_zero_flag

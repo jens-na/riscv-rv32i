@@ -23,7 +23,7 @@ architecture Behavioral of pc is
 	signal cnt_reg : cpu_word;
 	signal cnt_next : cpu_word;
 	signal out_s: cpu_word;
-	signal enable: std_logic := '1';
+	signal enable: std_logic := '0';
 	signal enable_next: std_logic;
 
 begin
@@ -33,7 +33,7 @@ begin
 			cnt_reg <= (others => '0');
 		elsif (rising_edge(clk)) then
 		    if (enable = '1') then
-                if (set = '0') then
+                if (set = '0' or set ='U') then
                     cnt_reg <= cnt_next;
                 else
                     cnt_reg <= std_logic_vector(signed(cnt_next) + signed(set_value));
@@ -44,7 +44,9 @@ begin
 	
 	process(clk)
 	begin
-	   enable <= enable_next;
+        if (rising_edge(clk)) then
+            enable <= enable_next;
+        end if;
 	end process;
 
     enable_next <= not enable;

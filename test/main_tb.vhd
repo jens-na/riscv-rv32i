@@ -36,6 +36,8 @@ begin
     process
     
     begin
+
+
 		s_pc_reset <= '1';
 		wait for 3ns;
 		s_pc_reset <= '0';
