@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use IEEE.NUMERIC_STD.ALL;
 use work.utils.all;
 use work.opcodes.all;
 
@@ -61,7 +61,7 @@ begin
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
 
-	process(instr, funct3, funct7, opc)
+	process(instr, funct3, funct7, opc, zero_flag)
 	begin
 		case opc is
 			-------------------------------------------
@@ -73,6 +73,7 @@ begin
                 en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
+                pc_set <= '0';
 
 				-- alu_out
 				case funct3 is
@@ -118,6 +119,7 @@ begin
                 en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
+                pc_set <= '0';
 
 				-- alu_out
 				case funct3 is
@@ -161,6 +163,7 @@ begin
                 en_read_ram <= true;
                 ctrl_register <= BRAM;
                 en_write_reg <= true;
+                pc_set <= '0';
 				
             when S_TYPE =>
 
@@ -173,6 +176,7 @@ begin
                 en_write_ram <= true;
                 en_read_ram <= false;
                 en_write_reg <= false;
+                pc_set <= '0';
 
             when U_TYPE_LUI =>
 
@@ -185,35 +189,63 @@ begin
                 en_read_ram <= false;
                 en_write_reg <= true;
                 ctrl_register <= ALU;
+                pc_set <= '0';
 
             when SB_TYPE =>
-                case funct3 is
+                rs1 <= instr(19 downto 15);
+                en_imm <= REG; 
+                en_write_ram <= false;
+                en_write_reg <= true;
+                ctrl_register <= PC;
+                add_offset(31 downto 12) <= (others => instr(31));
+                add_offset(11) <= instr(7);
+                add_offset(10 downto 5) <= instr(30 downto 25);
+                add_offset(4 downto 1) <= instr(11 downto 8);
+                add_offset(0) <= '0';
 
+                case funct3 is
                     when "000" => -- BEQ
                         alu_out <= ALU_AND;
-                        en_imm <= REG; 
-                        en_write_ram <= false;
-                        en_write_reg <= true;
-                        ctrl_register <= PC;
-
-                        -- if rs1 and rs2 are equal
-                        if zero_flag = true then
-                            add_offset(31 downto 12) <= (others => '0');                   
-                            add_offset(11) <= instr(7);
-                            add_offset(10 downto 5) <= instr(30 downto 25);
-                            add_offset(4 downto 1) <= instr(11 downto 8);
-                            add_offset(0) <= '0';
-                            pc_set <= '1';
-                        else
+                        case zero_flag is
+                            when true =>
+                                pc_set <= '1';
+                            when others =>
                              add_offset <= (others => '0');
                              pc_set <= '0';
-                        end if;
+                        end case;
 
                     when "001" => -- BNE
-                    when "100" => -- BLT
-                    when "101" => -- BGE
-                    when others =>
+                        alu_out <= ALU_AND;
+                        case zero_flag is
+                            when false =>
+                                pc_set <= '1';
+                            when others =>
+                             add_offset <= (others => '0');
+                             pc_set <= '0';
+                        end case;
 
+                    when "100" => -- BLT
+                        alu_out <= ALU_SLT;
+                        case zero_flag is
+                            when true =>
+                                pc_set <= '1';
+                            when others =>
+                             add_offset <= (others => '0');
+                             pc_set <= '0';
+                        end case;
+
+                    when "101" => -- BGE
+                        alu_out <= ALU_SLT;
+                        case zero_flag is
+                            when true =>
+                                pc_set <= '1';
+                            when others =>
+                             add_offset <= (others => '0');
+                             pc_set <= '0';
+                        end case;
+                    when others =>
+                        add_offset <= (others => '0');
+                        pc_set <= '0';
 
                 end case;
 			when others =>

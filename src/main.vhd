@@ -196,8 +196,5 @@ begin
         op_in => s_decode_alu_out,
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
-    );
-    
-    
-        
+    );       
 end Structural;
