@@ -48,13 +48,7 @@ signal funct10 : std_logic_vector (9 downto 0);
 
 begin
 
-    -- same for every instruction
-	rs2 <= instr(24 downto 20);
-    with opc select rd <=
-        "00001" when SB_TYPE, -- ra register when branch
-        instr(11 downto 7) when others;
 
-    width_ram <= instr(14 downto 12);
 
     -- for use in the process
 	opc <= instr(6 downto 0); 
@@ -63,11 +57,27 @@ begin
 
 	process(instr, funct3, funct7, opc, zero_flag)
 	begin
+
+        -- standard assignments
+        rs1 <= instr(19 downto 15);
+        rs2 <= instr(24 downto 20);
+        rd <= instr(11 downto 7);
+        width_ram <= instr(14 downto 12);
+        alu_out <= ALU_ADD;
+        add_offset <= (others => '0');
+        ctrl_register <= ALU;
+        en_read_ram <= false;
+        imm <= (others => '0');
+        en_imm <= REG;
+        pc_set <= '0';
+        alu_out <= ALU_ADD;
+        en_write_ram <= false;
+        en_write_reg <= false;
+
 		case opc is
 			-------------------------------------------
 			when I_TYPE_AL =>
 
-                rs1 <= instr(19 downto 15);
 				en_imm <= IMMED;
                 en_write_ram <= false;
                 en_read_ram <= false;
@@ -115,7 +125,6 @@ begin
 
 			when R_TYPE =>
 
-                rs1 <= instr(19 downto 15);
 				en_imm <= REG;
                 en_write_ram <= false;
                 en_read_ram <= false;
@@ -156,7 +165,6 @@ begin
 
 			when I_TYPE_LOAD =>
 
-                rs1 <= instr(19 downto 15);
 				alu_out <= ALU_ADD;
 				en_imm <= IMMED;
 				imm(31 downto 12) <= (others => instr(31));
@@ -169,7 +177,6 @@ begin
 				
             when S_TYPE =>
 
-                rs1 <= instr(19 downto 15);
                 alu_out <= ALU_ADD;
                 en_imm <= IMMED;
 				imm(31 downto 12) <= (others => instr(31));
@@ -194,7 +201,7 @@ begin
                 pc_set <= '0';
 
             when SB_TYPE =>
-                rs1 <= instr(19 downto 15);
+                rd <= "00001"; -- ra register when branch
                 en_imm <= REG; 
                 en_write_ram <= false;
                 en_write_reg <= true;
@@ -251,10 +258,7 @@ begin
 
                 end case;
 			when others =>
-				en_imm <= REG;
-				imm <= (others => '0');
-                add_offset <= (others => '0');
-                pc_set <= '0';
+                null;
 
 		end case;
 	end process;

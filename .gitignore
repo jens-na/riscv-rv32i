@@ -2,6 +2,8 @@
 # Created by https://www.gitignore.io/api/latex,vim,emacs,sublimetext,vivado
 
 *.wcfg
+*.debug
+**.Xil
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
