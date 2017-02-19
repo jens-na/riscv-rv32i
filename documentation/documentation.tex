@@ -8,6 +8,11 @@
 \usepackage{microtype}
 \usepackage{amsmath}
 
+% ---
+% german language
+\usepackage [german] {babel}
+
+
 % ------
 % Page layout
 \usepackage[hmarginratio=1:1,top=32mm,bottom=40mm,columnsep=20pt]{geometry}
@@ -49,6 +54,11 @@
 	\fancyfoot[RO,LE]{\thepage}
 
 
+%---- 
+% Fixes the space between text and numbers in table of contents
+\usepackage{tocstyle}
+\usetocstyle{standard}
+
 \usepackage[utf8]{inputenc}
 
 % ------
@@ -77,10 +87,15 @@
 \maketitle
 %ABSTRACT
 \begin{abstract}
-Hier wird die Dokumentation zusammengefasst...
-\end{abstract}
+Diese Arbeit wurde im Rahmen des Wahlprojekts "Software- Hardwareschnittstellen" bei Prof. Dr. Reith an der HS RheinMain verfasst. Sie dokumentiert die Konzeptionalisierung und die Implementierung einer CPU auf einem \textit{FPGA} Board. Die verwendete Befehlssatzarchitektur basiert auf dem offenen \textit{\href{https://riscv.org/}{RISC-V}} Design. Die Architektur wurde unter Verwendung der Hardwarebeschreibungssprache \textit{VHDL} implementiert. Anschließend wurde sie testweise für das \textit{\href{https://reference.digilentinc.com/reference/programmable-logic/nexys-4/start}{Xilinx Nexys 4\textsuperscript{\textregistered}}}
+ Board mit Artix-7\textsuperscript{\textregistered} FPGA synthetisiert.\\
+\\\end{abstract}
 \end{@twocolumnfalse}
 ]
+
+
+\tableofcontents
+\newpage
 
 \thispagestyle{fancy}
 
@@ -88,9 +103,44 @@ Hier wird die Dokumentation zusammengefasst...
 % ABSÄTZE UND BREAKS
 \lettrine[nindent=0em,lines=3]{L} orem ipsum dolor sit amet, consectetur adipiscing elit. \cite{Ashenden:609207}
 
-\section{RISC} \label{mlsection}
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+\section{Einleitung}
+Die Aufgabenstellung beinhaltet die Umsetzung einer eigenen CPU-
 
+\section{FPGA} \label{fpga}
+Ein FPGA (Field Programmable Gate Array) ist ein Schaltkreis, in den eine beliebige logische Schaltung programmiert werden kann. Der Vorteil besteht dabei insbesondere darin, dass FPGA's beliebig oft neu programmiert werden können. 
+\subsection{Technik}
+
+\section{VHDL} \label{vhdl}
+
+\section{RISC} \label{risc}
+RISC-V (reduced instruction set computing) ist eine offene Befehlssatzarchitektur, die 2010 von Entwicklern an der University of California, Berkeley vorgestellt wurde. Beim Entwurf wurde besonderer Wert auf eine leichtgewichtige Architektur, aber auch Performance und Energiesparsamkeit gelegt.
+
+\subsection{Verwendetes Subset}
+Die RISC-V Spezifikation definiert mehrere Teilmengen der allgemeinen Architektur. Diese als "General Purpose" bezeichnete Architektur enthält neben Mindeststandard für Integerverarbeitung ("I") auch Befehle für Gleitkommaarithmetik ("F") mit Double("D") oder Quad-Präzision ("Q"), für die Handhabung verschiedener Privilegierungen ("P"), atomare Befehle für die Verwaltung von Nebenläufigkeit ("A") und seit der neusten Version  2.1 auch für Bitmanipulation ("B"), Vectoroperationen ("V") und einigen mehr.
+
+In diesem Projekt wurde sich allerdings auf das Minimum, einer einfachen Integerverarbeitenden CPU ("I") beschränkt. Die Bezeichnung des verwendeten Subsets lautet daher "RV32I".
+
+\subsection{Architektur}
+Die RISC-V Architektur existiert in einer 32, 64 und 128-bit Variante. In diesem Projekt wurde jedoch nur ein 32-bit Prozessor umgesetzt, weshalb die anderen Architekturen an dieser Stelle vernachlässigt werden.
+\subsubsection{Register}
+
+\subsection{Maschinenbefehle}
+
+
+
+
+\section{Umsetzung}
+
+\section{Herangehensweise und Organisation}
+\subsection{git}
+
+\subsection{Testumgebung}
+
+\section{Probleme und Limitierungen}
+\subsection{Bekannte Probleme}
+\subsection{Ausblick}
+
+\section{Dokumentation - wie wird Projekt verwendet, etc?}
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography}
