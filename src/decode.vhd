@@ -19,7 +19,6 @@ entity decode is
   	en_write_ram : out boolean;
   	en_read_ram : out boolean;
 	width_ram : out std_logic_vector(2 downto 0);
-    add_pc_offset : out cpu_word;
     en_write_reg : out boolean;
     ctrl_register : out std_logic_vector(1 downto 0);
     add_offset : out cpu_word; 
@@ -175,17 +174,19 @@ begin
                 ctrl_register <= BRAM;
                 en_write_reg <= true;
                 pc_set <= '0';
-				
-		    when UJ_TYPE =>
+                
+            when UJ_TYPE =>
 		         ctrl_register <= PC;
 		         pc_set <= '1';
-		         
-		         add_pc_offset(31 downto 20) <= (others => instr(31));
-		         add_pc_offset(19 downto 12) <= instr(19 downto 12);
-		         add_pc_offset(11) <= instr(20);
-		         add_pc_offset(10 downto 5) <= instr(30 downto 25);
-                 add_pc_offset(4 downto 1) <= instr(24 downto 21);
-                 add_pc_offset(0) <= '0';
+                 en_write_ram <= false;
+                 en_write_reg <= true;
+                 rd <= instr(11 downto 7);
+		         add_offset(31 downto 20) <= (others => instr(31));
+		         add_offset(19 downto 12) <= instr(19 downto 12);
+		         add_offset(11) <= instr(20);
+		         add_offset(10 downto 5) <= instr(30 downto 25);
+                 add_offset(4 downto 1) <= instr(24 downto 21);
+                 add_offset(0) <= '0';
                  		   
             when S_TYPE =>
 
