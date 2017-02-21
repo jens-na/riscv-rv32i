@@ -158,6 +158,24 @@ architecture Behavioral of block_ram is
     86 => x"63",
     87 => x"00",
     
+    -- sb t2,508(zero)
+    88 => x"23",
+    89 => x"0e",
+    90 => x"70",
+    91 => x"1e",
+    
+    -- sh t0,508(zero)
+    92 => x"23",
+    93 => x"1e",
+    94 => x"50",
+    95 => x"1e",
+    
+    -- sw t0,508(zero)
+    96 => x"23",
+    97 => x"2f",
+    98 => x"50",
+    99 => x"1e",
+    
     -- load/store-area
     500 => x"85",
     501 => x"07",
