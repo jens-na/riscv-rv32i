@@ -65,7 +65,8 @@ begin
                 when ALU_SUB =>
                     result <= cpu_word(signed(data_in1) - signed(data_in2));
                 when ALU_SLL =>
-                    result <= cpu_word(signed(data_in1) sll to_integer(signed(data_in2)));
+                    result <= cpu_word(signed(data_in1) sll
+                              to_integer(signed(data_in2(5 downto 0))));
                 when ALU_SLT =>
                     zero_flag_next <= signed(data_in1) < signed(data_in2);
 					--zero_flag <= zero_flag_next;
@@ -77,7 +78,8 @@ begin
                 when ALU_XOR =>
                     result <= cpu_word(signed(data_in1) xor signed(data_in2));
                 when ALU_SRL =>
-                    result <= cpu_word(signed(data_in1) srl to_integer(signed(data_in2)));
+                    result <= cpu_word(signed(data_in1) srl
+                              to_integer(signed(data_in2(5 downto 0))));
                 when ALU_SRA =>
                     result <= to_cpu_word(to_bitvector(data_in1) sra to_integer(signed(data_in2)));
                 when ALU_OR =>
