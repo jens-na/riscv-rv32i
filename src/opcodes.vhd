@@ -39,6 +39,11 @@ package opcodes is
     function is_sb_type(val : in opcode) return boolean;
     function is_u_type(val : in opcode) return boolean;
     function is_uj_type(val : in opcode) return boolean;
+
+    -- pc
+    constant NO_SET : std_logic_vector(1 downto 0) := "00";
+    constant ADD_OFF : std_logic_vector(1 downto 0) := "01";
+    constant JALR : std_logic_vector(1 downto 0) := "10";
     
 end opcodes;
 
