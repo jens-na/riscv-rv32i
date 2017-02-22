@@ -69,19 +69,33 @@ begin
                               to_integer(signed(data_in2(5 downto 0))));
                 when ALU_SLT =>
                     zero_flag_next <= signed(data_in1) < signed(data_in2);
-					--zero_flag <= zero_flag_next;
-                    result <= to_cpu_word(zero_flag_next);
+                    if signed(data_in1) < signed(data_in2) then
+                        result(0) <= '1';
+                    else
+                        result(0) <= '0';
+                    end if;
+                    result(cpu_word_length -1 downto 1) <= (others => '0');
                 when ALU_SLTU =>
                     zero_flag_next <= unsigned(data_in1) < unsigned(data_in2);
-					--zero_flag <= zero_flag_next;
-                    result <= to_cpu_word(zero_flag_next);
+                    
+                    if unsigned(data_in1) = 0 and unsigned(data_in2) = 0 then
+                        result(0) <= '0'; -- assembler pseudo-op SNEZ rd, rs
+                    else
+                        if unsigned(data_in1) < unsigned(data_in2) then
+                            result(0) <= '1';
+                        else
+                            result(0) <= '0';
+                        end if;
+                    end if;
+                    result(cpu_word_length -1 downto 1) <= (others => '0');
                 when ALU_XOR =>
                     result <= cpu_word(signed(data_in1) xor signed(data_in2));
                 when ALU_SRL =>
                     result <= cpu_word(signed(data_in1) srl
                               to_integer(signed(data_in2(5 downto 0))));
                 when ALU_SRA =>
-                    result <= to_cpu_word(to_bitvector(data_in1) sra to_integer(signed(data_in2)));
+                    result <= to_cpu_word(to_bitvector(data_in1) sra
+                              to_integer(signed(data_in2(5 downto 0))));
                 when ALU_OR =>
                     result <= cpu_word(signed(data_in1) or signed(data_in2));
                 when ALU_AND =>
