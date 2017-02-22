@@ -22,7 +22,7 @@ entity decode is
     en_write_reg : out boolean;
     ctrl_register : out std_logic_vector(1 downto 0);
     add_offset : out cpu_word; 
-    pc_set : out std_logic
+    pc_set : out std_logic_vector(1 downto 0)
   );
 end decode;
 
@@ -40,6 +40,7 @@ constant IMMED : std_logic_vector(0 downto 0) := "1";
 -- mux bram
 constant ALU_BRAM : std_logic_vector(0 downto 0) := "0";
 constant PC_BRAM : std_logic_vector(0 downto 0) := "1";
+
 
 signal opc : opcode;
 signal funct3 : std_logic_vector(2 downto 0);
@@ -69,7 +70,7 @@ begin
         en_read_ram <= false;
         imm <= (others => '0');
         en_imm <= REG;
-        pc_set <= '0';
+        pc_set <= NO_SET;
         alu_out <= ALU_ADD;
         en_write_ram <= false;
         en_write_reg <= false;
@@ -83,7 +84,6 @@ begin
                 en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
-                pc_set <= '0';
 
 				-- alu_out
 				case funct3 is
@@ -130,7 +130,6 @@ begin
                 en_read_ram <= false;
                 ctrl_register <= ALU;
                 en_write_reg <= true;
-                pc_set <= '0';
 
 				-- alu_out
 				case funct3 is
@@ -173,8 +172,19 @@ begin
                 en_read_ram <= true;
                 ctrl_register <= BRAM;
                 en_write_reg <= true;
-                pc_set <= '0';
-				
+                
+            when UJ_TYPE =>
+		         ctrl_register <= PC;
+		         pc_set <= ADD_OFF;
+                 en_write_ram <= false;
+                 en_write_reg <= true;
+		         add_offset(31 downto 20) <= (others => instr(31));
+		         add_offset(19 downto 12) <= instr(19 downto 12);
+		         add_offset(11) <= instr(20);
+		         add_offset(10 downto 5) <= instr(30 downto 25);
+                 add_offset(4 downto 1) <= instr(24 downto 21);
+                 add_offset(0) <= '0';
+                 		   
             when S_TYPE =>
 
                 alu_out <= ALU_ADD;
@@ -185,7 +195,6 @@ begin
                 en_write_ram <= true;
                 en_read_ram <= false;
                 en_write_reg <= false;
-                pc_set <= '0';
 
             when U_TYPE_LUI =>
 
@@ -198,7 +207,6 @@ begin
                 en_read_ram <= false;
                 en_write_reg <= true;
                 ctrl_register <= ALU;
-                pc_set <= '0';
 
             when SB_TYPE =>
                 rd <= "00001"; -- ra register when branch
@@ -217,46 +225,50 @@ begin
                         alu_out <= ALU_AND;
                         case zero_flag is
                             when true =>
-                                pc_set <= '1';
+                                pc_set <= ADD_OFF;
                             when others =>
                              add_offset <= (others => '0');
-                             pc_set <= '0';
                         end case;
 
                     when "001" => -- BNE
                         alu_out <= ALU_AND;
                         case zero_flag is
                             when false =>
-                                pc_set <= '1';
+                                pc_set <= ADD_OFF;
                             when others =>
                              add_offset <= (others => '0');
-                             pc_set <= '0';
                         end case;
 
                     when "100" => -- BLT
                         alu_out <= ALU_SLT;
                         case zero_flag is
                             when true =>
-                                pc_set <= '1';
+                                pc_set <= ADD_OFF;
                             when others =>
                              add_offset <= (others => '0');
-                             pc_set <= '0';
                         end case;
 
                     when "101" => -- BGE
                         alu_out <= ALU_SLT;
                         case zero_flag is
                             when true =>
-                                pc_set <= '1';
+                                pc_set <= ADD_OFF;
                             when others =>
                              add_offset <= (others => '0');
-                             pc_set <= '0';
                         end case;
                     when others =>
                         add_offset <= (others => '0');
-                        pc_set <= '0';
 
                 end case;
+
+            when I_TYPE_JALR =>
+                en_imm <= IMMED;
+                imm(31 downto 12) <= (others => instr(31));
+                imm(11 downto 0) <= instr(31 downto 20);
+                ctrl_register <= PC;
+                alu_out <= ALU_ADD;
+                pc_set <= JALR;
+
 			when others =>
                 null;
 

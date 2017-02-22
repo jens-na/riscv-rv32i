@@ -235,6 +235,27 @@ architecture Behavioral of block_ram is
     137 => x"d2",
     138 => x"12",
     139 => x"40",
+    
+    -- jal, x0,0x0
+    -- 12 lowest bits: 0000 0110 1111
+    140 => x"6f",
+    141 => x"00",
+    142 => x"00",
+    143 => x"00",
+
+    -- jal, ra, 0x12c (300)
+    -- 0001 0010 1100 0000 0000 0000 1110 1111
+    144 => x"ef",
+    145 => x"00",
+    146 => x"c0",
+    147 => x"12",
+
+    -- jalr x0,x1,0
+    -- jumps back to address that is held in x1(ra)
+    408 => x"67",
+    409 => x"80",
+    410 => x"00",
+    411 => x"00",
 
     -- load/store-area
     500 => x"85",

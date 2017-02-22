@@ -3,7 +3,8 @@
 
 *.wcfg
 *.debug
-**.Xil
+.Xil
+
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:

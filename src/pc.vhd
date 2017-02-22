@@ -10,8 +10,9 @@ entity pc is
 
 
     Port ( clk : in std_logic;
-		   set : in std_logic;
+		   set : in std_logic_vector(1 downto 0);
            set_value : in cpu_word;
+           set_jalr : in cpu_word;
 		   reset : in std_logic;
 		   value_out: out cpu_word;
 		   value_out_next: out cpu_word
@@ -33,11 +34,13 @@ begin
 			cnt_reg <= (others => '0');
 		elsif (rising_edge(clk)) then
 		    if (enable = '1') then
-                if (set = '0' or set = 'U') then
+                if (set <= NO_SET) then
                     cnt_reg <= cnt_next;
-                else
+                elsif (set = ADD_OFF) then
                     cnt_reg <= std_logic_vector(signed(cnt_next) +
                                signed(set_value));
+                elsif (set = JALR) then
+                    cnt_reg <= set_jalr;
                 end if; 
             end if;
 		end if;
@@ -55,7 +58,6 @@ begin
     -- next state logic
     cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
 
-                
 	-- output logic
 	value_out <= cnt_reg;            
     value_out_next <= cnt_next;

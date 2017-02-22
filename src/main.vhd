@@ -17,12 +17,13 @@ architecture Structural of main is
     
     signal s_pc_value_out : cpu_word;
     signal s_pc_value_out_next : cpu_word;
-    signal s_pc_set : std_logic;
+    signal s_pc_set : std_logic_vector(1 downto 0);
     signal s_pc_set_value : cpu_word;
     component pc port(
         clk : in std_logic;
-        set : in std_logic;
+        set : in std_logic_vector(1 downto 0);
         set_value : in cpu_word;
+        set_jalr : in cpu_word;
         reset : in std_logic;
         value_out: out cpu_word;
         value_out_next : out cpu_word
@@ -54,11 +55,11 @@ architecture Structural of main is
         imm : out cpu_word;
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
+        ctrl_register : out std_logic_vector(1 downto 0);
         en_read_ram : out boolean;
         en_write_reg : out boolean;
-        ctrl_register : out std_logic_vector(1 downto 0);
         add_offset : out cpu_word;
-        pc_set : out std_logic
+        pc_set : out std_logic_vector(1 downto 0)
     );
     end component;
     
@@ -140,6 +141,7 @@ begin
         clk => m_clk,
         set => s_pc_set,
         set_value => s_pc_set_value,
+        set_jalr => s_alu_result,
         reset => m_pc_reset,
         value_out => s_pc_value_out,
         value_out_next => s_pc_value_out_next
@@ -157,9 +159,9 @@ begin
         en_imm => s_decode_en_imm,
         imm => s_decode_imm,
         width_ram => s_decode_width_ram,
+        ctrl_register => s_decode_ctrl_register,
         en_write_ram => s_decode_en_write_ram,
         en_read_ram => s_decode_en_read_ram,
-        ctrl_register => s_decode_ctrl_register,
         en_write_reg => s_decode_en_write_reg,
         pc_set => s_pc_set,
         add_offset => s_pc_set_value 
