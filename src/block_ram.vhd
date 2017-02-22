@@ -252,10 +252,10 @@ architecture Behavioral of block_ram is
 
     -- jalr x0,x1,0
     -- jumps back to address that is held in x1(ra)
-    408 => x"67",
-    409 => x"80",
-    410 => x"00",
-    411 => x"00",
+    448 => x"67",
+    449 => x"80",
+    450 => x"00",
+    451 => x"00",
 
     -- load/store-area
     500 => x"85",
