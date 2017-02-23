@@ -268,7 +268,30 @@ architecture Behavioral of block_ram is
     157 => x"90",
     158 => x"72",
     159 => x"12",
+    
+    -- blt t1,t2, 284
+    160 => x"63",
+    161 => x"4e",
+    162 => x"73",
+    163 => x"10",
 
+    -- bge t2,t1, 280
+    164 => x"63",
+    165 => x"dc",
+    166 => x"63",
+    167 => x"10",
+
+    -- bltu t1,t2, 276
+    168 => x"63",
+    169 => x"6a",
+    170 => x"73",
+    171 => x"10",
+
+    --bgeu t2,t1, 272
+    172 => x"63",
+    173 => x"f8",
+    174 => x"63",
+    175 => x"10",
 
     -- jalr x0,x1,0
     -- jumps back to address that is held in x1(ra)
