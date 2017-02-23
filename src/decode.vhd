@@ -251,11 +251,30 @@ begin
                     when "101" => -- BGE
                         alu_out <= ALU_SLT;
                         case zero_flag is
+                            when false =>
+                                pc_set <= ADD_OFF;
+                            when others =>
+                             add_offset <= (others => '0');
+                        end case;
+
+                    when "110" => -- BLTU
+                        alu_out <= ALU_SLTU;
+                        case zero_flag is
                             when true =>
                                 pc_set <= ADD_OFF;
                             when others =>
                              add_offset <= (others => '0');
                         end case;
+
+                    when "111" => -- BGEU
+                        alu_out <= ALU_SLTU;
+                        case zero_flag is
+                            when false =>
+                                pc_set <= ADD_OFF;
+                            when others =>
+                             add_offset <= (others => '0');
+                        end case;
+
                     when others =>
                         add_offset <= (others => '0');
 
