@@ -250,6 +250,25 @@ architecture Behavioral of block_ram is
     146 => x"c0",
     147 => x"12",
 
+    -- lui s0,0xacc21
+    176 => x"37",
+    177 => x"14",
+    178 => x"c2",
+    179 => x"ac",
+    
+    -- auipc, s0,0x200
+    180 => x"17",
+    181 => x"04",
+    182 => x"20",
+    183 => x"00",
+
+    -- auipc, s0,0x200
+    184 => x"17",
+    185 => x"04",
+    186 => x"00",
+    187 => x"f0",
+
+
     -- jalr x0,x1,0
     -- jumps back to address that is held in x1(ra)
     448 => x"67",
