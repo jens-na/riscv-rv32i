@@ -9,6 +9,7 @@ entity decode is
   Port (
     clk : in std_logic;
     instr : in cpu_word;
+    cur_pc : in cpu_word;
     rs1 : out reg_idx;
     rs2 : out reg_idx;
     rd : out reg_idx;
@@ -57,6 +58,7 @@ begin
 	funct7 <= instr(31 downto 25);
 
 	process(instr, funct3, funct7, opc, zero_flag)
+        variable auipc_offset : cpu_word;
 	begin
 
         -- standard assignments
@@ -287,6 +289,17 @@ begin
                 ctrl_register <= PC;
                 alu_out <= ALU_ADD;
                 pc_set <= JALR;
+                en_write_reg <= true;
+
+            when U_TYPE_AUIPC =>
+                auipc_offset := instr(31 downto 12) & (11 downto 0 => '0');
+                imm <= cpu_word(signed(cur_pc) + signed(auipc_offset));
+                en_imm <= IMMED;
+                alu_out <= ALU_ADD;
+                en_write_reg <= true;
+                ctrl_register <= ALU;
+                rs1 <= (others => '0');
+
 
 			when others =>
                 null;

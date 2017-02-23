@@ -46,6 +46,7 @@ architecture Structural of main is
     component decode port(
         clk : in std_logic;
         instr : in cpu_word;
+        cur_pc : in cpu_word;
         rs1 : out reg_idx;
         rs2 : out reg_idx;
         rd : out reg_idx;
@@ -151,6 +152,7 @@ begin
     c_decode : decode port map(
         clk => m_clk,
         instr => s_bram_instr_out,
+        cur_pc => s_pc_value_out_next,
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
