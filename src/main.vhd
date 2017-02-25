@@ -9,7 +9,8 @@ entity main is
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
     m_bram_reset : in std_logic;
-    m_register_reset : in std_logic
+    m_register_reset : in std_logic;
+    m_status_flag : out cpu_word
   );
 end main;
 
@@ -83,6 +84,7 @@ architecture Structural of main is
     
     signal s_register_data_out1 : cpu_word;
     signal s_register_data_out2 : cpu_word;
+    signal s_register_status : cpu_word;
     component registerfile port(
         clk : in std_logic;
         reset : in std_logic;
@@ -92,7 +94,8 @@ architecture Structural of main is
         data_in : in cpu_word;
         en_write : in boolean;
         data_out1 : out cpu_word;
-        data_out2 : out cpu_word
+        data_out2 : out cpu_word;
+        status : out cpu_word
     );
     end component;
     
@@ -191,7 +194,8 @@ begin
         data_in => s_mux_register_result,
         data_out1 => s_register_data_out1,
         data_out2 => s_register_data_out2,
-        en_write => s_decode_en_write_reg
+        en_write => s_decode_en_write_reg,
+        status => s_register_status
     );
     
     c_alu : alu port map(
@@ -201,4 +205,7 @@ begin
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
     );       
+    
+    m_status_flag <= s_register_status;
+    
 end Structural;

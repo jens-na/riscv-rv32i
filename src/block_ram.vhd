@@ -311,6 +311,11 @@ architecture Behavioral of block_ram is
     186 => x"00",
     187 => x"f0",
 
+    -- addi, a0, x0, 0x2
+    188 => x"13",
+    189 => x"05",
+    190 => x"20",
+    191 => x"00",
 
     -- jalr x0,x1,0
     -- jumps back to address that is held in x1(ra)
@@ -392,7 +397,7 @@ begin
         instr_out(31 downto 24) <= memory(to_integer(unsigned(pc_in) + 3));
 
         -- standard assignment
-        data_out <= (others => '0');
+        -- data_out <= (others => '0');
 
 		if rising_edge(clk) then
 			

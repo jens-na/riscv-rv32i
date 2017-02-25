@@ -15,13 +15,16 @@ architecture Behavioral of main_tb is
     signal s_pc_reset : std_logic;
     signal s_bram_reset : std_logic;
     signal s_register_reset : std_logic;
+    signal s_register_status : cpu_word;
+    
 begin
 
     uut : entity work.main port map (
         m_clk => s_clk,
         m_pc_reset => s_pc_reset,
         m_bram_reset => s_bram_reset,
-        m_register_reset => s_register_reset
+        m_register_reset => s_register_reset,
+        m_status_flag => s_register_status
     );
     
     process
