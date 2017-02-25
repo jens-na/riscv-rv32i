@@ -62,11 +62,14 @@ begin
         case op_in is
                 when ALU_ADD =>
                     result <= cpu_word(signed(data_in1) + signed(data_in2));
+                    zero_flag_next <= false;
                 when ALU_SUB =>
                     result <= cpu_word(signed(data_in1) - signed(data_in2));
+                    zero_flag_next <= false;
                 when ALU_SLL =>
                     result <= cpu_word(signed(data_in1) sll
                               to_integer(signed(data_in2(5 downto 0))));
+                    zero_flag_next <= false;
                 when ALU_SLT =>
                     zero_flag_next <= signed(data_in1) < signed(data_in2);
                     if signed(data_in1) < signed(data_in2) then
@@ -90,14 +93,18 @@ begin
                     result(cpu_word_length -1 downto 1) <= (others => '0');
                 when ALU_XOR =>
                     result <= cpu_word(signed(data_in1) xor signed(data_in2));
+                    zero_flag_next <= false;
                 when ALU_SRL =>
                     result <= cpu_word(signed(data_in1) srl
                               to_integer(signed(data_in2(5 downto 0))));
+                    zero_flag_next <= false;
                 when ALU_SRA =>
                     result <= to_cpu_word(to_bitvector(data_in1) sra
                               to_integer(signed(data_in2(5 downto 0))));
+                    zero_flag_next <= false;
                 when ALU_OR =>
                     result <= cpu_word(signed(data_in1) or signed(data_in2));
+                    zero_flag_next <= false;
                 when ALU_AND =>
                     zero_flag_next <= signed(data_in1) = signed(data_in2);
                     --zero_flag <= zero_flag_next;
