@@ -16,6 +16,8 @@ package utils is
     
     type cpu_word_1x2 is array (1 downto 0) of cpu_word;
     type cpu_word_arr is array (natural range <>) of cpu_word;
+    
+    subtype status_led_output is std_logic_vector(15 downto 0);
 
     function to_cpu_word(b : in boolean) return cpu_word;
     function to_cpu_word(v : in bit_vector) return cpu_word;
