@@ -7,7 +7,7 @@ use work.opcodes.all;
 
 entity decode is
   Port (
-    clk : in std_logic;
+    --clk : in std_logic;
     instr : in cpu_word;
     cur_pc : in cpu_word;
     rs1 : out reg_idx;
@@ -57,7 +57,7 @@ begin
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
 
-	process(instr, funct3, funct7, opc, zero_flag)
+	process(instr, funct3, funct7, opc, zero_flag, cur_pc)
         variable auipc_offset : cpu_word;
 	begin
 

@@ -5,12 +5,12 @@ use work.utils.all;
 
 entity block_ram is
 	generic (
-		ram_size : integer := 1024;
+		ram_size : integer := 512;
 		address_bits : integer := cpu_word_length
 	);
     port ( 
         clk : in std_logic;
-        reset : in std_logic;
+        --reset : in std_logic;
         data_in : in cpu_word;
         addr : in cpu_word;
         pc_in : in cpu_word;
@@ -388,7 +388,7 @@ architecture Behavioral of block_ram is
     );
 begin
 
-	process (clk, pc_in)
+	process (clk, pc_in, en_read, width, addr)
 	begin
 
         instr_out(7 downto 0) <= memory(to_integer(unsigned(pc_in)));
@@ -401,10 +401,10 @@ begin
 
 		if rising_edge(clk) then
 			
-			if reset = '1' then
+			--if reset = '1' then
 				-- clear data_out on reset
-				data_out <= (others => '0');
-			end if;
+				--data_out <= (others => '0');
+			--end if;
 
 			if en_write = true then
 
@@ -430,6 +430,8 @@ begin
                         null;
 
                 end case;
+            else 
+                null;
 		    end if; --en_write
         end if; -- rising_edge
 
@@ -469,9 +471,11 @@ begin
                     std_logic_vector(resize(unsigned(memory(to_integer(unsigned(addr) + 1))), 24));
 
                 when others =>
-                    null;
+                    data_out <= (others => '0');
 
             end case;
+        else
+            null;
         end if;	-- en_read
 
 

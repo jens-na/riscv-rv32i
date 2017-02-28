@@ -8,9 +8,9 @@ entity main is
   Port (
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
-    m_bram_reset : in std_logic;
+    --m_bram_reset : in std_logic;
     m_register_reset : in std_logic;
-    m_status_flag : out cpu_word
+    m_status_flag : out status_led_output
   );
 end main;
 
@@ -45,7 +45,7 @@ architecture Structural of main is
     signal s_decode_add_offset : cpu_word;
 
     component decode port(
-        clk : in std_logic;
+        --clk : in std_logic;
         instr : in cpu_word;
         cur_pc : in cpu_word;
         rs1 : out reg_idx;
@@ -70,7 +70,7 @@ architecture Structural of main is
     signal s_bram_instr_out : cpu_word;
     component block_ram port(
         clk : in std_logic;
-        reset : in std_logic;
+        --reset : in std_logic;
         data_in : in cpu_word;
         addr : in cpu_word;
         pc_in : in cpu_word;
@@ -84,7 +84,7 @@ architecture Structural of main is
     
     signal s_register_data_out1 : cpu_word;
     signal s_register_data_out2 : cpu_word;
-    signal s_register_status : cpu_word;
+    signal s_register_status : status_led_output;
     component registerfile port(
         clk : in std_logic;
         reset : in std_logic;
@@ -95,7 +95,7 @@ architecture Structural of main is
         en_write : in boolean;
         data_out1 : out cpu_word;
         data_out2 : out cpu_word;
-        status : out cpu_word
+        status : out status_led_output
     );
     end component;
     
@@ -153,7 +153,7 @@ begin
     
     
     c_decode : decode port map(
-        clk => m_clk,
+        --clk => m_clk,
         instr => s_bram_instr_out,
         cur_pc => s_pc_value_out_next,
         rs1 => s_decode_rs1,
@@ -174,7 +174,7 @@ begin
     
     c_bram : block_ram port map(
         clk => m_clk,
-        reset => m_bram_reset,
+        --reset => m_bram_reset,
         data_in => s_register_data_out2,
         addr => s_alu_result,
         pc_in => s_pc_value_out,

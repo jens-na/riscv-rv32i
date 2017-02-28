@@ -16,7 +16,7 @@ entity registerfile is
     en_write : in boolean;
     data_out1 : out cpu_word;
     data_out2 : out cpu_word;
-    status : out cpu_word
+    status : out status_led_output
   );
 end registerfile;
 
@@ -40,9 +40,9 @@ begin
      -- data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (rs2 /= zero_reg) else (others => '0');
 
     --status_flag
-    status <= reg_blocks(10);
+    status <= reg_blocks(10)(15 downto 0);
 
-    process(clk, rs1, rs2, rd)
+    process(clk, rs1, rs2, rd, reg_blocks)
     begin
     
         --async read out
