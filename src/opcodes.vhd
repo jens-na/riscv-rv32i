@@ -44,6 +44,8 @@ package opcodes is
     constant NO_SET : std_logic_vector(1 downto 0) := "00";
     constant ADD_OFF : std_logic_vector(1 downto 0) := "01";
     constant JALR : std_logic_vector(1 downto 0) := "10";
+
+    constant RAM_SZ : integer := 1024;
     
 end opcodes;
 

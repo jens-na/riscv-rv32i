@@ -16,6 +16,24 @@ end main;
 
 architecture Structural of main is
     
+    signal s_ram_control_en_write_out : boolean;
+    signal s_ram_control_data_out_reg : cpu_word;
+    signal s_ram_control_data_out_ram : cpu_word;
+    signal s_ram_control_addr_out : cpu_word;
+    component ram_control port(
+        clk : in std_logic;
+        width : in std_logic_vector(2 downto 0);
+        addr_in : in cpu_word;
+        en_write : in boolean; 
+        data_in_reg : in cpu_word;
+        data_in_ram : in cpu_word;
+        en_write_out : out boolean;
+        data_out_reg : out cpu_word;
+        data_out_ram : out cpu_word;
+        addr_out : out cpu_word
+    );
+    end component;
+
     signal s_pc_value_out : cpu_word;
     signal s_pc_value_out_next : cpu_word;
     signal s_pc_set : std_logic_vector(1 downto 0);
@@ -39,7 +57,6 @@ architecture Structural of main is
     signal s_decode_imm : cpu_word;
     signal s_decode_width_ram : std_logic_vector(2 downto 0);
     signal s_decode_en_write_ram : boolean;
-    signal s_decode_en_read_ram : boolean;
     signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
     signal s_decode_en_write_reg : boolean;
     signal s_decode_add_offset : cpu_word;
@@ -58,7 +75,6 @@ architecture Structural of main is
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
-        en_read_ram : out boolean;
         en_write_reg : out boolean;
         add_offset : out cpu_word;
         pc_set : out std_logic_vector(1 downto 0)
@@ -75,8 +91,6 @@ architecture Structural of main is
         addr : in cpu_word;
         pc_in : in cpu_word;
         en_write : in boolean;
-        en_read : in boolean;
-        width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
     );
@@ -127,7 +141,7 @@ begin
         port map(
         selector => s_decode_ctrl_register,
         x(0) =>  s_alu_result,
-        x(1) =>  s_bram_data_out,
+        x(1) =>  s_ram_control_data_out_reg,
         x(2) =>  s_pc_value_out_next,
         y => s_mux_register_result
         );
@@ -140,6 +154,19 @@ begin
         x(1) => s_decode_imm,
         y => s_mux_alu_result
         );
+
+    c_ram_control : ram_control port map(
+        clk => m_clk,
+        width => s_decode_width_ram,
+        addr_in => s_alu_result,
+        en_write => s_decode_en_write_ram,
+        data_in_reg => s_register_data_out2,
+        data_in_ram => s_bram_data_out,
+        en_write_out => s_ram_control_en_write_out, 
+        data_out_reg => s_ram_control_data_out_reg,
+        data_out_ram => s_ram_control_data_out_ram,
+        addr_out => s_ram_control_addr_out
+    );
 
     c_pc : pc port map(
         clk => m_clk,
@@ -166,7 +193,6 @@ begin
         width_ram => s_decode_width_ram,
         ctrl_register => s_decode_ctrl_register,
         en_write_ram => s_decode_en_write_ram,
-        en_read_ram => s_decode_en_read_ram,
         en_write_reg => s_decode_en_write_reg,
         pc_set => s_pc_set,
         add_offset => s_pc_set_value 
@@ -174,14 +200,11 @@ begin
     
     c_bram : block_ram port map(
         clk => m_clk,
-        --reset => m_bram_reset,
-        data_in => s_register_data_out2,
-        addr => s_alu_result,
+        data_in => s_ram_control_data_out_ram,
+        addr => s_ram_control_addr_out,
         pc_in => s_pc_value_out,
-        en_write => s_decode_en_write_ram,
-        en_read => s_decode_en_read_ram,
+        en_write => s_ram_control_en_write_out,
         data_out => s_bram_data_out,
-        width => s_decode_width_ram,
         instr_out => s_bram_instr_out
     );
     
