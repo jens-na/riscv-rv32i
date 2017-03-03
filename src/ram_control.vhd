@@ -15,7 +15,7 @@ entity ram_control is
         en_write_out : out boolean;
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
-        addr_out : out cpu_word
+        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0)
     );
 end ram_control;
 
@@ -28,7 +28,7 @@ signal enable_next: std_logic;
 begin
 
     -- prevent access to memory out of bound
-    addr_out <= cpu_word(to_unsigned(to_integer(unsigned(addr_in)) / 4, 32))
+    addr_out <= std_logic_vector(to_unsigned(to_integer(unsigned(addr_in)) / 4, addr_out'length))
                 when ((to_integer(unsigned(addr_in))) < RAM_SZ * 4) 
                         and ((to_integer(unsigned(addr_in))) >= 0 ) 
                 else
@@ -37,16 +37,16 @@ begin
     byte_idx <= addr_in(1 downto 0);
 
     --write control process
-    process(clk)
+    process(en_write, enable)
     begin
         
-        if rising_edge(clk) then
+        --if rising_edge(clk) then
             if en_write = true and enable = '1' then
                 en_write_out <= true;
             else
                 en_write_out <= false;
             end if;
-        end if;
+        --end if;
     end process;
 
 	process(clk)
@@ -61,6 +61,8 @@ begin
     -- write process
     process(data_in_reg, data_in_ram, width, byte_idx)
     begin
+            -- standard assignment
+            data_out_ram <= (others => '0');
 
             case width is
 

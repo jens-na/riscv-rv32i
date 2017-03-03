@@ -19,7 +19,7 @@ architecture Structural of main is
     signal s_ram_control_en_write_out : boolean;
     signal s_ram_control_data_out_reg : cpu_word;
     signal s_ram_control_data_out_ram : cpu_word;
-    signal s_ram_control_addr_out : cpu_word;
+    signal s_ram_control_addr_out : std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
     component ram_control port(
         clk : in std_logic;
         width : in std_logic_vector(2 downto 0);
@@ -30,7 +30,7 @@ architecture Structural of main is
         en_write_out : out boolean;
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
-        addr_out : out cpu_word
+        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0)
     );
     end component;
 
@@ -82,13 +82,12 @@ architecture Structural of main is
     end component;
     
     signal s_bram_data_out : cpu_word;
-    signal s_bram_addr : cpu_word;
     signal s_bram_instr_out : cpu_word;
     component block_ram port(
         clk : in std_logic;
         --reset : in std_logic;
         data_in : in cpu_word;
-        addr : in cpu_word;
+        addr : in std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
         pc_in : in cpu_word;
         en_write : in boolean;
         instr_out : out cpu_word;

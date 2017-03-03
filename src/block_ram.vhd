@@ -12,7 +12,7 @@ entity block_ram is
     port ( 
         clk : in std_logic;
         data_in : in cpu_word;
-        addr : in cpu_word;
+        addr : in std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
         pc_in : in cpu_word;
         en_write : in boolean;
         instr_out : out cpu_word;
@@ -306,7 +306,8 @@ architecture Behavioral of block_ram is
 --    186 => x"00",
 --    187 => x"f0",
 --
---    -- addi, a0, x0, 0x2
+    -- addi, a0, x0, 0x2
+    47 => x"00200513",
 --    188 => x"13",
 --    189 => x"05",
 --    190 => x"20",
