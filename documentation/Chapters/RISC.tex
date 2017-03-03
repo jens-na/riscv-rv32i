@@ -1,0 +1,24 @@
+\chapter{RISC-V} % Main chapter title
+\label{RISC-V} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+RISC-V (reduced instruction set computing) ist eine offene Befehlssatzarchitektur, die 2010 von Entwicklern an der University of California, Berkeley vorgestellt wurde. Beim Entwurf wurde besonderer Wert auf eine leichtgewichtige Architektur, aber auch Performance und Energiesparsamkeit gelegt.
+
+%----------------------------------------------------------------------------------------
+\section{Verwendetes Subset}
+Die RISC-V Spezifikation definiert mehrere Teilmengen der allgemeinen Architektur. Diese als "General Purpose" bezeichnete Architektur enthält neben Mindeststandard für Integerverarbeitung ("I") auch Befehle für Gleitkommaarithmetik ("F") mit Double("D") oder Quad-Präzision ("Q"), für die Handhabung verschiedener Privilegierungen ("P"), atomare Befehle für die Verwaltung von Nebenläufigkeit ("A") und seit der neusten Version  2.1 auch für Bitmanipulation ("B"), Vectoroperationen ("V") und einigen mehr.
+
+In diesem Projekt wurde sich allerdings auf das Minimum, einer einfachen Integerverarbeitenden CPU ("I") beschränkt. Die Bezeichnung des verwendeten Subsets lautet daher "RV32I".
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+\section{Architektur}
+RISC-V ist als \textit{load-store}-Architektur entworfen. Arithmetische und logische Instruktionen greifen daher nicht auf den Speicher zu, stattdessen werden alle Operatoren vorher in der Registerbank abgelegt. Rechenergebnisse werden ebenfalls in Registern gespeichert. Speicherzugriffe werden ausschließlich mit load bzw. store Befehlen realisiert.
+
+\subsection{Register}
+Die RISC-V Spezifikation definiert 31 Integer Register 1 - 31. Zusätzlich existiert ein \textit{zero}-Register, das eine konstante 0 beinhaltet.
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+\section{Maschinenbefehle}
+
+%----------------------------------------------------------------------------------------
