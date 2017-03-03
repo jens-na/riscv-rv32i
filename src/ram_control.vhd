@@ -62,7 +62,7 @@ begin
     process(data_in_reg, data_in_ram, width, byte_idx)
     begin
             -- standard assignment
-            data_out_ram <= (others => '0');
+            data_out_ram <= data_in_ram;
 
             case width is
 

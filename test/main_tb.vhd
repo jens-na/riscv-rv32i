@@ -44,7 +44,7 @@ begin
 		s_pc_reset <= '1';
 		wait for 3ns;
 		s_pc_reset <= '0';
-		wait for 1500ns;
+		wait for 3000ns;
     end process;
 
 end Behavioral;
