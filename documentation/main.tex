@@ -24,17 +24,17 @@
 
 \documentclass[
 11pt, % The default document font size, options: 10pt, 11pt, 12pt
-%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
 ngerman, 
-onehalfspacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
 %draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
 %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
 %liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
 %toctotoc, % Uncomment to add the main table of contents to the table of contents
-%parskip, % Uncomment to add space between paragraphs
+parskip, % Uncomment to add space between paragraphs
 %nohyperref, % Uncomment to not load the hyperref package
 headsepline, % Uncomment to get a line under the header
-%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+chapterinoneline, % Uncomment to place the chapter title next to the number on one line
 %consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
 ]{MastersDoctoralThesis} % The class file specifying the document structure
 
@@ -124,7 +124,7 @@ headsepline, % Uncomment to get a line under the header
  
 \vfill
 
-\large \textit{Dokumentation der Praktischen Tätigkeit\\ im Rahmen des Wahlprojekts Software- Hardwareschnittstellen\\ im Wintersemester 2016/1017}
+\large \textit{Dokumentation der Praktischen Tätigkeit\\ im Rahmen des Wahlprojekts Hardware/Software-Schnittstellen\\ im Wintersemester 2016/1017}
 \\[1cm] % University requirement text
 %\textit{im}\\[0.4cm]
 %\groupname\\\deptname\\[2cm] % Research group name and department name
@@ -143,10 +143,10 @@ headsepline, % Uncomment to get a line under the header
 %	ABSTRACT PAGE
 %----------------------------------------------------------------------------------------
 
-%\begin{abstract}
-%\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-%The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
-%\end{abstract}
+\begin{abstract}
+\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
+The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
+\end{abstract}
 
 %----------------------------------------------------------------------------------------
 %	LIST OF CONTENTS
@@ -170,15 +170,14 @@ headsepline, % Uncomment to get a line under the header
 % Include the chapters of the thesis as separate files from the Chapters folder
 % Uncomment the lines as you write the chapters
 
-\include{Chapters/Einleitung}
-\include{Chapters/FPGA}
-\include{Chapters/VHDL}
-\include{Chapters/RISC}
-\include{Chapters/Umsetzung}
-\include{Chapters/Herangehensweise}
-\include{Chapters/Probleme}
-\include{Chapters/Dokumentation}
-
+\include{Chapters/Einleitung} %Einleitung
+\include{Chapters/FPGA} %FPGA
+\include{Chapters/VHDL} %VHDL
+\include{Chapters/RISC} %RISC
+\include{Chapters/Umsetzung} %Umsetzung
+\include{Chapters/Herangehensweise} %Herangehensweise
+\include{Chapters/Probleme} %Probleme
+\include{Chapters/Dokumentation} %Dokumentation
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - APPENDICES

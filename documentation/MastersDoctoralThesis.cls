@@ -58,12 +58,12 @@
 
 %  Simple interface for the user  to customize the chapter titles 
 \ProvideDocumentCommand{\abovechapterskip}{}{\vspace*{20pt}}
-\ProvideDocumentCommand{\chapterbelowskip}{}{\vspace*{40pt}}
+\ProvideDocumentCommand{\chapterbelowskip}{}{\vspace*{30pt}}
 \ProvideDocumentCommand{\chapterinbetweenskip}{}{\vspace*{20pt}}
 \ProvideDocumentCommand{\autodot}{}{}
 \ProvideDocumentCommand{\mdtChapapp}{}{}
 \ProvideDocumentCommand{\chapteralign}{}{\raggedright}
-\ProvideDocumentCommand{\chapterfont}{}{\Huge\bfseries}
+\ProvideDocumentCommand{\chapterfont}{}{\huge\bfseries}
 \ProvideDocumentCommand{\chapterprefixfont}{}{\LARGE\bfseries}
 \DeclareDocumentCommand{\@makechapterhead}{ m }{%
 	\abovechapterskip
