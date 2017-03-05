@@ -37,7 +37,7 @@ begin
                 if (set = NO_SET) then
                     cnt_reg <= cnt_next;
                 elsif (set = ADD_OFF) then
-                    cnt_reg <= std_logic_vector(signed(cnt_next) +
+                    cnt_reg <= std_logic_vector(signed(cnt_reg) +
                                signed(set_value));
                 elsif (set = JALR) then
                     cnt_reg(31 downto 1) <= set_jalr(31 downto 1);
@@ -57,7 +57,7 @@ begin
     enable_next <= not enable;
     
     -- next state logic
-    cnt_next <= std_logic_vector(unsigned(cnt_reg) + 1);
+    cnt_next <= std_logic_vector(unsigned(cnt_reg) + 4);
 
 	-- output logic
 	value_out <= cnt_reg;            

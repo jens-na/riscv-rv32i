@@ -20,17 +20,20 @@ architecture Structural of main is
     signal s_ram_control_data_out_reg : cpu_word;
     signal s_ram_control_data_out_ram : cpu_word;
     signal s_ram_control_addr_out : std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
+    signal s_ram_control_pc_out : cpu_word;
     component ram_control port(
         clk : in std_logic;
         width : in std_logic_vector(2 downto 0);
         addr_in : in cpu_word;
+        pc_in : in cpu_word;
         en_write : in boolean; 
         data_in_reg : in cpu_word;
         data_in_ram : in cpu_word;
         en_write_out : out boolean;
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
-        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0)
+        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
+        pc_out : out cpu_word
     );
     end component;
 
@@ -158,13 +161,15 @@ begin
         clk => m_clk,
         width => s_decode_width_ram,
         addr_in => s_alu_result,
+        pc_in => s_pc_value_out,
         en_write => s_decode_en_write_ram,
         data_in_reg => s_register_data_out2,
         data_in_ram => s_bram_data_out,
         en_write_out => s_ram_control_en_write_out, 
         data_out_reg => s_ram_control_data_out_reg,
         data_out_ram => s_ram_control_data_out_ram,
-        addr_out => s_ram_control_addr_out
+        addr_out => s_ram_control_addr_out,
+        pc_out => s_ram_control_pc_out
     );
 
     c_pc : pc port map(
@@ -181,7 +186,7 @@ begin
     c_decode : decode port map(
         --clk => m_clk,
         instr => s_bram_instr_out,
-        cur_pc => s_pc_value_out_next,
+        cur_pc => s_pc_value_out,
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
@@ -201,7 +206,7 @@ begin
         clk => m_clk,
         data_in => s_ram_control_data_out_ram,
         addr => s_ram_control_addr_out,
-        pc_in => s_pc_value_out,
+        pc_in => s_ram_control_pc_out,
         en_write => s_ram_control_en_write_out,
         data_out => s_bram_data_out,
         instr_out => s_bram_instr_out

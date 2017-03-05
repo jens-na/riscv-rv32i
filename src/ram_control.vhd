@@ -9,13 +9,15 @@ entity ram_control is
         clk : in std_logic;
         width : in std_logic_vector(2 downto 0);
         addr_in : in cpu_word;
+        pc_in : in cpu_word;
         en_write : in boolean; 
         data_in_reg : in cpu_word;
         data_in_ram : in cpu_word;
         en_write_out : out boolean;
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
-        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0)
+        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
+        pc_out : out cpu_word
     );
 end ram_control;
 
@@ -33,6 +35,8 @@ begin
                         and ((to_integer(unsigned(addr_in))) >= 0 ) 
                 else
                     (others => '0');
+
+    pc_out <= std_logic_vector(shift_right(unsigned(pc_in), 2));
 
     byte_idx <= addr_in(1 downto 0);
 
