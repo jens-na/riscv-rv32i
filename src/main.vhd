@@ -8,13 +8,35 @@ entity main is
   Port (
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
-    m_bram_reset : in std_logic;
-    m_register_reset : in std_logic
+    --m_bram_reset : in std_logic;
+    m_register_reset : in std_logic;
+    m_status_flag : out status_led_output
   );
 end main;
 
 architecture Structural of main is
     
+    signal s_ram_control_en_write_out : boolean;
+    signal s_ram_control_data_out_reg : cpu_word;
+    signal s_ram_control_data_out_ram : cpu_word;
+    signal s_ram_control_addr_out : std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
+    signal s_ram_control_pc_out : cpu_word;
+    component ram_control port(
+        clk : in std_logic;
+        width : in std_logic_vector(2 downto 0);
+        addr_in : in cpu_word;
+        pc_in : in cpu_word;
+        en_write : in boolean; 
+        data_in_reg : in cpu_word;
+        data_in_ram : in cpu_word;
+        en_write_out : out boolean;
+        data_out_reg : out cpu_word;
+        data_out_ram : out cpu_word;
+        addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
+        pc_out : out cpu_word
+    );
+    end component;
+
     signal s_pc_value_out : cpu_word;
     signal s_pc_value_out_next : cpu_word;
     signal s_pc_set : std_logic_vector(1 downto 0);
@@ -38,13 +60,12 @@ architecture Structural of main is
     signal s_decode_imm : cpu_word;
     signal s_decode_width_ram : std_logic_vector(2 downto 0);
     signal s_decode_en_write_ram : boolean;
-    signal s_decode_en_read_ram : boolean;
     signal s_decode_ctrl_register : std_logic_vector(1 downto 0);
     signal s_decode_en_write_reg : boolean;
     signal s_decode_add_offset : cpu_word;
 
     component decode port(
-        clk : in std_logic;
+        --clk : in std_logic;
         instr : in cpu_word;
         cur_pc : in cpu_word;
         rs1 : out reg_idx;
@@ -57,7 +78,6 @@ architecture Structural of main is
         width_ram : out std_logic_vector(2 downto 0);
         en_write_ram : out boolean;
         ctrl_register : out std_logic_vector(1 downto 0);
-        en_read_ram : out boolean;
         en_write_reg : out boolean;
         add_offset : out cpu_word;
         pc_set : out std_logic_vector(1 downto 0)
@@ -65,17 +85,14 @@ architecture Structural of main is
     end component;
     
     signal s_bram_data_out : cpu_word;
-    signal s_bram_addr : cpu_word;
     signal s_bram_instr_out : cpu_word;
     component block_ram port(
         clk : in std_logic;
-        reset : in std_logic;
+        --reset : in std_logic;
         data_in : in cpu_word;
-        addr : in cpu_word;
+        addr : in std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
         pc_in : in cpu_word;
         en_write : in boolean;
-        en_read : in boolean;
-        width : in std_logic_vector(2 downto 0);
         instr_out : out cpu_word;
         data_out : out cpu_word
     );
@@ -83,6 +100,7 @@ architecture Structural of main is
     
     signal s_register_data_out1 : cpu_word;
     signal s_register_data_out2 : cpu_word;
+    signal s_register_status : status_led_output;
     component registerfile port(
         clk : in std_logic;
         reset : in std_logic;
@@ -92,7 +110,8 @@ architecture Structural of main is
         data_in : in cpu_word;
         en_write : in boolean;
         data_out1 : out cpu_word;
-        data_out2 : out cpu_word
+        data_out2 : out cpu_word;
+        status : out status_led_output
     );
     end component;
     
@@ -124,7 +143,7 @@ begin
         port map(
         selector => s_decode_ctrl_register,
         x(0) =>  s_alu_result,
-        x(1) =>  s_bram_data_out,
+        x(1) =>  s_ram_control_data_out_reg,
         x(2) =>  s_pc_value_out_next,
         y => s_mux_register_result
         );
@@ -138,6 +157,21 @@ begin
         y => s_mux_alu_result
         );
 
+    c_ram_control : ram_control port map(
+        clk => m_clk,
+        width => s_decode_width_ram,
+        addr_in => s_alu_result,
+        pc_in => s_pc_value_out,
+        en_write => s_decode_en_write_ram,
+        data_in_reg => s_register_data_out2,
+        data_in_ram => s_bram_data_out,
+        en_write_out => s_ram_control_en_write_out, 
+        data_out_reg => s_ram_control_data_out_reg,
+        data_out_ram => s_ram_control_data_out_ram,
+        addr_out => s_ram_control_addr_out,
+        pc_out => s_ram_control_pc_out
+    );
+
     c_pc : pc port map(
         clk => m_clk,
         set => s_pc_set,
@@ -150,9 +184,9 @@ begin
     
     
     c_decode : decode port map(
-        clk => m_clk,
+        --clk => m_clk,
         instr => s_bram_instr_out,
-        cur_pc => s_pc_value_out_next,
+        cur_pc => s_pc_value_out,
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,
@@ -163,7 +197,6 @@ begin
         width_ram => s_decode_width_ram,
         ctrl_register => s_decode_ctrl_register,
         en_write_ram => s_decode_en_write_ram,
-        en_read_ram => s_decode_en_read_ram,
         en_write_reg => s_decode_en_write_reg,
         pc_set => s_pc_set,
         add_offset => s_pc_set_value 
@@ -171,14 +204,11 @@ begin
     
     c_bram : block_ram port map(
         clk => m_clk,
-        reset => m_bram_reset,
-        data_in => s_register_data_out2,
-        addr => s_alu_result,
-        pc_in => s_pc_value_out,
-        en_write => s_decode_en_write_ram,
-        en_read => s_decode_en_read_ram,
+        data_in => s_ram_control_data_out_ram,
+        addr => s_ram_control_addr_out,
+        pc_in => s_ram_control_pc_out,
+        en_write => s_ram_control_en_write_out,
         data_out => s_bram_data_out,
-        width => s_decode_width_ram,
         instr_out => s_bram_instr_out
     );
     
@@ -191,7 +221,8 @@ begin
         data_in => s_mux_register_result,
         data_out1 => s_register_data_out1,
         data_out2 => s_register_data_out2,
-        en_write => s_decode_en_write_reg
+        en_write => s_decode_en_write_reg,
+        status => s_register_status
     );
     
     c_alu : alu port map(
@@ -201,4 +232,7 @@ begin
         result => s_alu_result,
         zero_flag => s_alu_zero_flag
     );       
+    
+    m_status_flag <= s_register_status;
+    
 end Structural;
