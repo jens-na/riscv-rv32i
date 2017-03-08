@@ -3,19 +3,25 @@
 
 %----------------------------------------------------------------------------------------
 \section{Einleitung}
-VHDL (\textit{Very High Speed Integrated Circuit Hardware Description Language}) ist eine Hardwarebeschreibungssprache. Mit ihr kann das Verhalten einer logischen Schaltung textuell beschrieben werden. Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender dabei jedoch nur bedingten Einfluss. Anstatt eine Schaltung aus ihren einzelnen elektronischen Teilen zu entwerfen, funktioniert VHDL auf einer höheren Abstraktionsschicht. Es wird lediglich beschrieben, wie sich eine Schaltung oder ein logischer Teil einer Schaltung in Abhängigkeit bestimmter Eingangsgrößen verhält.
+VHDL (\textit{Very High Speed Integrated Circuit Hardware Description Language}) ist eine Hardwarebeschreibungssprache, die 1980 entwickelt wurde. Mit ihr kann das Verhalten einer logischen Schaltung formalisiert textuell beschrieben werden. Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender dabei jedoch nur bedingten Einfluss, da die Implementierung der Schaltung üblicherweise von automatisierten Werkzeugen durchgeführt wird. 
 
+Anstatt eine Schaltung aus ihren einzelnen elektronischen Teilen zu entwerfen, arbeitet VHDL auf einer höheren Abstraktionsschicht. Es wird lediglich beschrieben, wie sich eine Schaltung oder ein logischer Teil einer Schaltung in Abhängigkeit bestimmter Eingangsgrößen verhält.
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+\section{Entwicklung mit VHDL}
+\paragraph{Entities.} In VHDL werden \textit{Entities} definiert, die eine Klasse von Schaltelementen repräsentieren. Entities bestehen üblicherweise aus mehreren Ein-und Ausgangs\textit{ports}. Innerhalb der \textit{Architecture} einer \textit{Entity} wird festgelegt, wie sich die Ausgangssignale in Abhängigkeit der Eingangssignale verhalten.
+
+\paragraph{Parallelität.} Bei der Entwicklung ist insbesondere zu beachten, dass das Verhalten einer Entity, anders als von Programmiersprachen gewohnt, im Allgemeinen nicht sequentiell abgearbeitet wird. Vielmehr findet die Signalverarbeitung parallel statt.
+
+\paragraph{Processes.} Innerhalb des Verhaltens können deshalb Prozesse deklariert werden, deren Instruktionen sequentiell abgearbeitet werden. Zu diesem Zweck können innerhalb eines Prozesses auch \textit{Variablen} verwendet werden.
+
+\paragraph{Strukturmodelle.} Neben Verhaltensmodellen kann mit Strukturmodellen eine Schaltung aus mehreren Entities beschrieben werden. Dafür werden sog. \textit{Components} (Instanzen von zuvor beschriebenen Entities) erstellt und deren Ports miteinander verbunden.
+
+So können verhältnismäßig einfach komplexe Verschaltungen beschrieben werden.
+%----------------------------------------------------------------------------------------
+ 
+%----------------------------------------------------------------------------------------
+\section{Weiterverabeitung}
 Das beschriebene Verhalten kann dann mittels entsprechender weiterführender Tools \textit{simuliert} und in eine echte Schaltung \textit{synthetisiert} und anschließend bspw. auf einem FPGA \textit{implementiert} werden.
-%----------------------------------------------------------------------------------------
-
-%----------------------------------------------------------------------------------------
-\section{Syntax?}
-%----------------------------------------------------------------------------------------
-
-%----------------------------------------------------------------------------------------
-\section{Unterschiede zur Programmiersprache / Herausforderungen}
-%----------------------------------------------------------------------------------------
-
-%----------------------------------------------------------------------------------------
-\section{Simulation und Synthese}
 %----------------------------------------------------------------------------------------
