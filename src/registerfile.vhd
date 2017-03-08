@@ -27,18 +27,11 @@ architecture Behavioral of registerfile is
 -- Array of 31 register blocks: zero is not created as this always returns 0
 type reg_block_t is array (1 to 2**reg_idx_length) of std_logic_vector(cpu_word_length - 1 downto 0);
 signal reg_blocks : reg_block_t := (
---    1 => (0 => '1', others => '0'), -- 1
---    2 => (1 => '1', others => '0'), -- 2
     others => (others => '0')
 );
 
 begin
     
-    --Asymc write:
-    --data_out1 <= reg_blocks(to_integer(unsigned(rs1))) when (unsigned(rs1) = 0) else (others => '0');
-    --data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (unsigned(rs2) = 0) else (others => '0');
-     -- data_out2 <= reg_blocks(to_integer(unsigned(rs2))) when (rs2 /= zero_reg) else (others => '0');
-
     --status_flag
     status <= reg_blocks(10)(15 downto 0);
 
@@ -65,7 +58,6 @@ begin
                 reg_blocks(to_integer(unsigned(rd))) <= data_in;
             end if;
             
-            --data_out1 <= (others => '1');
         end if;
         
     end process;

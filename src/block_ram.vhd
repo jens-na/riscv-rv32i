@@ -55,7 +55,7 @@ architecture Behavioral of block_ram is
         9 => x"0062c3b3",
 
         -- or t2,t0,t1
-        10 => x"0062e3b2",
+        10 => x"0062e3b3",
 
         -- and t2,t0,t1
         11 => x"0062f3b3",

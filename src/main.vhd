@@ -184,7 +184,6 @@ begin
     
     
     c_decode : decode port map(
-        --clk => m_clk,
         instr => s_bram_instr_out,
         cur_pc => s_pc_value_out,
         rs1 => s_decode_rs1,
