@@ -1,0 +1,37 @@
+\chapter{Herangehensweise und Organisation} 
+\label{Herangehensweise} 
+
+\section{Teammanagement}
+Um das gemeinsame Ziel, nämlich die Implementierung einer RISC-V CPU,
+umzusetzen musste vor Beginn der eigentlichen Arbeit gewisse
+Vorkehrungen getroffen werden, um die Arbeit im Team zu ermöglichen.
+Hierzu gehört insbesondere die Einigung auf eine bestimmte
+Projektstruktur und eine Versionsverwaltung in welcher die Quelldateien
+der Implementierung abgelegt werden können. Einige dieser
+organisatorischen Angelegenheiten werden in den folgenden Kapiteln 
+genauer erläutert. 
+
+\subsection{Projektstruktur}
+Wie bereits in Kapitel \ref{vivado} erwähnt wurde ist als
+Entwicklungsumgebung Vivado zum Einsatz gekommen. Vivado gibt für
+VHDL-Projekte bereits eine bestimmte Projektstruktur vor, diese ist
+jedoch für die Arbeit im Team ungeeignet, da sie Dateien mit festen 
+Pfadangaben  und vielen temporären, automatisch erzeugten Dateien
+beinhaltet. Dadurch können Vivado-Projekte nicht ohne Weiteres in einer
+gemeinsamen Versionsverwaltung geteilt werden. Um trotz allem eine
+Projektstruktur zu erstellen, die auch für das Versionskontrollsystem
+„git“ geeignet ist, sind verschiedene Anpassungen nötig gewesen.
+
+\paragraph{Build-Script.}  
+Vivado selbst ist in der Programmiersprache Tcl geschrieben und kann
+ebenfalls mit dieser Programmiersprache erweitert werden. Es ist möglich  
+\paragraph{Aufbau.}  
+
+\subsection{Versionskontrolle}
+\subsection{Arbeitsteilung}
+
+\section{Testumgebung}
+\subsection{Excel}
+\subsection{risc-v-instr}
+\subsection{Hardware Tests}
+- Constraints/LEDs
