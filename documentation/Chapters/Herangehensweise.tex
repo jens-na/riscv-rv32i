@@ -1,5 +1,5 @@
-\chapter{Herangehensweise und Organisation} 
-\label{Herangehensweise} 
+\chapter{Organisation} 
+\label{organisation} 
 
 \section{Teammanagement}
 Um das gemeinsame Ziel, nämlich die Implementierung einer RISC-V CPU,
@@ -20,18 +20,166 @@ Pfadangaben  und vielen temporären, automatisch erzeugten Dateien
 beinhaltet. Dadurch können Vivado-Projekte nicht ohne Weiteres in einer
 gemeinsamen Versionsverwaltung geteilt werden. Um trotz allem eine
 Projektstruktur zu erstellen, die auch für das Versionskontrollsystem
-„git“ geeignet ist, sind verschiedene Anpassungen nötig gewesen.
+\emph{git} geeignet ist, sind verschiedene Anpassungen nötig gewesen.
 
 \paragraph{Build-Script.}  
 Vivado selbst ist in der Programmiersprache Tcl geschrieben und kann
-ebenfalls mit dieser Programmiersprache erweitert werden. Es ist möglich  
-\paragraph{Aufbau.}  
+ebenfalls mit dieser Programmiersprache erweitert werden. Es ist möglich
+ein Tcl-Script zu erstellen, was ein temporäres Vivado-Projekt erstellt
+in dem gearbeitet werden kann. Der Vorteil ist, dass die Quelldateien in
+einem anderen Ordner aufbewahrt werden und unnötige Dateien des
+temporären Vivado-Projektes nicht unter Versionskontrolle gestellt werden.
+
+\paragraph{Aufbau.} Es ergibt sich folgende Projektstruktur. Alle Ordner
+bis auf \code{work/} werden in einem Versionskontrollsystem abgelegt:
+\begin{lstlisting}[inputencoding={utf8},extendedchars=false,escapeinside=``]
+riscv/
+  documentation/ -- Verzeichnis f`ü`r Dokumentation
+  script/        -- Verschiedene Hilfsprogramme 
+  src/           -- VHDL Quelldateien 
+  test/          -- VHDL Testbench Dateien 
+  work/          -- tempor`ä`res Vivado-Projekt (nicht in git) 
+  build.sh       -- Programm zur Generierung des Vivado-Projekts
+  build.tcl      -- Tcl Script zur Generierung des Vivado-Projekts
+  start.sh       -- Start-Programm f`ü`r Vivado 
+\end{lstlisting}
+
 
 \subsection{Versionskontrolle}
-\subsection{Arbeitsteilung}
+Als Versionsverwaltungssystem hat sich die Gruppe für \emph{git}
+entschieden. Die Hochschule RheinMain bietet für Softwareprojekte
+zusätzlich einen \emph{Gitlab}-Server an, auf dem das Projekt unter
+dem Namen
+\textbf{vhdl-cpu/riscv}\footnote{\url{https://zenon.cs.hs-rm.de/vhdl-cpu/riscv}
+(08.03.2017)} geführt ist.
 
-\section{Testumgebung}
-\subsection{Excel}
-\subsection{risc-v-instr}
-\subsection{Hardware Tests}
-- Constraints/LEDs
+\subsection{Arbeitsweise}
+
+\paragraph{Workflow.} Das Projekt wurde unter Berücksichtigung des sogenannten
+\emph{GitHub-Flows}\footnote{\url{https://guides.github.com/introduction/flow/}
+(08.03.2017)}
+entwickelt. Das bedeutet, dass verschiedene Regeln, was das 
+Versionskontrollsystem betrifft, eingehalten wurden:
+
+\begin{enumerate}
+\item Es gibt einen Branch \emph{master}, der zu jeder Zeit kompilierbar
+und in Vivado simulierbar ist.
+\item Entwicklungen werden in neuen Branches durchgeführt (sogenannte
+Feature-Branches).
+\item Ist die Entwicklung eines Features für das Projekt abgeschlossen
+wird ein \emph{Merge-Request} des entsprechenden Entwicklers gestellt.
+\item Die Gruppe entscheidet anschließend gemeinsam, ob das Feature in
+den \emph{master}-Branch übernommen werden soll oder, ob noch Änderungen
+zur Fertigstellung notwendig sind.
+\end{enumerate}
+
+Die Entwicklung nach diesem Prinzip hat mehrere Vorteile. Es ist zum
+Beispiel direkt nachvollziehbar wer, welche Teile der Entwicklung
+übernommen hat. Auch das gemeinsame Entscheiden über die Integration in
+den \emph{master}-Branch kann helfen Fehler frühzeitig zu erkennen.
+
+Zur Synthese der RISC-V-CPU auf dem FPGA wurde zusätzlich noch ein Branch
+namens \emph{master\_\,fpga} angelegt. Dieser Branch enthält zusätzlich zu
+der CPU noch FPGA-spezifische Änderungen, wie zum Beispiel die
+Constraint-Datei für die Portbelegung.
+
+\paragraph{Arbeitsteilung.} In Kapitel \ref{sec:komponenten} wurden die
+verschiedenen Komponenten der CPU vorgestellt. Die Entwicklung der
+einzelnen Bausteine wurde in der Gruppe aufgeteilt. Anschließend mussten
+die verschiedenen Maschinenbefehle, wie in Tabelle
+\ref{maschinenbefehle} zu sehen, umgesetzt werden. Diese wurden
+nach der Entwicklung der Komponenten aufgeteilt und in Feature-Branches 
+entwickelt. Zum Beispiel gibt es einen Branch namens \emph{ar\_\,load}, der die 
+Entwicklung der Load/Store-Befehle wie \code{lw, lb, lh} beinhaltet.
+
+\section{Testumgebung} 
+\subsection{Testbenches}
+Zu jeder erstellten Komponente, die in Kapitel \ref{sec:komponente}
+erläutert wurde sind Testbenches erstellt worden. Eine Testbench testet
+\emph{eine} Komponente unabhängig und stellt somit einen Modultest der
+entsprechenden Komponente dar. Zusätzlich wurde eine Testbench namens
+\code{main\_tb} erzeugt, die das Zusammenspiel der einzelnen Komponenten
+testet (Integrationstest). In der Testbench \code{main\_tb} kann somit
+die Arbeitsweise der CPU simuliert und untersucht werden. 
+
+Generell wurden Testbenches während der Entwicklung verwendet, um zu
+überprüfen, ob sich die Signale und Funktionsweise der Komponenten
+richtig verhalten.
+\subsection{White-Box-Test}
+Zusätzlich wurden mehrere White-Box-Tests durchgeführt, mit welchen
+ersichtlich ist, ob die CPU die gewünschten Änderungen an den 
+Registern nach Abarbeitung einer Instruktion durchführt.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+Instruktion & x5(t0) & x6(t1) & x7(t2) \cr
+\hline
+lhu t1,506(zero) & 0x81 & 0x8713 & 0x82070785 \cr
+add t2, t0, t1 & 0x81 & 0x8713 & 0x8794 \cr 
+sub t2,t0,t1 & 0x81 & 0x8713 & 0xffff796e \cr 
+xor t2,t0,t1 & 0x81 & 0x8713 & 0x8792 \cr
+\dots & \dots & \dots & \dots
+\end{tabular}
+\caption{Ausschnitt der White-Box-Tests und die Beschreibung der
+Register nachdem der entsprechende Test durchgeführt wurde.}
+\label{tab:whiteboxtest}
+\end{table}
+Die Testfälle wurde manuell in der Simulationsansicht von Vivado überprüft.
+
+\subsection{Black-Box-Test}
+Nachdem die Implementierung abgeschlossen war und es möglich war den
+vorliegenden FPGA mit der RISC-V-CPU zu „programmieren“ wurden
+Black-Box-Tests mit dem FPGA durchgeführt. Die niederwertigsten 16 Bits
+des Registers \code{a0} (Status-Register) wurden mit den LEDs auf dem FPGA verbunden. Es
+wurden verschiedene Programme ausgeführt und die Ausgabe der LED-Anzeige
+überprüft.
+
+\subsection{Hilfsprogramm \emph{riscv-instr}}
+Um gültige 32 Bit Maschinenbefehle für die CPU testweise zu erstellen
+wurde ein Hilfsprogramm namens \emph{riscv-instr} erstellt, welches in
+der Lage ist zu einem gültigen Assemblerprogramm die entsprechenden
+Instruktionen für die CPU auszugeben. Mit diesem Programm ist es somit
+möglich Instruktionen zu erzeugen, die in den RAM der CPU geladen werden
+können.
+
+Beispiel-Assembler-Programm:
+\begin{lstlisting}[language={[x86masm]Assembler}]
+  .globl main
+  .type main, @function
+main:
+  addi x1,x2,12 
+  add  x1,x1,x2
+\end{lstlisting}
+
+Nach Programmaufruf werden die beiden Instruktionen als Hexadezimal
+ausgegeben:
+\begin{lstlisting}[language=bash]
+riscv-instr testasm.s
+0x00c10093 
+0x002080b3 
+\end{lstlisting}
+Die beiden Instruktionen können in den RAM der CPU geladen werden und
+können von der RISC-V CPU verarbeitet werden. Das Programm
+\emph{riscv-instr} benötigt zur Erzeugung der Maschinenbefehle die 
+entsprechende GNU Cross Compiler Toolchain für RISC-V
+\footnote{\url{https://github.com/riscv/riscv-gnu-toolchain}
+(08.03.2017)}. 
+
+\subsection{RAM-Initialisierung}
+Um bei der Erstellung des RAMs möglichst flexibel zu sein kann der
+Inhalt aus einer Datei eingelesen werden. \cite[S. 187]{XST}
+Hierzu müssen alle Instruktion, die in den RAM der CPU geladen werden
+sollen, als 32-Bit-Vektor in einer Datei abgelegt werden:
+
+Beispiel-Datei:
+\begin{lstlisting}
+00000000000000000000001010010011
+00000001001000101110010100010011
+00000000000001010000000001100111
+...
+\end{lstlisting}
+
+Die Funktion \ref{src:blockram_read_file} liest beim Synthese-Vorgang
+den Inhalt der entsprechenden Datei und füllt den RAM mit den
+Instruktionen. Dies war besonders für den Black-Box-Test notwendig.
