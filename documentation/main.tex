@@ -52,6 +52,25 @@ chapterinoneline, % Uncomment to place the chapter title next to the number on o
 \usepackage{graphicx}
 \usepackage[font=it]{caption}
 
+\usepackage{listings}
+\lstdefinelanguage{VHDL}{
+   morekeywords={
+     library,use,all,entity,is,port,in,out,end,architecture,of,
+     begin,and
+   },
+   morecomment=[l]--
+}
+
+\lstdefinestyle{vhdl}{
+   language     = VHDL,
+   basicstyle   = \ttfamily,
+   keywordstyle = \color{keyword}\bfseries,
+   commentstyle = \color{comment}
+}
+
+% command \code{Text}
+%\newcommand{\code}[1]{\texttt{#1}}
+
 %----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
