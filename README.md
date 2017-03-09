@@ -9,8 +9,8 @@ riscv/
   src/          -- Source files
   test/         -- Test source files
   work/         -- work files/folders for the Vivado project
+  start.sh      -- start script for Vivado 
   build.sh      -- build script to create the Vivado project
-  build.sh      -- start script for Vivado 
   build.tcl     -- Tcl project generation file
 ```
 
