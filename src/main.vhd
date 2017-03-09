@@ -5,6 +5,9 @@ use work.utils.all;
 use work.opcodes.all;
 
 entity main is
+  generic (
+    RAM_FILE : string := "/tmp/binary.bin"
+  );
   Port (
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
@@ -83,7 +86,9 @@ architecture Structural of main is
     
     signal s_bram_data_out : cpu_word;
     signal s_bram_instr_out : cpu_word;
-    component block_ram port(
+    component block_ram 
+        generic (ram_file : string);
+        port(
         clk : in std_logic;
         --reset : in std_logic;
         data_in : in cpu_word;
@@ -197,7 +202,9 @@ begin
         add_offset => s_pc_set_value 
     );
     
-    c_bram : block_ram port map(
+    c_bram : block_ram 
+    generic map(ram_file => RAM_FILE)
+    port map(    
         clk => m_clk,
         data_in => s_ram_control_data_out_ram,
         addr => s_ram_control_addr_out,

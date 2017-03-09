@@ -5,6 +5,7 @@ use work.utils.all;
 use work.opcodes.all;
 
 entity main_tb is
+generic(RAM_FILE : string := "/tmp/binary.bin");
 --  Port ( );
 end main_tb;
 
@@ -19,7 +20,9 @@ architecture Behavioral of main_tb is
     
 begin
 
-    uut : entity work.main port map (
+    uut : entity work.main 
+    generic map(RAM_FILE => RAM_FILE)
+    port map (
         m_clk => s_clk,
         m_pc_reset => s_pc_reset,
         --m_bram_reset => s_bram_reset,

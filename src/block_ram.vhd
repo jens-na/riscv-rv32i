@@ -9,7 +9,8 @@ use work.opcodes.all;
 entity block_ram is
 	generic (
 		ram_size : integer := RAM_SZ;
-		address_bits : integer := cpu_word_length
+		address_bits : integer := cpu_word_length;
+		ram_file : string := "/tmp/binary.bin"
 	);
     port ( 
         clk : in std_logic;
@@ -38,7 +39,7 @@ architecture Behavioral of block_ram is
         return RAM;
     end function;
 	
-    signal memory : memory_t := InitRamFromFile("/tmp/binary.bin");
+    signal memory : memory_t := InitRamFromFile(ram_file);
 begin
 
 	process (clk, addr)
