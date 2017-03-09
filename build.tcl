@@ -105,8 +105,8 @@ set proj_dir [get_property directory [current_project]]
 set obj [get_projects riscv]
 set_property "default_lib" "xil_defaultlib" $obj
 set_property "ip_cache_permissions" "read write" $obj
-set_property "ip_output_repo" "/home/jens/documents/study/5-fpga/riscv/work/riscv/riscv.cache/ip" $obj
-set_property "part" "xc7k70tfbv676-1" $obj
+set_property "ip_output_repo" "work/riscv/riscv.cache/ip" $obj
+set_property "part" "xc7a100tcsg324-1" $obj
 set_property "sim.ip.auto_export_scripts" "1" $obj
 set_property "simulator_language" "VHDL" $obj
 set_property "target_language" "VHDL" $obj
@@ -148,6 +148,15 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 
 # Set 'constrs_1' fileset object
 set obj [get_filesets constrs_1]
+
+set file "[file normalize "$origin_dir/src/constraints/constraint.xdc"]"
+set file_added [add_files -norecurse -fileset $obj $file]
+set file "$origin_dir/src/constraints/constraint.xdc"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
+set_property "file_type" "XDC" $file_obj
+
+
 
 # Empty (no sources present)
 
@@ -198,7 +207,7 @@ if {[string equal [get_runs -quiet synth_1] ""]} {
   set_property flow "Vivado Synthesis 2016" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
-set_property "part" "xc7k70tfbv676-1" $obj
+set_property "part" "xc7a100tcsg324-1" $obj
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
@@ -211,7 +220,7 @@ if {[string equal [get_runs -quiet impl_1] ""]} {
   set_property flow "Vivado Implementation 2016" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
-set_property "part" "xc7k70tfbv676-1" $obj
+set_property "part" "xc7a100tcsg324-1" $obj
 set_property "steps.write_bitstream.args.readback_file" "0" $obj
 set_property "steps.write_bitstream.args.verbose" "0" $obj
 
