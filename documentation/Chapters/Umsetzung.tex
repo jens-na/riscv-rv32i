@@ -89,15 +89,14 @@ Bei der Implementierung wurde eine einfache \textit{Case}-Anweisung verwendet, d
 
 \subsection{Random Access Memory}
 
-Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt), werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgelegt.
+Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt), werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgespeichert.
+Für die Erstellung dieser Komponente gibt es eine Reihe von vorgegebenen Templates an die man sich halten sollte, wenn man sicherstellen möchte, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
 
-Grundsätzlich unterschiedet man zwei Arten von RAM, die implementiert werden können:
-\textit{Distributed RAM} greift auf die Look-Up-Tables und Logigblöcke des FPGAs zu, während es sich beim \textit{Block RAM} um ein internes Speichermodul des FPGAs handelt.
-Für welchen Typ man sich entscheidet hängt von vielen Faktoren ab, auf die hier nicht im Detail eingegangen werden soll. 
-Grundsätzlich sollte man eher Block RAM verwenden, wenn man viel Speicherplatz benötigt, um keine Logikzellen zu belegen.
-Distributed RAM dagegen kann flexibler konfiguriert werden. 
-Für die Erstellung von RAM gibt es eine Reihe von vorgegebenen Templates an die man sich halten sollte, wenn man sicherstellen möchte, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
+Grundsätzlich unterschiedet man zwei Arten von RAM, die auf den FPGAs implementiert werden können:
+Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logigblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs.
+Benötigt man viel Speicherplatz, ist es ratsam eher den Block RAM zu verwenden, da dieser keine Logikzellen belegt, wohingegen Distributed RAM flexibler konfiguriert werden kann.
 Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welchen Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung war dies allerdings nicht notwendig.
+
 
 In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{asynchronem Lesezugriff} konfiguriert, was von den Synthesetools automatisch als Distributed RAM erkannt und umgesetzt wird.
 Der Begriff Dual-Port bezieht sich auf zwei Datenausgangsports, in diesem Fall einem Ausgang für den aktuellen Maschinenbefehl (\textit{instr\_out}) und einem Datenausgang (\textit{data\_out}).
@@ -110,19 +109,50 @@ Zusätzlich erfordern bestimmte Instruktionen, wie z.B. \textit{load halfword} o
 Möchte man diese Unterscheidung der Bitbreite eines Zugriffs direkt im RAM implementieren, läuft man Gefahr, dass das Ergebnis nicht mehr dem vorgegebenen Template entspricht und der RAM bei der Synthese nicht mehr als solcher erkannt wird.
 Aus diesem Grund wurde eine zusätzliche \textit{RAM-Control}-Einheit erstellt, die die Zugriffslogik abstrahiert und sicherstellt, dass auf den Hauptspeicher nur mit der Breite von 32 Bit zugegriffen wird.
 
-\paragraph{Adressierung.} Wird nun ein bestimmtes Byte im Speicher adressiert, muss die Kontrolleinheit die Originaladresse durch vier teilen um die Adresse des zugehörigen Wortes im RAM zu erhalten. 
-Dieses Wort wird anschließend gelesen und über die beiden niederwertigsten Bits der ursprünglichen Adresse extrahiert man das passende Byte.
-Bei einem Lesezugriff wird dieses Byte nun in die acht niederwertigsten Bits des Datenausgangs gepackt, abhängig von der Instruktion und dem Vorzeichen des Bits mit Nullen oder Einsen aufgefüllt und an die Registerbank weitergeleitet.
-Wird auf den Speicher schreibend zugegriffen, wird das jeweilige Byte des gelesenen Wortes ersetzt und anschließend das veränderte Wort in den Speicher zurückgeschrieben.
-Dieses Vorgehen kann natürlich auch auf Halbwort-Zugriffe übertragen werden.
+\paragraph{Adressierung.} Wird nun ein bestimmtes Byte im Speicher adressiert, muss die Kontrolleinheit die Adresse umwandeln, um die Position des zugehörigen Wortes im RAM zu erhalten. 
+Dieses Wort wird anschließend gelesen um daraus über die beiden niederwertigsten Bits der ursprünglichen Adresse das passende Byte zu extrahieren.
 
-\paragraph{Beispiel:}
-Angenommmen das Wort 0x00184421 befindet sich im Hauptspeicher an der Adresse 0x2 und es erfolgt ein Zugriff auf das Byte an der Adresse 0xa.
-Da sich die Adresse 0xa auf eine Byteadressierung bezieht wird diese von der Kontrolleinheit durch vier geteilt um an das richtige Wort im Speicher zu kommen.
-Unter der resultierenden Adresse 0x2 wird folglich das Wort 0x00184421 gelesen.
-Über die niederwertigsten Bits der ursprünglichen Adresse ($10_2$) extrahiert man das passende Byte 0x18 aus diesem Wort.
-Handelt es sich um einen Lesezugriff wird dieses Byte zu dem Wort 0x00000018 aufgefüllt und an den Datenausgang angelegt.
-Bei einem Schreibzugriff wird das Byte 0x18 im ursprünglichen Wort ersetzt (z.B. durch 0xff) und das modifizierte Wort (in diesem Fall also 0x00ff4421) wieder an die Adresse 0x2 in den Speicher geschrieben.
+Ein Beispiel soll diesen Vorgang verdeutlichen:\\
+Angenommen der Hauptspeicher enthält das Wort $00184421_{16}$ an der Adresse $2_{16}$,
+und es erfolgt ein Zugriff auf ein Byte über die Adresse $A_{16}$.
+\begin{figure} [htpb]
+    \centering
+        \begin{tabular}{|c|c|c|c|c|}
+            \multicolumn{1}{c}{3} & \multicolumn{1}{c}{2} &  \multicolumn{1}{c}{1}& \multicolumn{1}{c}{0}\\
+            \hline
+            $00_{16}$ & $18_{16}$ & $44_{16}$ & $21_{16}$\\
+            \hline
+        \end{tabular}
+        \caption{Speicherinhalt an der Adresse $2_{16}$}
+\end{figure}
+\\                                                        
+Da sich die Adresse $A_{16}$ auf ein Byte bezieht, muss sie von der Kontrolleinheit durch vier geteilt werden um an das Wort im Speicher, das das gewünschte Byte enthält, zu gelangen.
+Unter der resultierenden Adresse $2_{16}$ wird folglich das oben dargestellte Wort gelesen.
+Anschließend wird über die niederwertigsten Bits der ursprünglichen Adresse, in diesem Fall also $10_2$, das passende Byte mit dem Inhalt $18_{16}$ aus diesem Wort extrahiert.\\
+Handelt es sich um einen Lesezugriff wird dieses Byte zu einem Wort umgeformt und an den Datenausgang angelegt:\\
+\begin{figure} [htpb]
+    \centering
+        \begin{tabular}{|c|c|c|c|c|}
+            \multicolumn{1}{c}{3} & \multicolumn{1}{c}{2} &  \multicolumn{1}{c}{1}& \multicolumn{1}{c}{0}\\
+            \hline
+            $00_{16}$ & $00_{16}$ & $00_{16}$ & $18_{16}$\\
+            \hline
+        \end{tabular}
+        \caption{Der Wert am Datenausgang nach dem Lesezugriff}
+\end{figure}\\
+Wird dagegen schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
+\begin{figure} [htpb]
+    \centering
+        \begin{tabular}{|c|c|c|c|c|}
+            \multicolumn{1}{c}{3} & \multicolumn{1}{c}{2} &  \multicolumn{1}{c}{1}& \multicolumn{1}{c}{0}\\
+            \hline
+            $00_{16}$ & FF$_{16}$ & $44_{16}$ & $21_{16}$\\
+            \hline
+        \end{tabular}
+        \caption{Speicherinhalt an der Adresse $2_{16}$ nach dem Schreibzugriff}
+\end{figure}\\
+
+Der beschrieben Vorgang kommt ebenso bei einem Speicherzugriff auf ein Halbwort zur Anwendung.
 
 
 %----------------------------------------------------------------------------------------
