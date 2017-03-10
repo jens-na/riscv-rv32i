@@ -39,3 +39,5 @@ set_property IOSTANDARD LVCMOS33 [get_ports {m_status_flag[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports m_clk]
 set_property IOSTANDARD LVCMOS33 [get_ports m_pc_reset]
 set_property IOSTANDARD LVCMOS33 [get_ports m_register_reset]
+
+create_clock -period 21.277 -name m_clk -waveform {0.000 10.638} [get_ports m_clk]
