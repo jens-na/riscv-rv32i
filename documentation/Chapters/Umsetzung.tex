@@ -1,10 +1,11 @@
 \iffalse
-\TODO: RAM im code umbenennen
+\TODO: mem out of bound bei RAM
+\TODO: Block RAM im code umbenennen
 \TDOD: Probleme: RAM
 \TODO: Komponente Main
 \TODO: Probleme: ALU und Decode erst clk-sensitiv implementiert
 \TODO: maschinenbefehle durchgehen: wurde etwas besonders implementiert?
-\TODO: warum zwei Takte?
+\TODO: warum zwei Takte? => Schreibzugriff RAM, Register...?
 \TODO: latches
 \TODO: synchrones design
 \TODO: Register erklären?
@@ -99,8 +100,9 @@ Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welchen A
 
 
 In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{asynchronem Lesezugriff} konfiguriert, was von den Synthesetools automatisch als Distributed RAM erkannt und umgesetzt wird.
-Der Begriff Dual-Port bezieht sich auf zwei Datenausgangsports, in diesem Fall einem Ausgang für den aktuellen Maschinenbefehl (\textit{instr\_out}) und einem Datenausgang (\textit{data\_out}).
-Die ansychronen Ausgänge haben den Vorteil, dass die Daten bei einem Lesezugriff nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
+Der Begriff Dual-Port bezieht sich auf den Umstand, dass die Komponente je zwei Ein- und Ausgangsports besitzt.
+Da zusätzlich zwei separate Adressleitungen zur Verfügung stehen, kann simultan auf Maschinenbefehle und Daten zugegriffen werden.
+Die ansychronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
 Der Schreibzugriff ist, ähnlich wie bei der Registerbank, taktflankengesteuert und von einem zusätzlichen Flag abhängig.
 %TODO: Größe RAM
 
@@ -151,8 +153,17 @@ Wird dagegen schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegri
         \end{tabular}
         \caption{Speicherinhalt an der Adresse $2_{16}$ nach dem Schreibzugriff}
 \end{figure}\\
+Der oben beschriebene Vorgang kann ebenso auf einen Speicherzugriff mit einer Breite von 16 oder 32 Bit übertragen werden.
 
-Der beschrieben Vorgang kommt ebenso bei einem Speicherzugriff auf ein Halbwort zur Anwendung.
+\paragraph{Speicherausrichtung.} 
+Ein 32-Bit-Wort gilt als im Speicher ausgerichtet, wenn dessen Adresse ein ganzzahliges Vielfaches von 4 ist.
+Findet nun ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, die also kein ganzzahliges Vielfaches von 4 ist, ergibt sich folgendes Problem:
+Nicht alle vier Bytes des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher, die Implementierung lässt aber pro Maschinenbefehl nur den Zugriff auf eine Adresse zu (zu Erinnerung: der zweite Ausgangsport ist für die Maschinenbefehle reserviert und kann hier nicht weiterhelfen).
+Um diese Art Zugriff zu ermöglichen, hätte man die Anzahl der Takte pro Maschinenbefehl erhöhen müssen. 
+Stattdessen wurde hier ein nicht ausgerichteter Speicherzugriff unterbunden.
+Bei 16-Bit-Zugriffen gilt diese Einschränkung für eine 2-Byte-Ausrichtung, d.h. hier muss die die Adresse des Zugriffs ein ganzzahliges Vielfaches von 2 sein.
+
+
 
 
 %----------------------------------------------------------------------------------------
