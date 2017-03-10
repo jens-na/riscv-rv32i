@@ -3,7 +3,7 @@
 
 %----------------------------------------------------------------------------------------
 \section{Einleitung}
-VHDL (\textit{Very High Speed Integrated Circuit Hardware Description Language}) ist eine Hardwarebeschreibungssprache, die 1980 entwickelt wurde. Mit ihr kann das Verhalten einer logischen Schaltung formalisiert textuell beschrieben werden. Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender dabei jedoch nur bedingten Einfluss, da die Implementierung der Schaltung üblicherweise von automatisierten Werkzeugen durchgeführt wird. 
+VHDL (\textit{Very High Speed Integrated Circuit Hardware Description Language}) ist eine Hardwarebeschreibungssprache, die 1980 entwickelt wurde. Mit ihr kann das Verhalten einer logischen Schaltung formalisiert textuell beschrieben werden. 
 
 Anstatt eine Schaltung aus ihren einzelnen elektronischen Teilen zu entwerfen, arbeitet VHDL auf einer höheren Abstraktionsschicht. Es wird lediglich beschrieben, wie sich eine Schaltung oder ein logischer Teil einer Schaltung in Abhängigkeit bestimmter Eingangsgrößen verhält.
 %----------------------------------------------------------------------------------------
@@ -22,11 +22,14 @@ So können verhältnismäßig einfach komplexe Verschaltungen beschrieben werden
 %----------------------------------------------------------------------------------------
  
 %----------------------------------------------------------------------------------------
-\section{Weiterverabeitung}
-\subsection{Vivado}
-\subsection{Entwicklungsworkflow}
-\subsubsection{Simulation}
-\subsubsection{Synthese und Implementierung}
-\subsubsection{Deviceprogrammierung}
-Das beschriebene Verhalten kann dann mittels entsprechender weiterführender Tools \textit{simuliert} und in eine echte Schaltung \textit{synthetisiert} und anschließend bspw. auf einem FPGA \textit{implementiert} werden.
+\section{Umsetzung von VHDL}
+Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender dabei jedoch nur bedingten Einfluss, da die Implementierung der Schaltung in Hardware selbst üblicherweise von automatisierten Werkzeugen durchgeführt wird. Dabei lassen sich mehrere Schritte unterscheiden. In diesem Projekt wurde die Entwicklungsumgebung Vivado Design Suite von Xilinx verwendet, um den VHDL-Code umzusetzen.
+
+\paragraph{Simulation.} In einem ersten Schritt kann der VHDL Code \emph{simuliert} werden, was vor allem in der Testphase von Bedeutung ist. Dabei wird der Code noch nicht auf der Hardware ausgeführt, sondern das Verhalten der Schaltung mittels sog. Testbenches simuliert, die die Schaltung mit virtuellen Eingangssignalen (z. B. Taktrate) versorgen. 
+
+TODO: Screenshot?
+
+\paragraph{Synthese.} Das simulierte Verhalten kann anschließend \emph{synthetisiert} werden. Dabei ist zu beachten, dass nicht die vollständige Menge von zulässigem (und simulationsfähigem VHDL-Code letztlich in eine physische Schaltung synthetisierbar ist (wie z. B. \emph{wait}-Statements). Das ist abhängig von den verwendeten Zieltechnologie (FPGA, ASIC) und den verwendeten Synthesetools. Das Ergebnis der Synthese ist eine Netzliste, die einer textuellen Beschreibung des fertigen Schaltplans entspricht. Dabei werden alle verwendeten Logikgatter und deren Verbindungen aufgeführt.
+
+\paragraph{Implementierung.} Diese Netzliste ist Grundlage der Implementierung in der Hardware. Dabei wird innerhalb des \emph{place and route} Vorgangs unter Berücksichtigung der verfügbaren Hardware und bestimmter zeitlicher Beschränkungen der Schaltung berechnet, wo die einzelnen Schaltelemente auf der Hardware implementiert werden und wie sie verbunden werden.
 %----------------------------------------------------------------------------------------

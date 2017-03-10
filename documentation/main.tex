@@ -49,6 +49,8 @@ chapterinoneline, % Uncomment to place the chapter title next to the number on o
 
 \usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
 
+\usepackage{microtype}
+\usepackage{pdfpages}
 \usepackage{graphicx}
 \usepackage[font=it]{caption}
 
@@ -167,7 +169,15 @@ chapterinoneline, % Uncomment to place the chapter title next to the number on o
 
 \begin{abstract}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-The Thesis Abstract is written here (and usually kept to just this page). The page is kept centered vertically so can expand into the blank space above the title too\ldots
+
+Dieses Dokument wurde im Rahmen des Wahlprojekts \textit{Software- Hardwareschnittstellen} bei Prof. Dr. \emph{Reith} an der Hochschule RheinMain verfasst. 
+
+Es dokumentiert die Konzeptionalisierung und die Implementierung einer CPU auf einem \textit{FPGA} Board. Die verwendete Befehlssatzarchitektur basiert auf dem offenen \textit{\href{https://riscv.org/}{RISC-V}} Design. Die Architektur wurde unter Verwendung der Hardwarebeschreibungssprache \textit{VHDL} implementiert. Anschließend wurde sie testweise für das \textit{\href{https://reference.digilentinc.com/reference/programmable-logic/nexys-4/start}{Xilinx Nexys 4\textsuperscript{\textregistered}}} Board mit Artix-7\textsuperscript{\textregistered} \emph{FPGA} synthetisiert.
+
+Ferner dokumentiert diese Arbeit das Projekt- und Teammanagement. Sie beschreibt die Verwendung von Versionskontrollsystemen, den Workflow und die Testumgebung im Zusammenhang mit der VHDL-Entwicklungsumgebung \textit{Xilinx} \textit{\href{https://www.xilinx.com/products/design-tools/vivado.html}{Vivado\textsuperscript{\textregistered} Design Suite}}.
+
+Das umgesetzte Projekt ist unter der GPL3-Lizenz veröffentlicht das Repository \ref{???} frei verfügbar.
+ 
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -211,8 +221,8 @@ The Thesis Abstract is written here (and usually kept to just this page). The pa
 % Include the appendices of the thesis as separate files from the Appendices folder
 % Uncomment the lines as you write the Appendices
 
-%\include{Appendices/AppendixA}
 \include{Appendices/schaltplan}
+\include{Appendices/Maschinenbefehle}
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
