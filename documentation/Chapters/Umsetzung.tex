@@ -157,26 +157,15 @@ Der oben beschriebene Vorgang kann ebenso auf einen Speicherzugriff mit einer Br
 
 \paragraph{Speicherausrichtung.} 
 Ein 32-Bit-Wort gilt als im Speicher ausgerichtet, wenn dessen Adresse ein ganzzahliges Vielfaches von 4 ist.
-Findet nun ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, die also kein ganzzahliges Vielfaches von 4 ist, ergibt sich folgendes Problem:
-Nicht alle vier Bytes des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher, die Implementierung lässt aber pro Maschinenbefehl nur den Zugriff auf eine Adresse zu (zu Erinnerung: der zweite Ausgangsport ist für die Maschinenbefehle reserviert und kann hier nicht weiterhelfen).
-Um diese Art Zugriff zu ermöglichen, hätte man die Anzahl der Takte pro Maschinenbefehl erhöhen müssen. 
-Stattdessen wurde hier ein nicht ausgerichteter Speicherzugriff unterbunden.
+Findet nun ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, ergibt sich folgendes Problem:
+Nicht alle vier Bytes des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher.
+Um das Wort zu lesen zu können würden zwei Zugriffe benötigt, wofür man wiederum die Anzahl der Takte pro Maschinenbfehel erhöhen müsste.
+Stattdessen wurde hier ein nicht ausgerichteter Speicherzugriff unterbunden.~\ref{}
 Bei 16-Bit-Zugriffen gilt diese Einschränkung für eine 2-Byte-Ausrichtung, d.h. hier muss die die Adresse des Zugriffs ein ganzzahliges Vielfaches von 2 sein.
 
 
 
-
 %----------------------------------------------------------------------------------------
-
-%----------------------------------------------------------------------------------------
-\section{Entwicklungsumgebung}
-\subsection{Vivado}
-\subsection{Entwicklungsworkflow}
-\subsubsection{Simulation}
-\subsubsection{Synthese und Implementierung}
-\subsubsection{Deviceprogrammierung}
-%----------------------------------------------------------------------------------------
-
 
 %----------------------------------------------------------------------------------------
 \section{Details der Implementierung}
