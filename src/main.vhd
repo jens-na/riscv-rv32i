@@ -8,7 +8,6 @@ entity main is
   Port (
     m_clk: in std_logic;
     m_pc_reset : in std_logic;
-    --m_bram_reset : in std_logic;
     m_register_reset : in std_logic;
     m_status_flag : out status_led_output
   );
@@ -21,6 +20,7 @@ architecture Structural of main is
     signal s_ram_control_data_out_ram : cpu_word;
     signal s_ram_control_addr_out : std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
     signal s_ram_control_pc_out : cpu_word;
+    signal s_ram_control_dsbl_wr_reg : boolean;
     component ram_control port(
         clk : in std_logic;
         width : in std_logic_vector(2 downto 0);
@@ -33,7 +33,8 @@ architecture Structural of main is
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
         addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
-        pc_out : out cpu_word
+        pc_out : out cpu_word;
+        dsbl_wr_reg : out boolean
     );
     end component;
 
@@ -65,9 +66,9 @@ architecture Structural of main is
     signal s_decode_add_offset : cpu_word;
 
     component decode port(
-        --clk : in std_logic;
         instr : in cpu_word;
         cur_pc : in cpu_word;
+        dsbl_wr_reg : in boolean;
         rs1 : out reg_idx;
         rs2 : out reg_idx;
         rd : out reg_idx;
@@ -169,7 +170,8 @@ begin
         data_out_reg => s_ram_control_data_out_reg,
         data_out_ram => s_ram_control_data_out_ram,
         addr_out => s_ram_control_addr_out,
-        pc_out => s_ram_control_pc_out
+        pc_out => s_ram_control_pc_out,
+        dsbl_wr_reg => s_ram_control_dsbl_wr_reg
     );
 
     c_pc : pc port map(
@@ -186,6 +188,7 @@ begin
     c_decode : decode port map(
         instr => s_bram_instr_out,
         cur_pc => s_pc_value_out,
+        dsbl_wr_reg => s_ram_control_dsbl_wr_reg,
         rs1 => s_decode_rs1,
         rs2 => s_decode_rs2,
         rd => s_decode_rd,

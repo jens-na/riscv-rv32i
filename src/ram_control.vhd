@@ -17,7 +17,8 @@ entity ram_control is
         data_out_reg : out cpu_word;
         data_out_ram : out cpu_word;
         addr_out : out std_logic_vector((ceillog2(RAM_SZ)-1) downto 0);
-        pc_out : out cpu_word
+        pc_out : out cpu_word;
+        dsbl_wr_reg : out boolean
     );
 end ram_control;
 
@@ -66,6 +67,7 @@ begin
     process(data_in_reg, data_in_ram, width, byte_idx)
     begin
             -- standard assignment
+            -- if the alignment is invalid, no changes are made in memory
             data_out_ram <= data_in_ram;
 
             case width is
@@ -147,6 +149,9 @@ begin
     process(width, data_in_ram, byte_idx)
     begin
 
+            --standard assignment
+            dsbl_wr_reg <= false;
+
             case width is
 
                 -- load sign extended byte
@@ -191,6 +196,8 @@ begin
 
                         when others =>
 
+                            -- disable write to register, if access is unaligned
+                            dsbl_wr_reg <= true;
                             data_out_reg <= (others => '0');
 
                     end case;
@@ -206,6 +213,8 @@ begin
 
                         when others =>
 
+                            -- disable write to register, if access is unaligned
+                            dsbl_wr_reg <= true;
                             data_out_reg <= (others => '0');
 
                     end case;
@@ -258,6 +267,8 @@ begin
 
                         when others =>
 
+                            -- disable write to register, if access is unaligned
+                            dsbl_wr_reg <= true;
                             data_out_reg <= (others => '0');
 
                     end case;

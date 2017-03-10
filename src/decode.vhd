@@ -7,9 +7,9 @@ use work.opcodes.all;
 
 entity decode is
   Port (
-    --clk : in std_logic;
     instr : in cpu_word;
     cur_pc : in cpu_word;
+    dsbl_wr_reg : in boolean;
     rs1 : out reg_idx;
     rs2 : out reg_idx;
     rd : out reg_idx;
@@ -56,7 +56,7 @@ begin
 	funct3 <= instr(14 downto 12);
 	funct7 <= instr(31 downto 25);
 
-	process(instr, funct3, funct7, opc, zero_flag, cur_pc)
+	process(instr, funct3, funct7, opc, zero_flag, cur_pc, dsbl_wr_reg)
         variable auipc_offset : cpu_word;
 	begin
 
@@ -168,7 +168,9 @@ begin
 				imm(11 downto 0) <= instr(31 downto 20);
 				en_write_ram <= false;
                 ctrl_register <= BRAM;
-                en_write_reg <= true;
+                if (dsbl_wr_reg = false) then
+                    en_write_reg <= true;
+                end if;
                 
             when UJ_TYPE =>
 		         ctrl_register <= PC;
@@ -190,7 +192,7 @@ begin
                 imm(11 downto 5) <= instr(31 downto 25);
                 imm(4 downto 0) <= instr(11 downto 7);
                 en_write_ram <= true;
-                en_write_reg <= false;
+                en_write_reg <= true;
 
             when U_TYPE_LUI =>
 
