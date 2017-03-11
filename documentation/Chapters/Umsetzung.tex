@@ -1,16 +1,24 @@
 \iffalse
+Herausforderungen:
 \TODO: mem out of bound bei RAM
-\TODO: Block RAM im code umbenennen
-\TDOD: Probleme: RAM
-\TODO: Komponente Main
+\TDOD: RAM als RAM erkennen
 \TODO: Probleme: ALU und Decode erst clk-sensitiv implementiert
+\TODO: latches
+\TODO: ELF, 
+\TODO: bei unaligned Zugriff: was an die Ausgänge anlegen? Was lesen schreiben?
+\TODO: umsetzung Schrebprozess RAM
+
+
+
+Sonstiges:
+\TODO: Block RAM im code umbenennen
+\TODO: Komponente Main
 \TODO: maschinenbefehle durchgehen: wurde etwas besonders implementiert?
 \TODO: warum zwei Takte? => Schreibzugriff RAM, Register...?
-\TODO: latches
 \TODO: synchrones design
 \TODO: Register erklären?
 \TODO: ALU zero-flag-next entfernen
-\TODO: ELF, 
+\TODO: Warnings entfernen
 \fi
 
 \chapter{Umsetzung} % Main chapter title
@@ -19,19 +27,11 @@
 %----------------------------------------------------------------------------------------
 \section{Komponenten der CPU}
 
-%\begin{figure}
-%
-%    \includegraphics[scale=0.3, angle=90]{Figures/dia.jpg}
-%\end{figure}
+Unter Anhang~\ref{schaltplan} findet man einen skizzenhaften Aufbau der CPU, der die einzelnen Komponenten und deren Verbindungen untereinander darstellt.
+Diese Skizze wurde während der Implementierungsphase sukzessive erweitert und stellte ein wichtiges Hilfsmittel dar, das erheblich zur Übersicht und zum Verständnis über das Zusammenwirkens der Bauteile beigetragen hat.
+In vorliegendem Kapitel sollen die Funktionsweise und der Aufbau der einzelnen Komponenten und einige implementierungsspezifische Details erläutert werden.
 
-
-\iffalse
-- Diagramm 
-- sukzessive Entwicklung, per Maschinenbefehl
-\fi
 \subsection{Decode}
-
-
 
 In dieser Komponente wird der aktuelle Maschinenbefehl, nachdem er aus dem Speicher geladen wurde, dekodiert und die daraus gewonnenen Informationen werden über Steuersignale an die jeweiligen Einheiten der CPU übertragen:
 \begin{itemize}
@@ -93,15 +93,16 @@ Bei der Implementierung wurde eine einfache \textit{Case}-Anweisung verwendet, d
 Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt), werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgespeichert.
 Für die Erstellung dieser Komponente gibt es eine Reihe von vorgegebenen Templates an die man sich halten sollte, wenn man sicherstellen möchte, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
 
-Grundsätzlich unterschiedet man zwei Arten von RAM, die auf den FPGAs implementiert werden können:
-Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logigblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs.
+Grundsätzlich unterschiedet man zwei Arten von RAM, die auf dem vorliegenden FPGA implementiert werden können:
+Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logigblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs~\ref{}
 Benötigt man viel Speicherplatz, ist es ratsam eher den Block RAM zu verwenden, da dieser keine Logikzellen belegt, wohingegen Distributed RAM flexibler konfiguriert werden kann.
-Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welchen Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung war dies allerdings nicht notwendig.
+Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welchen Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung wurde dies als nicht notwendig erachtet.
 
 
 In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{asynchronem Lesezugriff} konfiguriert, was von den Synthesetools automatisch als Distributed RAM erkannt und umgesetzt wird.
 Der Begriff Dual-Port bezieht sich auf den Umstand, dass die Komponente je zwei Ein- und Ausgangsports besitzt.
 Da zusätzlich zwei separate Adressleitungen zur Verfügung stehen, kann simultan auf Maschinenbefehle und Daten zugegriffen werden.
+Somit ist es möglich den aktuell zu bearbeitenden Maschinenbefehl an die Dekodiereinheit weiterzuleiten, ohne diesen in ein Register zwischenzuspeichern und gleichzeitg Daten, die gelesen werden müssen, an den Datenausgang anzulegen.
 Die ansychronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
 Der Schreibzugriff ist, ähnlich wie bei der Registerbank, taktflankengesteuert und von einem zusätzlichen Flag abhängig.
 %TODO: Größe RAM
@@ -155,13 +156,6 @@ Wird dagegen schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegri
 \end{figure}\\
 Der oben beschriebene Vorgang kann ebenso auf einen Speicherzugriff mit einer Breite von 16 oder 32 Bit übertragen werden.
 
-\paragraph{Speicherausrichtung.} 
-Ein 32-Bit-Wort gilt als im Speicher ausgerichtet, wenn dessen Adresse ein ganzzahliges Vielfaches von 4 ist.
-Findet nun ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, ergibt sich folgendes Problem:
-Nicht alle vier Bytes des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher.
-Um das Wort zu lesen zu können würden zwei Zugriffe benötigt, wofür man wiederum die Anzahl der Takte pro Maschinenbfehel erhöhen müsste.
-Stattdessen wurde hier ein nicht ausgerichteter Speicherzugriff unterbunden.~\ref{}
-Bei 16-Bit-Zugriffen gilt diese Einschränkung für eine 2-Byte-Ausrichtung, d.h. hier muss die die Adresse des Zugriffs ein ganzzahliges Vielfaches von 2 sein.
 
 
 
