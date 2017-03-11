@@ -30,6 +30,8 @@ Wird dagegen lesend auf eine nicht ausgerichtete Adresse zugegriffen, sendet der
 %\TODO: Exception werfen? returncode? Compiler erwähnen, der den unaligned Zugriff anzeigt
 %\TODO: Literaturhinweis darauf, wie unaligned memory access gehandelt wird
 %https://www.kernel.org/doc/Documentation/unaligned-memory-access.txt
+
+\paragraph{Schreibprozess.} Da auf den eigentlichen RAM nur ein 32-Bit breiter Zugriff möglich ist, muss vor einem Schreibzugriff der Breite 8- oder 16-Bit immer erst ein Lesezugriff ausgeführt werden (~\ref{subsec:RAM}).
 \section{Adressberechnung von Branches im PC}
 \section{Alignment bei Speicehrzugriffen}
 %----------------------------------------------------------------------------------------
