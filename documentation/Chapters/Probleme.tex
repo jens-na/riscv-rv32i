@@ -9,25 +9,27 @@ An dieser Stelle sollen nun einige Schwierigkeiten und die daraus resultierenden
 
 \paragraph{Speicherausrichtung.} 
 Ein Speicherzugriff auf $N$ Byte gilt als nicht ausgerichtet, wenn die Startadresse dieser $N$ Byte kein ganzzahliges Vielfaches von $N$ ist.
+%\TODO: link
 Findet z.B. ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, die also kein ganzzahliges Vielfaches von 4 ist, ergibt sich folgendes Problem:
 Nicht alle vier Byte des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher und können daher nicht innerhalb eines einzelnen Zugriffs erreicht werden.
 Es existieren verschiedene Ansätze mit diesem Problem umzugehen:~\ref{}
 \begin{itemize}
     \item Nicht ausgerichtete Speicherzugriffe sind grundsätzlich erlaubt.
     \item Ein nicht ausgreichteter Speicherzugriff führt zu einer Prozessor-Exception, deren Handler den Zugriff korrigieren kann.
-    \item Ein nicht ausgreichteter Speicherzugriff führt zu einer Prozessor-Exception, der Zugriff wird allerdings nicht korrigiert.
+    \item Ein nicht ausgreichteter Speicherzugriff ist grundsätzlich nicht möglich.
 \end{itemize}
 
 Die Lösungsansätze eins und zwei führen unweigerlich zu Performanceeinbußen, da sie nicht in der gleichen Zeit wie ein ausgerichteter Speicherzugriff abgearbeitet werden können.
 Der vorliegende RAM-Controller wurde mit dem dritten Lösungsansatz implementiert, mit dem Vorteil, dass alle Maschinenbefehle die gleiche Zeit zur Ausführung benötigen.
 Ein nicht ausgerichteter Speicherzugriff wird hier also unterbunden, d.h. der Maschinenbefehl wird ignoriert und hat keinerlei Auswirkung.
-Umgesetzt wurde dies folgendermaßen:
+
+Umgesetzt wurde dies wie folgt:\\
 Bei einem nicht ausgerichteten Schreibzugriff wird der Schreibvorgang nicht unterbrochen, allerdings wird in die jeweilige Speicherstelle einfach der ürsprünglich dort enthaltene Wert zurückgeschrieben.
-Somit wird der Speicher wird also nicht verändert.
-%\TODO: Exception werfen? returncode?
+Folglich wird der Speicher also nicht verändert.\\
+Wird dagegen lesend auf eine nicht ausgerichtete Adresse zugegriffen, sendet der RAM-Controller über seinen \textit{dsbl\_wr\_reg}-Port ein Signal an den Dekodierer, der diese Information (\textit{en\_write = false}) an die Registerbank weiterleitet und somit einen Schreibzugriff auf das Register unterbindet, in das der zu lesende Wert aus dem RAM ursprünglich geschrieben werden sollte.
+%\TODO: Exception werfen? returncode? Compiler erwähnen, der den unaligned Zugriff anzeigt
 %\TODO: Literaturhinweis darauf, wie unaligned memory access gehandelt wird
 %https://www.kernel.org/doc/Documentation/unaligned-memory-access.txt
-Bei 16-Bit-Zugriffen gilt diese Einschränkung für eine 2-Byte-Ausrichtung, d.h. hier muss die die Adresse des Zugriffs ein ganzzahliges Vielfaches von 2 sein.
 \section{Adressberechnung von Branches im PC}
 \section{Alignment bei Speicehrzugriffen}
 %----------------------------------------------------------------------------------------
