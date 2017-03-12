@@ -25,13 +25,30 @@ Ein nicht ausgerichteter Speicherzugriff wird hier also unterbunden, d.h. der Ma
 
 Umgesetzt wurde dies wie folgt:\\
 Bei einem nicht ausgerichteten Schreibzugriff wird der Schreibvorgang nicht unterbrochen, allerdings wird in die jeweilige Speicherstelle einfach der ürsprünglich dort enthaltene Wert zurückgeschrieben.
-Folglich wird der Speicher also nicht verändert.\\
+Somit wird der Speicher nicht verändert.\\
 Wird dagegen lesend auf eine nicht ausgerichtete Adresse zugegriffen, sendet der RAM-Controller über seinen \textit{dsbl\_wr\_reg}-Port ein Signal an den Dekodierer, der diese Information (\textit{en\_write = false}) an die Registerbank weiterleitet und somit einen Schreibzugriff auf das Register unterbindet, in das der zu lesende Wert aus dem RAM ursprünglich geschrieben werden sollte.
 %\TODO: Exception werfen? returncode? Compiler erwähnen, der den unaligned Zugriff anzeigt
 %\TODO: Literaturhinweis darauf, wie unaligned memory access gehandelt wird
 %https://www.kernel.org/doc/Documentation/unaligned-memory-access.txt
 
-\paragraph{Schreibprozess.} Da auf den eigentlichen RAM nur ein 32-Bit breiter Zugriff möglich ist, muss vor einem Schreibzugriff der Breite 8- oder 16-Bit immer erst ein Lesezugriff ausgeführt werden (~\ref{subsec:RAM}).
+\paragraph{Schreibprozess.} 
+Da auf den Hauptspeicher nur ein 32-Bit breiter Zugriff möglich ist, muss der RAM-Controler vor einem Schreibzugriff der Breite 8- oder 16-Bit die adressierte Speicherstelle lesen um diese verändern und anschließend zurückschreiben zu können. (~\ref{subsec:RAM}).
+Herausforderung bei der Umsetzung dieser Maschineninstruktion war es, diese in zwei Takten durchführen zu können, um die Anzahl der Takte pro Instruktion nicht erhöhen zu müssen.
+Abbildung~\ref{fig:write} zeigt beispielhaft, wie ein Schreibprozess in den RAM durchgeführt wird.
+Links sieht man die Namen der enstprechenden Ports und Signale, während rechts deren Werte zum jeweiligen Zeitpunkt (siehe Taktsignal \textit{s\_clk}) dargestellt sind.
+
+\begin{figure}[htpb]
+    \includegraphics[width=\textwidth]{Figures/write.png}
+    \caption{Umsetzung eines Schreibzugriffs in den Speicher}
+    \label{fig:write}
+\end{figure}
+
+In diesem Beispiel soll ein Byte in den Speicher geschrieben werden:\\
+Der RAM-Controller erhält ein Wort vom Register (\textit{data\_in\_reg}), dessen niederwertigstes Byte in den Speicher geschrieben werden soll (in diesem Fall wiederum an die Position des niederwertigsten Bytes).
+Gleichzeitig liest er den Wert aus der Speicherstelle, die adressiert wird  (\textit{data\_in\_ram}), um diese mit dem Registerwert zu modifizieren und in den Speicher zurückzuschreiben (\textit{data\_out\_ram}).
+Vom Dekoder erhält der RAM-Controller die Information, dass ein Schreibzugriff auf den RAM erforderlich ist (\textit{en\_write\_in}), welche er direkt an den RAM weiterleitet (\textit{en\_write\_out}).
+Dieser erhält den Schreibbefehl (\textit{en\_write}) allerdings kurz nach einer steigenden Taktflanke (siehe \textit{s\_clk}), weswegen der eigentliche Schreibvorgang erst im zweiten Takt erfolgt.
+Um einen weiteren Schreibzugriff im nächsten Takt zu verhindern, setzt der RAM-Controller das \textit{en\_write\_out}-Signal  mit Hilfe zweier toggelnder Signale (\textit{enable} und \textit{enable\_next}) auf \textit{FALSE}.
 \section{Adressberechnung von Branches im PC}
 \section{Alignment bei Speicehrzugriffen}
 %----------------------------------------------------------------------------------------
