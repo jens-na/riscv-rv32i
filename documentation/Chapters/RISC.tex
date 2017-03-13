@@ -23,7 +23,7 @@ Auch wenn der Begriff \textit{reduced instruction} sich nicht zwangsweise auf di
 \subsection{Speicherarchitektur}
 RISC-V ist als \textit{load-store}-Architektur entworfen. Arithmetische und logische Instruktionen greifen daher nicht auf den Speicher zu, stattdessen werden alle Operanden vorher in der Registerbank abgelegt. Operationsergebnisse werden ebenfalls in Registern abgelegt. Speicherzugriffe werden ausschließlich mit \textit{load} bzw. \textit{store}-Befehlen realisiert.
 
-\subsection{Register}
+\subsection{Register} \label{subsec:Register}
 Die RISC-V Spezifikation definiert $31$ Integer Register $x1 - x31$. Zusätzlich existiert das \textit{zero}-Register $x0$, das eine konstante $0$ beinhaltet. Andere Register (Floating Point) können an dieser Stelle vernachlässigt werden, da sich die umgesetzte CPU auf Integerverarbeitung beschränkt.
 
 \subsection{Maschinenbefehle}

@@ -8,8 +8,7 @@ In Kapitel~\ref{Umsetzung} wurden Aufbau und Funktionsweise des Hauptspeichers u
 An dieser Stelle sollen nun einige Schwierigkeiten, die während der Implementierung auftraten, und die daraus resultierenden Überlegungen beschrieben werden.
 
 \paragraph{Speicherausrichtung.} 
-Ein Speicherzugriff auf $N$ Byte gilt als nicht ausgerichtet, wenn die Startadresse dieser $N$ Byte kein ganzzahliges Vielfaches von $N$ ist.
-%\TODO: link zur Definition
+Ein Speicherzugriff auf $N$ Byte gilt als ausgerichtet, wenn die Startadresse dieser $N$ Byte ein ganzzahliges Vielfaches von $N$ ist~\cite[S. 96/97]{Hennessy}.
 Findet z.B. ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, die also kein ganzzahliges Vielfaches von 4 ist, ergibt sich folgendes Problem:
 Nicht alle vier Byte des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher und können daher nicht innerhalb eines einzelnen Zugriffs erreicht werden.
 Folgende Ansätze mit dieser Problematik umzugehen wurden diskutiert:
@@ -20,6 +19,7 @@ Folgende Ansätze mit dieser Problematik umzugehen wurden diskutiert:
 \end{itemize}
 
 Die Lösungsansätze eins und zwei führen unweigerlich zu Performanceeinbußen, da sie nicht in der gleichen Zeit wie ein ausgerichteter Speicherzugriff abgearbeitet werden können.
+Außerdem wird in der RISC-V-Spezifikation nur für ausgerichtete Zugriffe Atomarität garantiert, wohingegen bei unausgerichteten Zugriffen zusätzliche Vorkehrungen zu treffen sind~\cite[S. 18]{RISC}.
 Der vorliegende RAM-Controller wurde mit dem dritten Lösungsansatz implementiert, mit dem Vorteil, dass alle Maschinenbefehle die gleiche Zeit zur Ausführung benötigen.
 Ein nicht ausgerichteter Speicherzugriff wird hier also unterbunden, d.h. der Maschinenbefehl wird ignoriert und hat keinerlei Auswirkung.
 %\TODO: Exception werfen? returncode? Compiler erwähnen, der den unaligned Zugriff anzeigt
@@ -32,8 +32,8 @@ Wird dagegen lesend auf eine nicht ausgerichtete Adresse zugegriffen, sendet der
 %https://www.kernel.org/doc/Documentation/unaligned-memory-access.txt
 
 \paragraph{Schreibprozess.} 
-Da auf den Hauptspeicher nur ein 32-Bit breiter Zugriff möglich ist, muss der RAM-Controler vor einem Schreibzugriff der Breite 8- oder 16-Bit die adressierte Speicherstelle lesen um diese verändern und anschließend zurückschreiben zu können. (~\ref{subsec:RAM}).
-Herausforderung bei der Umsetzung dieser Maschineninstruktion war es, diese in zwei Takten durchführen zu können, um die Anzahl der Takte pro Instruktion nicht erhöhen zu müssen.
+Da auf den Hauptspeicher nur ein 32-Bit breiter Zugriff möglich ist, muss der RAM-Controler vor einem Schreibzugriff der Breite 8- oder 16-Bit die adressierte Speicherstelle lesen um diese verändern und anschließend zurückschreiben zu können~(\ref{subsec:RAM}).
+Herausforderung bei der Umsetzung dieser Maschineninstruktionen war es, diese in zwei Takten durchführen zu können, um die Anzahl der Takte pro Instruktion nicht erhöhen zu müssen.
 Abbildung~\ref{fig:write} zeigt beispielhaft, wie ein Schreibprozess in den RAM durchgeführt wird.
 Links sieht man die Namen der enstprechenden Ports und Signale, während rechts deren Werte zum jeweiligen Zeitpunkt (siehe Taktsignal \textit{s\_clk}) dargestellt sind.
 
@@ -44,7 +44,7 @@ Links sieht man die Namen der enstprechenden Ports und Signale, während rechts 
 \end{figure}
 
 In diesem Beispiel soll ein Byte in den Speicher geschrieben werden:\\
-Der RAM-Controller erhält ein Wort vom Register (\textit{data\_in\_reg}), dessen niederwertigstes Byte in den Speicher geschrieben werden soll (in diesem Fall wiederum an die Position des niederwertigsten Bytes).
+Der RAM-Controller erhält ein Wort von der Registerbank (\textit{data\_in\_reg}), dessen niederwertigstes Byte in den Speicher geschrieben werden soll (in diesem Fall wiederum an die Position des niederwertigsten Bytes).
 Gleichzeitig liest er den Wert aus der Speicherstelle, die adressiert wird  (\textit{data\_in\_ram}), um diese mit dem Registerwert zu modifizieren und in den Speicher zurückzuschreiben (\textit{data\_out\_ram}).
 Vom Dekoder erhält der RAM-Controller die Information, dass ein Schreibzugriff auf den RAM erforderlich ist (\textit{en\_write\_in}), welche er direkt an den RAM weiterleitet (\textit{en\_write\_out}).
 Dieser erhält den Schreibbefehl (\textit{en\_write}) allerdings kurz nach einer steigenden Taktflanke (siehe \textit{s\_clk}), weswegen der eigentliche Schreibvorgang erst im zweiten Takt erfolgt.

@@ -1,10 +1,49 @@
 \chapter{Ergebnis und Ausblick} % Main chapter title
 \label{Ergebnis} % For referencing the chapter elsewhere, use \ref{Chapter1} 
 
-Ein FPGA (Field Programmable Gate Array) ist ein Schaltkreis, in den eine beliebige logische Schaltung programmiert werden kann. Der Vorteil besteht dabei insbesondere darin, dass FPGA's beliebig oft neu programmiert werden können. 
-
 %----------------------------------------------------------------------------------------
 \section{Ergebnis}
 \section{Ausblick}
+%\TODO: einführende Worte
+
+\subsection{Pipelining}
+
+Pipelining ist eine Technik, mit der die Performance einer CPU verbessert werden kann~\cite[A.1]{Hennessy}.
+Statt Machineninstruktionen nacheinander auszuführen, werden diese in Teilaufgaben zerlegt, wodurch es möglich ist während eines Taktzyklus Befehle parallel abzuarbeiten.
+Die Ausführungszeit eines einzelnen Befehls, also die Taktzahl pro Befehl, kann dadurch länger werden, allerdings ist es möglich insgesamt mehr Instruktionen pro Takt abzuarbeiten.
+Klassische Pipeline-Stufen wären z.B.
+\begin{itemize}
+    \item Instruction fetch - Laden des Maschinenbefehls,
+    \item Instruction decode - Dekodieren des Maschinenbefehls,
+    \item Execute - Ausführen einer Rechenoperation,
+    \item Memory Access - Zugriff auf den Speicher (bei LOAD- und STORE-Befehlen),
+    \item Write back - Zurückschreiben des Ergebnisses in den Speicher,
+\end{itemize}
+aber auch andere Phasen sind denkbar.\\
+Um Pipelining umzusetzen, wäre es notwendig die Ergebisse der Teilaufgaben in Register zwischenzuspeichern, um diese der jeweils nächsten Phase zur Verfügung zu stellen
+
+
+
+
+
+\subsection{Speicherausrichtung}
+In Kapitel~\ref{Probleme} wurde erläutert, dass die vorliegende Implementierung nur ausgerichtete Speicherzugriffe unterstützt.
+Im Moment werden allerdings keine Vorkehrungen getroffen diese Art Zugriff zu unterbinden oder darauf zu reagieren.
+Der entsprechende Maschinenbefehl wird lediglich ignoriert, wodurch ein Programm, das diesen enthält, fehlerhaft ablaufen wird, sollte der nicht ausgerichtete Zugriff nicht schon auf der Kompilerebene unterbunden werden.
+
+Im Rahmen dieser Arbeit wurden zwei Möglichkeiten diskutiert, wie auf Prozessorebene mit diesem Problem umgegangen werden könnte.
+
+\paragraph{Fehler auslösen.}
+Eine relative einfache Lösung wäre es, den fehlerhaften Zugriff in irgendeiner Form anzuzeigen und es dem Nutzer zu überlassen den Fehler zu beheben.
+Denkbar wäre es hier einen Returncode festzulegen und in diesen 
+
+
+
+
+\iffalse
+- den Zugriff auflösen zu Byte-Zugriff -> sehr langsam
+- mit compiler von vornherein unterbinden
+- return code
+\fi
 
 %----------------------------------------------------------------------------------------

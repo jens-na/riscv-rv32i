@@ -4,7 +4,7 @@ Herausforderungen:
 \TODO: Probleme: ALU und Decode erst clk-sensitiv implementiert
 \TODO: latches
 \TODO: ELF, 
-
+\TODO: sign extension bei Load erwähnen
 
 
 Sonstiges:
@@ -35,17 +35,17 @@ In dieser Komponente wird der aktuelle Maschinenbefehl, nachdem er aus dem Speic
 \begin{itemize}
     \item Die \textit{Registerbank} bekommt mitgeteilt, welche Registerinhalte sie an ihre Ausgänge anlegen soll und in welches Register ein potentielles Ergebnis geschrieben werden muss.
         Außerdem wird über einen \textit{Multiplexer} gesteuert, ob dieses Ergebnis vom \textit{Program Counter}, dem \textit{Hauptspeicher} oder der \textit{ALU} zu erwarten ist.
-    \item An die \textit{ALU} wird der Operationstyp übermittelt, den diese auf ihre beiden Operanden anwenden soll.
+    \item An die \textit{ALU} wird der Operationstyp übermittelt, den diese auf ihre beiden Operanden anwendet.
         Zusätzlich wird auch hier ein Multiplexer angesteuert, der der ALU entweder einen Registerinhalt oder eine Konstante als zweiten Operanden zuweist.
     \item Der \textit{Hauptspeicher} erhält Informationen über die Bitbreite und die Art eines Speicherzugriffs (lesend/schreibend).
     \item Der Wert des \textit{Program Counters} muss bei Sprungbefehlen angepasst werden.
 \end{itemize}
 Es werden also alle Informationen, die zur Ausführung eines Maschinenbefehls nötig sind, von der Dekodiereinheit extrahiert und an die zugehörige Stelle übertragen. 
 
-Bei der Umsetzung dieser Aufgabe erweist sich der Aufbau der Maschinenbefehle als sehr hilfreich:
+Bei der Umsetzung dieser Aufgabe erweist sich der Aufbau der Maschinenbefehle (siehe Anhang~\ref{Maschinenbefehle}) als sehr hilfreich:
 Vergleichbare Informationen belegen innerhalb der 32-Bit- Instruktionen die gleichen Positionen.
 Enthält ein Maschinenbefehl z.B. ein Zielregister in das ein Ergebnis geschrieben werden soll, so befindet sich die Adresse dieses Zielrgisters an der gleichen Position, an der es sich auch bei anderen Befehlen befindet.
-Das erleichtert zum einen die Implementierung, da einem Ausgangsport über mehrer Befehle hinweg die gleichen Bits zugeordnet werden können und verringert zum anderen die Komplexität der daraus resultierenden Schaltungen. 
+Das erleichtert zum einen die Implementierung, da einem Ausgangsport über mehrer Befehle hinweg die gleichen Bits eines Eingangsports zugeordnet werden können, und verringert zum anderen die Komplexität der daraus resultierenden Schaltungen. 
 Ein Blick in den Quellcode (siehe~\ref{}) zeigt, dass eine verschachtelte \textit{Case}-Abfrage den Ausgangsports die passenden Signale zuweist, die ohne den vorteilhaften Aufbau der Maschinenbefehle wesentlich komplexer geraten wäre.
 
 \subsection{Program Counter}
@@ -59,14 +59,15 @@ Soll ein Sprungbefehl ausgeführt werden, muss der Wert des PCs auf eine neue Ad
 Beide Funktionialitäten wurden direkt im PC implementiert, um einen Umweg über die \textit{ALU} zu vermeiden.
 Hierfür stehen die Eingangsports \textit{set}, \textit{set\_value} und \textit{set\_jalr} zur Verfügung.
 
-Am Ausgangsport \textit{value\_out\_next} liegt die Adresse des nächsten Maschinenbefehls (\textit{PC + 4}) an, die als Rücksprungadresse optional in der Registerbank abgespeichert werden kann, um zu einem späteren Zeitpunkt zum ürsprünglichen Ausführungsstrang zurückzukehren.
+Am Ausgangsport \textit{value\_out\_next} liegt die Adresse des nächsten Maschinenbefehls (\textit{PC + 4}) an, die als Rücksprungadresse optional in der Registerbank abgespeichert werden kann, um zu einem späteren Zeitpunkt zum ürsprünglichen Ausführungsstrang zurückkehren zu können.
 
-Die Implementierung des Program Counters unterliegt den Prinzipien des \textit{synchronen Designs} (siehe~\ref{})...
+Die Implementierung des Program Counters unterliegt den Prinzipien des \textit{synchronen Designs}:~\cite[S. 72 ff.]{Chu}
+Der nächste Registerwert wird unabhängig vom Taktsignal berechnet (\textit{cnt\_next}) und dem Ausgangsport erst bei steigender Taktflanke zugewiesen. 
 
 \subsection{Registerbank}
 
 Bevor die CPU eine Rechenoperationen durchführen kann, müssen die passenden Operanden aus dem Hauptspeicher geladen und in der \textit{Registerbank} zwischengespeichert werden.
-Diese besteht aus 32 Registern der Länge 32 Bit, wobei es sich bei der vorliegenden Implementierung eigentlich um ein Array aus nur 31 Registern handelt, da das \textit{Register 0} konstant den Wert $0$ enthält und nicht überschrieben werden kann.
+Diese besteht aus 32 Registern der Länge 32 Bit, wobei es sich bei der vorliegenden Implementierung eigentlich um ein Array aus nur 31 Registern handelt, da das \textit{Register 0} konstant den Wert $0$ enthält und nicht überschrieben werden kann~(\ref{subsec:Register}).
 
 Ein asynchroner Leseprozess versorgt die beiden Datenausgänge mit den Inhalten der beiden Register, die durch die Eingänge \textit{rs1} und \textit{rs2} ausgewählt werden.
 Beide Ausgänge leiten die Werte an die ALU weiter, während eine zusätzliche Verbindung zum RAM die Ausführung einer \textit{Store}-Instruktion erleichtert.
@@ -78,10 +79,9 @@ Der Dateneingang kann mittels eines vorgeschalteten Multiplexers Werte aus den R
 \subsection{Arithmetisch Logische Einheit}
 
 Die eigentlichen Rechenoperationen werden in der arithmetisch-logischen Einheit (kurz: \textit{ALU} für \textit{arithmetic logic unit}) durchgeführt.
-Wie der Name bereits andeutet, führt diese Einheit arithmetische und logische Funktionen auf zwei 32-Bit-Zahlen aus (siehe Übersicht~\ref{}).
-Neben den beiden Dateneingängen enthält die ALU einen weiteren Eingang(\textit{op\_in}), über den sie von der Decode-Einheit den auszuführenden Funktionstypen erhält.
+Wie der Name bereits andeutet, führt diese Einheit arithmetische und logische Funktionen auf zwei 32-Bit-Zahlen aus.
+Neben den beiden Dateneingängen enthält die ALU einen weiteren Eingang (\textit{op\_in}), über den sie von der Decode-Einheit den auszuführenden Funktionstypen erhält.
 Das Ergebnis der Berechnung wird, abhängig vom Maschinenbefehl, entweder an die Registerbank, den Hauptspeicher oder den Program Counter weitergeleitet.
-%TODO: zero_flag
 Ein weiterer Ausgangsport (\textit{zero\_flag}) versorgt die Dekodiereinheit bei bedingten Sprungbefehlen mit der Information, ob ein Sprung genommen werden muss. 
 
 Bei der Implementierung wurde eine einfache \textit{Case}-Anweisung verwendet, die den Funktionstypen abfragt, woraufhin die entsprechende Funktion zur Anwendung kommt.
@@ -92,10 +92,10 @@ Bei der Implementierung wurde eine einfache \textit{Case}-Anweisung verwendet, d
 Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt), werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgespeichert.
 Für die Erstellung dieser Komponente gibt es eine Reihe von vorgegebenen Templates an die man sich halten sollte, wenn man sicherstellen möchte, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
 
-Grundsätzlich unterschiedet man zwei Arten von RAM, die auf dem vorliegenden FPGA implementiert werden können:
+Grundsätzlich unterscheidet man zwei Arten von RAM, die auf dem vorliegenden FPGA implementiert werden können:
 Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logigblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs~\ref{}
 Benötigt man viel Speicherplatz, ist es ratsam eher den Block RAM zu verwenden, da dieser keine Logikzellen belegt, wohingegen Distributed RAM flexibler konfiguriert werden kann.
-Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welchen Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung wurde dies als nicht notwendig erachtet.
+Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welche Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung wurde dies als nicht notwendig erachtet.
 
 
 In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{asynchronem Lesezugriff} konfiguriert, was von den Synthesetools automatisch als Distributed RAM erkannt und umgesetzt wird.
@@ -153,9 +153,8 @@ Wird dagegen schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegri
         \end{tabular}
         \caption{Speicherinhalt an der Adresse $2_{16}$ nach dem Schreibzugriff}
 \end{figure}\\
-Der oben beschriebene Vorgang kann ebenso auf einen Speicherzugriff mit einer Breite von 16 oder 32 Bit übertragen werden.
-
-
+Dieser Vorgang kommt ebenso bei Speicherzugriffen der Breite 16 Bit zur Anwendung.
+Wird dagegen auf ein 32-Bit-Wort zugegriffen, muss lediglich die Adresse übersetzt werden.
 
 
 %----------------------------------------------------------------------------------------
