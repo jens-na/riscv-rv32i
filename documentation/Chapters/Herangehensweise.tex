@@ -106,9 +106,11 @@ Generell wurden Testbenches während der Entwicklung verwendet, um zu
 überprüfen, ob sich die Signale und Funktionsweise der Komponenten
 richtig verhalten.
 \subsection{White-Box-Test}
-Zusätzlich wurden mehrere White-Box-Tests durchgeführt, mit welchen
-ersichtlich ist, ob die CPU die gewünschten Änderungen an den 
-Registern nach Abarbeitung einer Instruktion durchführt.
+Zusätzlich wurden mehrere White-Box-Tests durchgeführt. Bei dieser Art
+von Test sind interne Details der Implementierung bekannt und werden
+überprüft\cite[S. 311]{Kleuker}. In der vorliegenden Implementierung wird getestet, ob die CPU 
+die gewünschten Änderungen an den  Registern nach Abarbeitung einer 
+Instruktion durchführt.
 
 \begin{table}[h]
 \centering
@@ -130,8 +132,9 @@ Die Testfälle wurde manuell in der Simulationsansicht von Vivado überprüft.
 \subsection{Black-Box-Test}
 Nachdem die Implementierung abgeschlossen war und es möglich war den
 vorliegenden FPGA mit der RISC-V-CPU zu „programmieren“ wurden
-Black-Box-Tests mit dem FPGA durchgeführt. Die niederwertigsten 16 Bits
-des Registers \code{a0} (Status-Register) wurden mit den LEDs auf dem FPGA verbunden. Es
+Black-Box-Tests mit dem FPGA durchgeführt. Bei einem solchen Test wird
+nur das „äußere Verhalten des Systems“ betrachtet \cite[S. 311]{Kleuker}. Dafür wurden die niederwertigsten 16 Bits
+des Registers \code{a0} (Status-Register) mit den LEDs auf dem FPGA verbunden. Es
 wurden verschiedene Programme ausgeführt und die Ausgabe der LED-Anzeige
 überprüft.
 
