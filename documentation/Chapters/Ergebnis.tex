@@ -7,11 +7,14 @@
 %\TODO: einführende Worte
 
 \subsection{Pipelining}
+In der vorliegenden Implementierung wurde aus Zeitgründen auf die Umsetung des sog. Pipelining verzichtet. 
+Trotzdem soll hier kurz auf die Grundlagen dieser Technik und deren Voraussetzungen eingegangen werden.
+Für eine detaillierte Auseinandersetzung mit diesem Thema soll hier auf weiterführende Literatur verwiesen werden~\cite[A.1]{Hennessy}
 
-Pipelining ist eine Technik, mit der die Performance einer CPU verbessert werden kann~\cite[A.1]{Hennessy}.
+Pipelining ist ein Verfahren, mit dessen Hilfe die Performance einer CPU verbessert werden kann.
 Statt Machineninstruktionen nacheinander auszuführen, werden diese in Teilaufgaben zerlegt, wodurch es möglich ist während eines Taktzyklus Befehle parallel abzuarbeiten.
-Die Ausführungszeit eines einzelnen Befehls, also die Taktzahl pro Befehl, kann dadurch länger werden, allerdings ist es möglich insgesamt mehr Instruktionen pro Takt abzuarbeiten.
-Klassische Pipeline-Stufen wären z.B.
+Die Ausführungszeit eines einzelnen Befehls kann dadurch länger werden, allerdings ist es möglich insgesamt mehr Instruktionen pro Takt abzuarbeiten.
+Klassische Pipeline-Stufen sind z.B.
 \begin{itemize}
     \item Instruction fetch - Laden des Maschinenbefehls,
     \item Instruction decode - Dekodieren des Maschinenbefehls,
@@ -19,8 +22,11 @@ Klassische Pipeline-Stufen wären z.B.
     \item Memory Access - Zugriff auf den Speicher (bei LOAD- und STORE-Befehlen),
     \item Write back - Zurückschreiben des Ergebnisses in den Speicher,
 \end{itemize}
-aber auch andere Phasen sind denkbar.\\
-Um Pipelining umzusetzen, wäre es notwendig die Ergebisse der Teilaufgaben in Register zwischenzuspeichern, um diese der jeweils nächsten Phase zur Verfügung zu stellen
+aber auch andere Phasen sind denkbar.
+
+Um Pipelining umzusetzen, ist es notwendig die Ergebisse der Teilaufgaben in Register zwischenzuspeichern, um diese der jeweils nächsten Phase zur Verfügung zu stellen.
+
+
 
 
 
