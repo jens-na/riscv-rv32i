@@ -2,7 +2,56 @@
 \label{Ergebnis} % For referencing the chapter elsewhere, use \ref{Chapter1} 
 
 %----------------------------------------------------------------------------------------
-\section{Ergebnis}
+\section{Kennzahlen}
+Die Leistung einer CPU wird in der Regel durch folgende Kennzahlen
+dargestellt \cite[S. 43]{Hennessy}:
+\begin{itemize}
+    \item Schaltfrequenz in MHz \emph{(clock rate)}
+    \item Anzahl der CPU-Kerne \emph{(cpu cores)}
+    \item Instruktionen pro Clock-Zyklus \emph{(instruction per cycle)} 
+\end{itemize}
+
+\paragraph{Schaltfrequenz.} Mit der Entwicklungsumgebung Vivado ist es
+möglich herauszufinden wie hoch die Schwaltfrequenz der Clock sein kann,
+damit die Implementierung der RISC-V-CPU auf dem vorliegenden FPGA
+lauffähig ist. Hierzu sind verschiedene Werte als „Clock Constraint“
+getestet worden. Nach der Synthese kann man im Synthese-Report von
+Vivado folgenden Ausschnitt beobachten: 
+\begin{lstlisting}
+Max Delay Paths
+---
+Slack (MET) :      1.018ns  (required time - arrival time)
+  Source:          c_pc/cnt_reg_reg[2]_rep__3/C
+  Destination:     c_registerfile/reg_blocks_reg[10][10]/D
+  Path Group:      m_clk
+  Requirement:     21.277ns  
+  Data Path Delay: 20.123ns  
+\end{lstlisting}
+Als Clock-Constraint wurde $47 MHz \equiv 21.277ns$ angegeben.
+Das bedeutet, dass zwischen zwei steigenen Flanken $21.277ns$ vergeht,
+dies entspricht einer Schaltfrequenz von $47 MHz$.
+
+Der Synthese-Report zeigt, dass die größte Verzögerung im Design
+$20.123ns$ beträgt. Dadurch ist das Design mit $47 MHz$ ($21.277ns$) lauffähig 
+.
+Bereits bei einer „Clock Constraint“ mit $48 MHz$ wird die Anforderung
+überschritten.
+
+Das bedeutet, dass die Implementierung der RISC-V-CPU mit einer Clock
+von maximal $\mathbf{47 MHz}$ betrieben werden kann.
+
+\paragraph{CPU-Kerne.} Die umgesetzte CPU besitzt \textbf{einen} Kern.
+Eine Parallelausführung von Programmen ist somit nicht möglich.
+
+\paragraph{Instruktionen.} Eine weitere Kennzahl, die die Leistung einer
+CPU beschreibt sind die Instruktionen, die pro Clock-Zyklus ausgeführt
+werden (IPC). 
+In der vorliegenden Implementierung der RISC-V-CPU beträgt \textbf{IPC =
+1/2}. Es werden also pro Maschineninstruktion genau \textbf{zwei}
+Clock-Zyklen benötigt. Grund hierfür sind die Schreibvorgänge in RAM und
+Register. Weitere Informationen hierfür sind in Kapitel
+\ref{sec:ram_register_schreibvorgaenge} zu finden.
+
 \section{Ausblick}
 %\TODO: einführende Worte
 
@@ -51,5 +100,6 @@ Denkbar wäre es hier einen Returncode festzulegen und in diesen
 - mit compiler von vornherein unterbinden
 - return code
 \fi
+
 
 %----------------------------------------------------------------------------------------
