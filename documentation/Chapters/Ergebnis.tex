@@ -53,7 +53,14 @@ Register. Weitere Informationen hierfür sind in Kapitel
 \ref{sec:ram_register_schreibvorgaenge} zu finden.
 
 \section{Ausblick}
-%\TODO: einführende Worte
+
+Das Ziel dieses Projekts war, einfache Berechnungen auf einer eigenen Hardwareimplementierung ausführen zu können. Dieses Mindestziel wurde erreicht. Darüber hinaus sind jedoch mehrere Ansätze denkbar, das entwickelte CPU-Design fortzuführen. Diese sind unterteilbar in solche, die die Funktionalität erweitern und solche, die das bestehende Design optimieren. Da mit diesem Projekt vor allem Bildungszwecke verfolgt wurden, wurde die Priorität zunächst auf Funktionalitätsaspekte gelegt, anstatt Details des Designs zu zu optimieren.
+
+\subsection{Erweiterungen des Befehlssatz}
+
+Aufgrund der flexiblen Erweiterbarkeit der RISC-V-Architektur (siehe Kapitel \ref{sec:erweiterung} und des modularen Aufbaus dieses Projekts sind zusätzliche Instruktionen, die über den RISC-V Basisbefehlssatz hinausgehen, verhältnismäßig einfach hinzuzufügen. In der RISC-V Spezifikation sind beispielsweise Befehlssatzerweiterungen für Gleitkommaarithmetik, mehrere Privilegierungsebenen, atomare Befehle für Multikernprozessoren, aber auch für Bitmanipulation und Vektoroperationen vorgesehen. \cite[S. 4f.]{RISC} Diese Erweiterungen können je nach indvidueller Anforderungen dem Basisbfehlssatz hinzugefügt werden.
+ 
+Denkbar wäre es außerdem, das CPU-Design über RISC-V Standards hinaus individuell zu erweitern, indem eigene Maschinenbefehle definiert werden, die auf spezielle Anwendungsgebiete zugeschnitten sind.
 
 \subsection{Pipelining}
 In der vorliegenden Implementierung wurde aus Zeitgründen auf die Umsetung des sog. Pipelining verzichtet. 
