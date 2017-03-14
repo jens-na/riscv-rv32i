@@ -23,54 +23,61 @@ Auch wenn der Begriff \textit{reduced instruction} sich nicht zwangsweise auf di
 
 %----------------------------------------------------------------------------------------
 \section{RISC-V Varianten}
+\label{sec:erweiterung}
 
 \paragraph{Erweiterbarkeit.} Die RISC-V Architektur ist darauf ausgelegt, flexibel erweiterbar zu sein. Die Spezifikation definiert daher mehrere Teilmengen des Befehlssatzes. \cite[p. 4]{RISC}
 
-\paragraph{Mindeststandard.} Um die RISC-V Anforderungen zu erfüllen, muss eine Implementierung zumindest den Basis-Integerbefehlssatz umsetzen (Bezeichnung nach \mbox{RISC-V} Konvention: \textit{I}). Dieser enthält neben Befehlen zur Integerarithmetik, auch Integer load- und store-Befehle, sowie die notwendigen Befehle zur Manipulation des Kontrollfluss.
+\paragraph{Mindeststandard.} Um die RISC-V Anforderungen zu erfüllen, muss eine Implementierung zumindest den Basis-Integerbefehlssatz umsetzen (Bezeichnung nach \mbox{RISC-V} Konvention: \textit{I}). Dieser enthält neben Befehlen zur Integerarithmetik auch Integer load- und store-Befehle, sowie die notwendigen Befehle zur Manipulation des Kontrollfluss.
 
 \paragraph{Erweiterungen.} Die allgemeine als \textit{General Purpose} bezeichnete Architektur enthält neben diesem Mindeststandard auch Befehle für Gleitkommaarithmetik (F) mit Double(D) oder Quad-Präzision (Q), für die Handhabung verschiedener Privilegierungen (P), atomare Befehle für die Verwaltung von Nebenläufigkeit (A) und seit der neusten Version 2.1 auch für Bitmanipulation (B), Vectoroperationen (V) und einigen mehr. \cite[p. 4f.]{RISC}
 
-\paragraph{Verwendetes Subset.} In diesem Projekt wurde sich allerdings darauf beschränkt, eine einfache integerverarbeitende Mikroarchitektur umzusetzen. Als Wortbreite wurden 32bit gewählt. Die Bezeichnung des verwendeten Subsets lautet daher nach RISC-V Konvention \textit{RV32I}. \cite[p. 67ff.]{RISC}
+\paragraph{Umgesetzte Instruktionsmenge.} In diesem Projekt wurde sich allerdings darauf beschränkt, eine einfache integerverarbeitende Mikroarchitektur umzusetzen. Als Wortbreite wurden 32bit gewählt. Die Bezeichnung des verwendeten Subsets lautet daher nach RISC-V Konvention \textit{RV32I}. \cite[p. 67ff.]{RISC}
 %----------------------------------------------------------------------------------------
 
 %----------------------------------------------------------------------------------------
 \section{RV32I}
-Das verwendete Subset besteht aus $47$ verschiedenen Maschineninstruktionen.
+Das verwendete Subset besteht aus insgesamt $47$ Maschineninstruktionen. Neben Instruktionen zur Integerarithmetik, sind dabei Branch-Instruktionen und Speicherzugriffe enthalten.
 
 \subsection{Instruktionsformate}
-RV32I kennt vier verschiedene Typen, in denen Maschineninstruktionen enkodiert sein können: \textit{R-type}, \textit{I-Type}, \textit{S-type} und \textit{U-type} - Befehle. Dabei sind Opcode, sowie Ausgangsregister ($rs1$, $rs2$) und Zielregister ($rd$) der Operationen immer an der gleichen Stelle des Maschinenbefehls kodiert. Diese Einteilung in Instruktionstypen erleichtert die Dekodierung der Instruktionen und führt zu einer überschaubareren Verschaltung.
+RV32I kennt vier verschiedene Typen, in denen Maschineninstruktionen enkodiert sein können: \textit{R-type}, \textit{I-Type}, \textit{S-type} und \textit{U-type} - Befehle, siehe Abbildung \ref{fig:instr_types}. Dabei sind Opcode, sowie Ausgangsregister ($rs1$, $rs2$) und Zielregister ($rd$) der Operationen immer an der gleichen Stelle des Maschinenbefehls kodiert. Sofern ein konstanter Wert (Immediate) in der Instruktion enthalten ist, ist dieser jeweils in den höchstwertigen Bits der Instruktion enkodiert. Diese Einteilung in Instruktionstypen erleichtert die Dekodierung der Instruktionen und führt zu einer simpleren Verschaltung.
 
 \begin{figure} [ht]
   \centering
-  \includegraphics[width=0.95\textwidth]{Figures/instruction_formats}
+  \includegraphics[width=\textwidth]{Figures/instruction_formats}
   \caption{Instruktionsformate. Quelle: \citep[S. 11]{RISC}}
   \label{fig:instr_types}
 \end{figure}
 
-\paragraph{Immediate Varianten?}
-...
 
-\paragraph{R-Type.} Als R-Type sind Register-Instruktionen enkodiert, bei denen beide Operanden in Registern liegen.
+\begin{itemize}  
+\item Als R-Type sind Register-Instruktionen enkodiert, bei denen beide Operanden in Registern liegen. 
+\item Die I-Type-Kodierung ist für Instruktionen vorgesehen, bei denen ein konstanter Wert (\textit{Immediate}) mit einem Wert im Register verrechnet wird.
+\item U-Type Befehle sind bedingte und unbedingte Sprungbefehle.
+\item Der S-Type wird für schreibende Zugriffe auf den Speicher (store) verwendet. 
+\end{itemize}
 
-\paragraph{I-Type.} Die I-Type-Kodierung ist für Instruktionen vorgesehen, bei denen ein konstanter Wert (\textit{Immediate}) mit einem Wert im Register verrechnet wird.
+\subsection{Immediate-Varianten.} Außerdem existieren mehrere Varianten, um Immediates aus den Instruktionen zu Werten zu dekodieren, siehe Abbildung \ref{fig:immediates}. Diese unterschiedlichen Kodierungen sind ebenfalls so gewählt, um die Überschneidungen der einzelnen Formate zu maximieren und dadurch die Implementierung zu vereinfachen. \cite[S. 11f.]{RISC} 
 
-\paragraph{S-Type.}
+\begin{figure} [ht]
+  \centering
+  \includegraphics[width=\textwidth]{Figures/immediates}
+  \caption{Immediateenkodierungen. Quelle: \citep[S. 12]{RISC}}
+  \label{fig:immediates}
+\end{figure}
 
-\subsection{Maschineninstruktionen}
-Die in dieser Arbeit umgesetzten Instruktionen des RV32I-Standards können im einzelnen der Tabelle in Anhang \ref{Maschinenbefehle} entnommen werden.
+\subsection{Einzelne Instruktionen}
+Die in dieser Arbeit umgesetzten Instruktionen des RV32I-Standards können im einzelnen der Tabelle in Anhang \ref{Maschinenbefehle} entnommen werden. Im Folgenden sollen lediglich ein Überblick über Instruktionen geschaffen werden und ein Befehl exemplarisch im Detail dargestellt werden.
 
-Im folgenden sollen lediglich einige Instruktionen exemplarisch dargestellt werden.
-
-\subsubsection{Integerverarbeitung}
+\paragraph{Integerarithmetik.}
 Integer verarbeitende Instruktionen bestehen aus solchen, die eine Operation auf zwei Registerwerten ausführen (als R-Type kodiert) oder eine Operation auf einem Registerwert und einem Immediate (I-Type) ausführen. Das Operationsergebnis wird jeweils im Zielregister ($rd$) gespeichert.
 
 In \ref{fig:addi} ist exemplarisch der \textit{ADDI}-Befehl zu sehen. Dieser soll einen im Maschinenbefehl kodierten Immediate-Wert mit einem einem Wert in einem bestimmten Register addieren und das Ergebnis anschließend in einem Zielregister speichern.
  
-Dafür ist in der Maschineninstruktion der Opcode $0010011$ (bits $6 - 0$) kodiert, der die Information enthält, dass eine Immediateoperation durchgeführt werden soll. Die bits $14-12$ kodieren die \textit{funct3}, die die auszuführende Rechenoperation beschreibt (hier: $000$ für die Addition). Ferner ist das Zielregister $rd$, das Ausgangsregister $rs1$ und der Immediate-Wert (bit $31 - 20$) im Maschinenbefehl selbst kodiert.
+Dafür ist in der Maschineninstruktion der Opcode $0010011$ (bits $6 - 0$) kodiert, der die Information enthält, dass eine Immediateoperation durchgeführt werden soll. Die bits 14-12 kodieren die \textit{funct3}, die die auszuführende Rechenoperation beschreibt (hier: $000$ für die Addition). Ferner ist das Zielregister $rd$, das Ausgangsregister $rs1$ und der Immediate-Wert (bit $31 - 20$) im Maschinenbefehl selbst kodiert.
 
 \begin{figure} [ht]
   \centering
-  \includegraphics[width=0.95\textwidth]{Figures/ADDI}
+  \includegraphics[width=\textwidth]{Figures/ADDI}
   \caption{ADDI-Instruktion.}
   \label{fig:addi}
 \end{figure}
@@ -81,10 +88,10 @@ Es ist außerdem der spezielle \textit{LUI}-Befehl vorgesehen, der benötigt wir
 
 TODO: Register-Register
 
-\subsubsection{Kontrollfluss}
+\paragraph{Kontrollfluss.}
 Um die Reihenfolge, mit der die Maschinenbefehle ausgeführt werden zu manipulieren, existieren bedingte (\textit{BEQ, BNE, BLT, BGE}) und unbedingte (\textit{JAL, JALR}) Sprungbefehle.
 
-\subsubsection{Speicherzugriffe}
+\paragraph{Speicherzugriffe.}
 Da RISC-V als load-store-Architektur entworfen ist, sind Zugriffe auf den Speicher nur in speziellen load/store-Befehlen vorgesehen. Die \textit{load}-Instruktion lädt einen Wert aus dem Speicher in ein Register, die \textit{store}-Instruktion schreibt einen Registerinhalt an eine bestimmte Speicheradresse. RISC-V erlaubt dabei Zugriffe auf Bytes, Halfwords und Words.
 %----------------------------------------------------------------------------------------
 
