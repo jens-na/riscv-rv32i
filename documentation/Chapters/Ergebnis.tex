@@ -58,7 +58,7 @@ Register. Weitere Informationen hierfür sind in Kapitel
 \subsection{Pipelining}
 In der vorliegenden Implementierung wurde aus Zeitgründen auf die Umsetung des sog. Pipelining verzichtet. 
 Trotzdem soll hier kurz auf die Grundlagen dieser Technik und deren Voraussetzungen eingegangen werden.
-Für eine detaillierte Auseinandersetzung mit diesem Thema soll hier auf weiterführende Literatur verwiesen werden~\cite[A.1]{Hennessy}
+Für eine detaillierte Auseinandersetzung mit diesem Thema soll hier auf weiterführende Literatur verwiesen werden~\cite[A-2 ff.]{Hennessy}
 
 Pipelining ist ein Verfahren, mit dessen Hilfe die Performance einer CPU verbessert werden kann.
 Statt Machineninstruktionen nacheinander auszuführen, werden diese in Teilaufgaben zerlegt, wodurch es möglich ist während eines Taktzyklus Befehle parallel abzuarbeiten.
@@ -73,7 +73,7 @@ Klassische Pipeline-Stufen sind z.B.
 \end{itemize}
 aber auch andere Phasen sind denkbar.
 
-Um Pipelining umzusetzen, ist es notwendig die Ergebisse der Teilaufgaben in Register zwischenzuspeichern, um diese der jeweils nächsten Phase zur Verfügung zu stellen.
+Um Pipelining umzusetzen, ist es außerdem notwendig die Ergebisse der Teilaufgaben in Register zwischenzuspeichern, um diese der jeweils nächsten Phase zur Verfügung zu stellen.
 
 
 
@@ -84,7 +84,7 @@ Um Pipelining umzusetzen, ist es notwendig die Ergebisse der Teilaufgaben in Reg
 \subsection{Speicherausrichtung}
 In Kapitel~\ref{Probleme} wurde erläutert, dass die vorliegende Implementierung nur ausgerichtete Speicherzugriffe unterstützt.
 Im Moment werden allerdings keine Vorkehrungen getroffen diese Art Zugriff zu unterbinden oder darauf zu reagieren.
-Der entsprechende Maschinenbefehl wird lediglich ignoriert, wodurch ein Programm, das diesen enthält, fehlerhaft ablaufen wird, sollte der nicht ausgerichtete Zugriff nicht schon auf der Kompilerebene unterbunden werden.
+Der entsprechende Maschinenbefehl wird lediglich ignoriert, wodurch ein Programm, das diesen enthält, fehlerhaft ablaufen wird, sollte der Zugriff nicht schon auf der Kompilerebene unterbunden werden.
 
 Im Rahmen dieser Arbeit wurden zwei Möglichkeiten diskutiert, wie auf Prozessorebene mit diesem Problem umgegangen werden könnte.
 

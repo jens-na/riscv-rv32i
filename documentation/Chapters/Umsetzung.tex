@@ -1,21 +1,10 @@
 \iffalse
 Herausforderungen:
-\TDOD: RAM als RAM erkennen
-\TODO: Probleme: ALU und Decode erst clk-sensitiv implementiert
-\TODO: latches
 \TODO: ELF, 
-\TODO: sign extension bei Load erwähnen
 
 
 Sonstiges:
 \TODO: links zu Quellcode
-\TODO: Block RAM im code umbenennen
-\TODO: Komponente Main
-\TODO: maschinenbefehle durchgehen: wurde etwas besonders implementiert?
-\TODO: warum zwei Takte? => Schreibzugriff RAM, Register...?
-\TODO: synchrones design
-\TODO: Register erklären?
-\TODO: ALU zero-flag-next entfernen
 \TODO: Warnings entfernen
 \fi
 
@@ -71,7 +60,8 @@ Diese besteht aus 32 Registern der Länge 32 Bit, wobei es sich bei der vorliege
 
 Ein asynchroner Leseprozess versorgt die beiden Datenausgänge mit den Inhalten der beiden Register, die durch die Eingänge \textit{rs1} und \textit{rs2} ausgewählt werden.
 Beide Ausgänge leiten die Werte an die ALU weiter, während eine zusätzliche Verbindung zum RAM die Ausführung einer \textit{Store}-Instruktion erleichtert.
-Ein Schreibprozess in das Register mit dem Index \textit{rd} ist nur bei steigender Taktflanke und gleichzeitig gesetztem Eingangsport \textit{en\_write} möglich, womit ein ungewolltes Speichern verhindert wird.
+Ein Schreibprozess in das Register mit dem Index \textit{rd} ist nur bei steigender Taktflanke und gleichzeitig gesetztem Eingangsport \textit{en\_write} möglich, womit ein unkontrolliertes Speichern verhindert wird.
+Dieser Vorgang benötigt zwei Takte, da bei steigender Taktflanke des ersten Taktes noch nicht gewährleistet werden kann, dass alle Signale in definiertem Zustand anliegen.
 Der Dateneingang kann mittels eines vorgeschalteten Multiplexers Werte aus den RAM, der ALU oder dem PC empfangen.
 
 
@@ -142,7 +132,10 @@ Handelt es sich um einen Lesezugriff wird dieses Byte zu einem Wort umgeformt un
         \end{tabular}
         \caption{Der Wert am Datenausgang nach dem Lesezugriff}
 \end{figure}\\
-Wird dagegen schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
+In diesem Fall wird das Wort mit Nullen aufgefüllt. 
+Bei einem \textit{sign extended Load}-Befehl kann dies auch mit Einsen geschehen, abhängig vom höchstwertigsten Bit des zu ladenden Byte.
+
+Wird schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
 \begin{figure} [htpb]
     \centering
         \begin{tabular}{|c|c|c|c|c|}

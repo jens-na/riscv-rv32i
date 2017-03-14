@@ -14,7 +14,7 @@ Nicht alle vier Byte des gesuchten Wortes befinden sich unter der gleichen (Wort
 Folgende Ansätze mit dieser Problematik umzugehen wurden diskutiert:
 \begin{itemize}
     \item Nicht ausgerichtete Speicherzugriffe sind grundsätzlich erlaubt.
-    \item Ein nicht ausgreichteter Speicherzugriff führt zu einer Prozessor-Exception, deren Handler den Zugriff korrigieren kann.
+    \item Ein nicht ausgerichteter Speicherzugriff führt zu einer Prozessor-Exception, deren Handler den Zugriff korrigieren kann.
     \item Ein nicht ausgreichteter Speicherzugriff ist grundsätzlich nicht möglich.
 \end{itemize}
 
@@ -22,14 +22,11 @@ Die Lösungsansätze eins und zwei führen unweigerlich zu Performanceeinbußen,
 Außerdem wird in der RISC-V-Spezifikation nur für ausgerichtete Zugriffe Atomarität garantiert, wohingegen bei unausgerichteten Zugriffen zusätzliche Vorkehrungen zu treffen sind~\cite[S. 18]{RISC}.
 Der vorliegende RAM-Controller wurde mit dem dritten Lösungsansatz implementiert, mit dem Vorteil, dass alle Maschinenbefehle die gleiche Zeit zur Ausführung benötigen.
 Ein nicht ausgerichteter Speicherzugriff wird hier also unterbunden, d.h. der Maschinenbefehl wird ignoriert und hat keinerlei Auswirkung.
-%\TODO: Exception werfen? returncode? Compiler erwähnen, der den unaligned Zugriff anzeigt
 
 Umgesetzt wurde dies wie folgt:\\
 Bei einem nicht ausgerichteten Schreibzugriff wird der Schreibvorgang nicht unterbrochen, allerdings wird in die jeweilige Speicherstelle einfach der ürsprünglich dort enthaltene Wert zurückgeschrieben.
 Somit wird der Speicher nicht verändert.\\
 Wird dagegen lesend auf eine nicht ausgerichtete Adresse zugegriffen, sendet der RAM-Controller über seinen \textit{dsbl\_wr\_reg}-Port ein Signal an den Dekodierer, der diese Information (\textit{en\_write = false}) an die Registerbank weiterleitet und somit einen Schreibzugriff auf das Register unterbindet, in das der zu lesende Wert aus dem RAM ursprünglich geschrieben werden sollte.
-%\TODO: Literaturhinweis darauf, wie unaligned memory access gehandelt wird
-%https://www.kernel.org/doc/Documentation/unaligned-memory-access.txt
 
 \paragraph{Schreibprozess.} 
 Da auf den Hauptspeicher nur ein 32-Bit breiter Zugriff möglich ist, muss der RAM-Controler vor einem Schreibzugriff der Breite 8- oder 16-Bit die adressierte Speicherstelle lesen um diese verändern und anschließend zurückschreiben zu können~(\ref{subsec:RAM}).
