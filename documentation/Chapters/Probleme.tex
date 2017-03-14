@@ -49,8 +49,21 @@ Gleichzeitig liest er den Wert aus der Speicherstelle, die adressiert wird  (\te
 Vom Dekoder erhält der RAM-Controller die Information, dass ein Schreibzugriff auf den RAM erforderlich ist (\textit{en\_write\_in}), welche er direkt an den RAM weiterleitet (\textit{en\_write\_out}).
 Dieser erhält den Schreibbefehl (\textit{en\_write}) allerdings kurz nach einer steigenden Taktflanke (siehe \textit{s\_clk}), weswegen der eigentliche Schreibvorgang erst im zweiten Takt erfolgt.
 Um einen weiteren Schreibzugriff im nächsten Takt zu verhindern, setzt der RAM-Controller das \textit{en\_write\_out}-Signal  mit Hilfe zweier toggelnder Signale (\textit{enable} und \textit{enable\_next}) auf \textit{FALSE}.
-\section{Adressberechnung von Branches im PC}
-%----------------------------------------------------------------------------------------
+\section{Laden von ELF-Dateien}
+Es wurde versucht ausführbare C-Programme im Executable and
+Linkable Format (ELF) in den Hauptspeicher (RAM) zu laden. Hierzu wurde
+eine ausführbare Datei, die der
+RISC-V-GCC\footnote{https://github.com/riscv/riscv-gnu-toolchain
+(08.03.2017)} kompiliert hat, in den RAM geladen. Durch verschiedene
+Anpassungen wurde versucht an die Stelle in der ELF-Datei zu
+„springen“, die den Start der ausführbaren Instruktionen darstellen.
+Der „Entry-Point“ des Programms wurde mit dem Programm \code{readelf}
+ermittelt. Das Springen an diese Adresse war jedoch erfolglos, da der
+Vorgang des Ladens von ELF-Dateien falsch verstanden wurde. 
 
-%----------------------------------------------------------------------------------------
-%----------------------------------------------------------------------------------------
+%% TODO ist das so okay?!
+\paragraph{Erkenntnis.} Ein ELF-Loader wäre benötigt worden, der die Datei (Instruktionen,
+Variablen) an den richtigen Stellen in den Speicher läd. Loader sind 
+in der Regel Teil eines Betriebssystems. Aus Zeitgründen konnte dieser
+nicht umgesetzt werden, besonders weil keine Ausführungsumgebung
+(Betriebssystem) für die Entwicklung der RISC-V-CPU zur Verfügung stand.
