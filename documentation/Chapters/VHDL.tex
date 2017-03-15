@@ -12,19 +12,27 @@ Anstatt eine Schaltung aus ihren einzelnen elektronischen Bauteilen zu entwerfen
 \section{Entwicklung mit VHDL}
 \paragraph{Entities.} In VHDL werden \textit{Entities} definiert, die eine Klasse von Schaltelementen repräsentieren. Entities bestehen üblicherweise aus mehreren Ein-und Ausgangs\textit{ports}. Innerhalb einer Entity wird ihre \emph{Architecture} beschrieben. Diese kann entweder ihr Verhalten als innere Funktion oder ihre Struktur beschreiben.
 
-\paragraph{Architecture.} Im \emph{Verhaltensmodell} einer Entity wird definiert, wie sich die Ausgangssignale in Abhängigkeit der Eingangssignale verhalten. Dafür können die Eingangssignale direkt oder über kombinatorische Schaltungen an die Ausgänge weitergeleitet werden. 
+\paragraph{Architecture.} Im Verhaltensmodell einer Entity wird definiert, wie sich die Ausgangssignale in Abhängigkeit der Eingangssignale verhalten. Dafür können die Eingangssignale direkt oder über kombinatorische Schaltungen an die Ausgänge weitergeleitet werden. 
 
-Um komplexe Schaltungen hierarchisch zu gliedern, kann die Architecture auch als \emph{Strukturmodell} beschrieben werden. Hier wird auf übergeordneter Ebene die Verschaltung mehrerer Subkomponenten definiert. Dafür werden Instanzen von zuvor beschriebenen Entities (sog. \textit{Components}) erstellt und deren Ports miteinander verbunden. \cite[S. 25ff.]{kesel2013entwurf}
+Um komplexe Schaltungen hierarchisch zu gliedern, kann die Architecture auch als Strukturmodell beschrieben werden. Hier wird auf übergeordneter Ebene die Verschaltung mehrerer Subkomponenten definiert. Dafür werden Instanzen von zuvor beschriebenen Entities (sog. \textit{Components}) erstellt und deren Ports miteinander verbunden. \cite[S. 25ff.]{kesel2013entwurf}
 
-\paragraph{Prozesse.} Bei der Entwicklung ist insbesondere zu beachten, dass das Verhalten einer Entity, anders als von Programmiersprachen gewohnt, im Allgemeinen nicht sequentiell abgearbeitet wird. Vielmehr findet die Signalverarbeitung grundsätzlich parallel statt. Im Verhaltensmodell einer Entity können deshalb Prozesse deklariert werden, deren Instruktionen sequentiell abgearbeitet werden. Innerhalb eines Prozesses können dann auch \textit{Variablen} verwendet werden, die sich vergleichbar mit Variablen von Programmiersprachen verhalten. \cite[S. 29f.]{kesel2013entwurf}
+\paragraph{Prozesse.} Bei der Entwicklung ist insbesondere zu beachten,
+dass das Verhalten einer Entity, anders als von vielen
+Programmiersprachen gewohnt, im Allgemeinen nicht sequentiell
+abgearbeitet wird. Vielmehr findet die Signalverarbeitung grundsätzlich
+parallel statt. Im Verhaltensmodell einer Entity können deshalb Prozesse
+deklariert werden, deren Instruktionen nacheinander abgearbeitet werden. Innerhalb eines Prozesses können dann auch Variablen verwendet werden, die sich vergleichbar mit Variablen von Programmiersprachen verhalten. \cite[S. 29f.]{kesel2013entwurf}
 %----------------------------------------------------------------------------------------
  
 %----------------------------------------------------------------------------------------
-\section{Umsetzung von VHDL}
-Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender selbst nur bedingten Einfluss, da die Implementierung der Schaltung in Hardware üblicherweise von automatisierten Werkzeugen durchgeführt wird. Dabei lassen sich mehrere Schritte unterscheiden. In diesem Projekt wurde die Entwicklungsumgebung Vivado Design Suite von Xilinx verwendet, um den VHDL-Code umzusetzen.
+\section{Umsetzung in Hardware}
+Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender
+selbst nur bedingten Einfluss, da die Implementierung der Schaltung in
+Hardware üblicherweise von automatisierten Werkzeugen durchgeführt wird.
+Dabei lassen sich mehrere Schritte unterscheiden. 
 
-\paragraph{Simulation.} In einem ersten Schritt kann das Verhalten des VHDL Codes \emph{simuliert} werden, was vor allem in der Testphase von Bedeutung ist. Dabei wird der Code noch nicht auf der Hardware ausgeführt, sondern das Verhalten der Schaltung mittels sogenannter Testbenches simuliert, die die Schaltung mit virtuellen Eingangssignalen (z. B. Taktrate) versorgt. \cite[S. 81]{SynthesisFPGA} Der Quellcode der verwendeten Haupttestbench dieses Projekts ist in im Anhang \ref{src:main_tb.vhd} zu sehen. 
-
+\paragraph{Simulation.} In einem ersten Schritt kann das Verhalten des
+VHDL-Codes \emph{simuliert} werden, was vor allem in der Testphase von Bedeutung ist. Dabei wird der Code noch nicht auf der Hardware ausgeführt, sondern das Verhalten der Schaltung mittels sogenannter Testbenches simuliert, die die Schaltung mit virtuellen Eingangssignalen (z. B. Taktrate) versorgt. \cite[S. 81]{SynthesisFPGA} 
 \begin{figure} [ht]
   \centering
   \includegraphics[width=\textwidth]{Figures/simulation}
@@ -32,7 +40,14 @@ Auf die konkrete Umsetzung der beschriebenen Schaltung hat der Anwender selbst n
   \label{fig:simulation}
 \end{figure}
 
-\paragraph{Synthese.} Das simulierte Verhalten kann anschließend \emph{synthetisiert} werden. Dabei ist zu beachten, dass nicht die vollständige Menge von zulässigem (und simulationsfähigem) VHDL-Code letztlich in eine physische Schaltung synthetisierbar ist (so z. B. \emph{wait}-Statements). Das ist abhängig von der verwendeten Zieltechnologie (FPGA, ASIC) und dem verwendeten Synthesewerkzeug. Das Ergebnis der Synthese ist eine (hardwareunabhängige) Netzliste, die einer textuellen Beschreibung des umgesetzten Schaltplans entspricht.
+\paragraph{Synthese.} Das simulierte Verhalten kann anschließend
+\emph{synthetisiert} werden. Dabei ist zu beachten, dass nicht die
+vollständige Menge von zulässigem (und simulationsfähigem) VHDL-Code in
+eine physische Schaltung synthetisierbar ist (so z.~B.
+\emph{wait}-Statements). Dies ist abhängig von der verwendeten Zieltechnologie (FPGA, ASIC) und dem verwendeten Synthesewerkzeug. Das Ergebnis der Synthese ist eine (hardwareunabhängige) Netzliste, die einer textuellen Beschreibung des umgesetzten Schaltplans entspricht.
 
-\paragraph{Implementierung.} Diese Netzliste ist Grundlage der Hardwareimplementierung. Dabei wird innerhalb des \emph{place and route} Vorgangs unter Berücksichtigung der verfügbaren Hardware und bestimmter zeitlicher Beschränkungen berechnet, wo die einzelnen Schaltelemente auf der Hardware implementiert werden und wie sie verbunden werden. In diesem Schritt wird ein Bitstream generiert, der anschließend auf die Hardware geladen werden kann. \cite[S. 21]{SynthesisFPGA}
+\paragraph{Implementierung.} Diese Netzliste ist Grundlage der
+Hardwareimplementierung. Unter anderem wird hier innerhalb des
+\emph{Place-and-Route}-Vorgangs, unter Berücksichtigung der verfügbaren
+Hardware und bestimmter zeitlicher Beschränkungen, berechnet, wo die einzelnen Schaltelemente auf der Hardware implementiert und wie sie verbunden werden. In diesem Schritt wird ein Bitstream generiert, der anschließend auf die Hardware geladen werden kann. \cite[S. 21]{SynthesisFPGA}
 %----------------------------------------------------------------------------------------
