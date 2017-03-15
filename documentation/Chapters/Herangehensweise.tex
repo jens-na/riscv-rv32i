@@ -86,15 +86,15 @@ Constraint-Datei für die Portbelegung.
 \paragraph{Arbeitsteilung.} In Kapitel \ref{sec:komponenten} wurden die
 verschiedenen Komponenten der CPU vorgestellt. Die Entwicklung der
 einzelnen Bausteine wurde in der Gruppe aufgeteilt. Anschließend mussten
-die verschiedenen Maschinenbefehle, wie in Tabelle
-\ref{maschinenbefehle} zu sehen, umgesetzt werden. Diese wurden
+die verschiedenen Maschinenbefehle, wie in Anhang
+\ref{Maschinenbefehle} zu sehen, umgesetzt werden. Diese wurden
 nach der Entwicklung der Komponenten aufgeteilt und in Feature-Branches 
 entwickelt. Zum Beispiel gibt es einen Branch namens \emph{ar\_\,load}, der die 
 Entwicklung der Load/Store-Befehle wie \code{lw, lb, lh} beinhaltet.
 
 \section{Testumgebung} \label{sec:testumgebung}
 \subsection{Testbenches}
-Zu jeder erstellten Komponente, die in Kapitel \ref{sec:komponente}
+Zu jeder erstellten Komponente, die in Kapitel \ref{sec:komponenten}
 erläutert wurde sind Testbenches erstellt worden. Eine Testbench testet
 \emph{eine} Komponente unabhängig und stellt somit einen Modultest der
 entsprechenden Komponente dar. Zusätzlich wurde eine Testbench namens
@@ -183,6 +183,7 @@ Beispiel-Datei:
 ...
 \end{lstlisting}
 
-Die Funktion \ref{src:blockram_read_file} liest beim Synthese-Vorgang
-den Inhalt der entsprechenden Datei und füllt den RAM mit den
+Die Funktion \code{InitRamFromFile} in der Datei \code{block\_ram.vhd}
+(nur im Branch \emph{master\_\,fpga vorhanden}) liest beim Compile-Vorgang
+des VHDL-Quellcodes den Inhalt der entsprechenden Datei und füllt den RAM mit den
 Instruktionen. Dies war besonders für den Black-Box-Test notwendig.

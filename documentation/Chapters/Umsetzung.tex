@@ -13,6 +13,7 @@ Sonstiges:
 
 %----------------------------------------------------------------------------------------
 \section{Komponenten der CPU}
+\label{sec:komponenten}
 
 Unter Anhang~\ref{schaltplan} findet man einen skizzenhaften Aufbau der CPU, der die einzelnen Komponenten und deren Verbindungen untereinander darstellt.
 Diese Skizze wurde während der Implementierungsphase sukzessive erweitert und stellte ein wichtiges Hilfsmittel dar, das erheblich zur Übersicht und zum Verständnis über das Zusammenwirkens der Bauteile beigetragen hat.
@@ -35,10 +36,10 @@ Bei der Umsetzung dieser Aufgabe erweist sich der Aufbau der Maschinenbefehle (s
 Vergleichbare Informationen belegen innerhalb der 32-Bit- Instruktionen die gleichen Positionen.
 Enthält ein Maschinenbefehl z.B. ein Zielregister in das ein Ergebnis geschrieben werden soll, so befindet sich die Adresse dieses Zielrgisters an der gleichen Position, an der es sich auch bei anderen Befehlen befindet.
 Das erleichtert zum einen die Implementierung, da einem Ausgangsport über mehrer Befehle hinweg die gleichen Bits eines Eingangsports zugeordnet werden können, und verringert zum anderen die Komplexität der daraus resultierenden Schaltungen. 
-Ein Blick in den Quellcode (siehe~\ref{}) zeigt, dass eine verschachtelte \textit{Case}-Abfrage den Ausgangsports die passenden Signale zuweist, die ohne den vorteilhaften Aufbau der Maschinenbefehle wesentlich komplexer geraten wäre.
+Ein Blick in den Quellcode (siehe \code{decode.vhd}) zeigt, dass eine verschachtelte \textit{Case}-Abfrage den Ausgangsports die passenden Signale zuweist, die ohne den vorteilhaften Aufbau der Maschinenbefehle wesentlich komplexer geraten wäre.
 
 \subsection{Program Counter}
-
+\label{sec:programcounter}
 Beim sog. \textit{Program Counter} (kurz: \textit{PC}) handelt es sich um ein flankengesteuertes 32-Bit-Register mit asynchronem Reset, das die Adresse enthält, unter der der nächste abzuarbeitende Maschinenbefehl im Hauptspeicher zu finden ist. 
 Wie der Name schon vermuten lässt, ist der PC als Zählregister implementiert:
 Alle zwei Takte wird der aktuelle Registerwert um vier erhöht, um damit den nächsten 32-Bit-Maschinenbefehl zu adressieren.
