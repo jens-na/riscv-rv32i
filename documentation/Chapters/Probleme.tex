@@ -1,6 +1,7 @@
-\chapter{Herausforderungen und Probleme} % Main chapter title
+\chapter{Herausforderungen und Ausblick} % Main chapter title
 \label{Probleme} % For referencing the chapter elsewhere, use \ref{Chapter1} 
 
+Das Ziel dieses Projekts war, einfache Berechnungen auf einer eigenen Hardwareimplementierung ausführen zu können. Dieses Mindestziel wurde erreicht. Darüber hinaus sind jedoch mehrere Ansätze denkbar, das entwickelte CPU-Design fortzuführen. Diese sind unterteilbar in solche, die die Funktionalität erweitern und solche, die das bestehende Design optimieren. Da mit diesem Projekt vor allem Bildungszwecke verfolgt wurden, wurde die Priorität zunächst auf Funktionalitätsaspekte gelegt, anstatt Details des Designs zu zu optimieren.
 %----------------------------------------------------------------------------------------
 \section{RAM}
 
@@ -11,17 +12,12 @@ An dieser Stelle sollen nun einige Schwierigkeiten, die während der Implementie
 Ein Speicherzugriff auf $N$ Byte gilt als ausgerichtet, wenn die Startadresse dieser $N$ Byte ein ganzzahliges Vielfaches von $N$ ist~\cite[S. 96/97]{Hennessy}.
 Findet z.B. ein Speicherzugriff mit der Breite von 32-Bit auf eine Adresse statt, die nicht ausgerichtet ist, die also kein ganzzahliges Vielfaches von 4 ist, ergibt sich folgendes Problem:
 Nicht alle vier Byte des gesuchten Wortes befinden sich unter der gleichen (Wort-)Adresse im Speicher und können daher nicht innerhalb eines einzelnen Zugriffs erreicht werden.
-Folgende Ansätze mit dieser Problematik umzugehen wurden diskutiert:
-\begin{itemize}
-    \item Nicht ausgerichtete Speicherzugriffe sind grundsätzlich erlaubt.
-    \item Ein nicht ausgerichteter Speicherzugriff führt zu einer Prozessor-Exception, deren Handler den Zugriff korrigieren kann.
-    \item Ein nicht ausgreichteter Speicherzugriff ist grundsätzlich nicht möglich.
-\end{itemize}
 
-Die Lösungsansätze eins und zwei führen unweigerlich zu Performanceeinbußen, da sie nicht in der gleichen Zeit wie ein ausgerichteter Speicherzugriff abgearbeitet werden können.
-Außerdem wird in der RISC-V-Spezifikation nur für ausgerichtete Zugriffe Atomarität garantiert, wohingegen bei unausgerichteten Zugriffen zusätzliche Vorkehrungen zu treffen sind~\cite[S. 18]{RISC}.
-Der vorliegende RAM-Controller wurde mit dem dritten Lösungsansatz implementiert, mit dem Vorteil, dass alle Maschinenbefehle die gleiche Zeit zur Ausführung benötigen.
-Ein nicht ausgerichteter Speicherzugriff wird hier also unterbunden, d.h. der Maschinenbefehl wird ignoriert und hat keinerlei Auswirkung.
+Möchte man diese Art Operation unterstützen wäre es z.B. denkbar, jeden Zugriff, der mehr als ein Byte breit ist, in eine entsprechende Anzahl von Byte-Zugriffen umzuwandeln, was sich allerdings negativ auf die Performance der CPU auswirken würde.
+Außerdem garantiert die RISC-V-Spezifikation nur für ausgerichtete Zugriffe Atomarität, wohingegen bei unausgerichteten Zugriffen zusätzliche Vorkehrungen zu treffen sind~\cite[S. 18]{RISC}.
+
+Der vorliegende RAM-Controller unterstützt unsaugerichtete Zugriffe nicht, mit dem Vorteil, dass alle Maschinenbefehle nur zwei Takte zur Ausführung benötigen.
+Ein entsprechender Speicherzugriff wird hier also unterbunden, d.h. der Maschinenbefehl wird ignoriert und hat keinerlei Auswirkung.
 
 Umgesetzt wurde dies wie folgt:\\
 Bei einem nicht ausgerichteten Schreibzugriff wird der Schreibvorgang nicht unterbrochen, allerdings wird in die jeweilige Speicherstelle einfach der ürsprünglich dort enthaltene Wert zurückgeschrieben.
@@ -47,25 +43,43 @@ Vom Dekoder erhält der RAM-Controller die Information, dass ein Schreibzugriff 
 Dieser erhält den Schreibbefehl (\textit{en\_write}) allerdings kurz nach einer steigenden Taktflanke (siehe \textit{s\_clk}), weswegen der eigentliche Schreibvorgang erst im zweiten Takt erfolgt.
 Um einen weiteren Schreibzugriff im nächsten Takt zu verhindern, setzt der RAM-Controller das \textit{en\_write\_out}-Signal  mit Hilfe zweier toggelnder Signale (\textit{enable} und \textit{enable\_next}) auf \textit{FALSE}.
 
-\section{Laden von ELF-Dateien}
-Es wurde versucht ausführbare C-Programme im Executable and
-Linkable Format (ELF) in den Hauptspeicher (RAM) zu laden. Hierzu wurde
-eine ausführbare Datei, die der
-RISC-V-GCC\footnote{https://github.com/riscv/riscv-gnu-toolchain
-(08.03.2017)} kompiliert hat, in den RAM geladen. Durch verschiedene
-Anpassungen wurde versucht an die Stelle in der ELF-Datei zu
-„springen“, die den Start der ausführbaren Instruktionen darstellen.
-Der „Entry-Point“ des Programms wurde mit dem Programm \code{readelf}
-ermittelt. Das Springen an diese Adresse war jedoch erfolglos, da der
-Vorgang des Ladens von ELF-Dateien falsch verstanden wurde. 
 
-%% TODO ist das so okay?!
-\paragraph{Erkenntnis.} Ein ELF-Loader wäre benötigt worden, der die Datei (Instruktionen,
-Variablen) an den richtigen Stellen in den Speicher läd. Loader sind 
-in der Regel Teil eines Betriebssystems. Aus Zeitgründen konnte dieser
-nicht umgesetzt werden, besonders weil keine Ausführungsumgebung
-(Betriebssystem) für die Entwicklung der RISC-V-CPU zur Verfügung stand.
 
+
+\subsection{Erweiterungen des Befehlssatz}
+
+Aufgrund der flexiblen Erweiterbarkeit der RISC-V-Architektur (siehe Kapitel \ref{sec:erweiterung} und des modularen Aufbaus dieses Projekts sind zusätzliche Instruktionen, die über den RISC-V Basisbefehlssatz hinausgehen, verhältnismäßig einfach hinzuzufügen. In der RISC-V Spezifikation sind beispielsweise Befehlssatzerweiterungen für Gleitkommaarithmetik, mehrere Privilegierungsebenen, atomare Befehle für Multikernprozessoren, aber auch für Bitmanipulation und Vektoroperationen vorgesehen. \cite[S. 4f.]{RISC} Diese Erweiterungen können je nach indvidueller Anforderungen dem Basisbfehlssatz hinzugefügt werden.
+ 
+Denkbar wäre es außerdem, das CPU-Design über RISC-V Standards hinaus individuell zu erweitern, indem eigene Maschinenbefehle definiert werden, die auf spezielle Anwendungsgebiete zugeschnitten sind.
+
+\subsection{Pipelining}
+In der vorliegenden Implementierung wurde aus Zeitgründen auf die Umsetung des sog. Pipelining verzichtet. 
+Trotzdem soll hier kurz auf die Grundlagen dieser Technik und deren Voraussetzungen eingegangen werden.
+Für eine detaillierte Auseinandersetzung mit diesem Thema wird an dieser Stelle auf weiterführende Literatur verwiesen~\cite[A-2 ff.]{Hennessy}
+
+Pipelining ist ein Verfahren, mit dessen Hilfe die Performance einer CPU verbessert werden kann.
+Statt Machineninstruktionen nacheinander auszuführen, werden diese in Teilaufgaben zerlegt, wodurch es möglich ist während eines Taktzyklus Befehle parallel abzuarbeiten.
+Die Ausführungszeit eines einzelnen Befehls kann dadurch zwar durchaus länger werden, allerdings ist es möglich insgesamt mehr Instruktionen pro Takt abzuarbeiten.
+Klassische Pipeline-Stufen sind z.B.
+\begin{itemize}
+    \item Instruction fetch - Laden des Maschinenbefehls,
+    \item Instruction decode - Dekodieren des Maschinenbefehls,
+    \item Execute - Ausführen einer Rechenoperation,
+    \item Memory Access - Zugriff auf den Speicher (bei LOAD- und STORE-Befehlen),
+    \item Write back - Zurückschreiben des Ergebnisses in den Speicher,
+\end{itemize}
+aber auch andere Phasen sind denkbar.
+
+Um Pipelining in das vorliegende CPU-Design zu integrieren, wäre es also notwendig die Bearbeitung eines Maschinenbefehls in eindeutig abgegrenzte Stufen zu unterteilen. 
+Außerdem müssten die Ergebnisse jeder Stufe in dafür vorgesehene Register zwischengespeichert werden, um diese der jeweils nächsten Phase zur Verfügung zu stellen.
+
+\subsection{Übersetzen von C-Programmen}
+Für die vorliegende CPU ist es zwar möglich Assemblerprogramme zu übersetzen und in den RAM zu laden~(\ref{sec:testumgebung}), allerdings muss dabei manuell für die korrekte Anordnung der Daten gesorgt werden.
+Aus diesem Grund wurde über die Möglichkeit diskutiert C-Programme zu übersetzen und ohne zusätzliche Vorkehrungen in den Speicher zu laden und auszuführen.
+Tatsächlich existiert mit dem RISC-V-GCC\footnote{https://github.com/riscv/riscv-gnu-toolchain (08.03.2017)} bereits ein Compiler für die vorliegende Architektur, allerdings fehlt für das erwähnte Vorhaben eine Ausführungsumgebung (z.B. ein Betriebssystem), die die kompilierte Datei korrekt in den Speicher lädt.
+
+Zwar wurde der naive Versuch unternommen, ein ausführbares C-Programm im ELF-Format (\textit{Executable and Linkable Format}) fast unverändert in den Speicher abzubilden und über kleine Anpassungen den \textit{entry point}, also die Adresse an der die eigentliche Programmausführung beginnt, anzuspringen.
+Allerdings folgte relativ schnell die Erkenntnis, dass sich dieses Thema als wesentlich komplexer darstellt als ursprünglich angenommen und damit eine Umsetzung weiterer Recherchen bedarf,~\cite[S. 9 ff.]{elf} auf die im Rahmen dieses Projekts aus Zeitgründen verzichtet wurde.
 
 
 
