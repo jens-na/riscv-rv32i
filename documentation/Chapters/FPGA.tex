@@ -2,12 +2,12 @@
 \label{FPGA} % For referencing the chapter elsewhere, use \ref{Chapter1} 
 
 \section{Einleitung}
-Ein FPGA (Field Programmable Gate Array) ist ein integrierter Schaltkreis, in den eine beliebige logische Schaltung programmiert werden kann.
+Ein FPGA (Field Programmable Gate Array) ist ein integrierter Schaltkreis, in den eine beliebige logische Schaltung programmiert werden kann. Diese Schaltungsstruktur wird mittels vorgefertiger Logikblöcke im Chip gespeichert, ohne dass die Hardware selbst verändert werden muss.
 
-Die meisten FPGA's basieren auf mehrfach beschreibbarem (EEPROM-) Speicher. Dadurch kann die umgesetzte Logik eines FPGA's beliebig oft durch das Laden einer Konfigurationsdatei geändert werden. Sie eignen sich daher insbesondere für die Prototyping- und Testphase von Hardwareprojekten, da sie kostengünstig und schnell neu konfiguriert werden können. \cite[S. 8]{SynthesisFPGA}
+Die umgesetzte Logik der meisten FPGA's kann außerdem beliebig oft durch das Laden einer neuen Konfigurationsdatei geändert werden. Sie sind gegenüber fest in Hardware umgesetzten Lösungen (z. B. ASIC's) damit sehr flexibel. FPGA's eignen sich somit insbesondere für die Prototyping- und Testphase von Hardwareprojekten. \cite[S. 8]{SynthesisFPGA}
 
 \section{Technik}
-\paragraph{Configurable Logic Blocks.} FPGA's bestehen aus einem zweidimensionalen Array von programmierbaren Blöcken, den \emph{Configurable Logic Blocks} (CLB). \cite[S. 11]{Chu} Der genaue Aufbau ist dabei herstellerabhängig, sie bestehen aber mindestens aus einem Look-Up Table (LUT) und einem Flipflop. \cite[S. 8]{SynthesisFPGA}
+\paragraph{Configurable Logic Blocks.} FPGA's bestehen aus einem zweidimensionalen Array von programmierbaren Logikblöcken, den \emph{Configurable Logic Blocks} (CLB). \cite[S. 11]{Chu} Der genaue Aufbau ist dabei herstellerabhängig, sie bestehen aber mindestens aus einer Look-Up Table (LUT) und einem Flipflop. \cite[S. 8]{SynthesisFPGA}
 
 \begin{figure} [ht]
   \centering
@@ -16,8 +16,7 @@ Die meisten FPGA's basieren auf mehrfach beschreibbarem (EEPROM-) Speicher. Dadu
   \label{fig:clb}
 \end{figure}
 
-
-\paragraph{Look-Up Tables.} Look-Up Tables haben $n$ Eingänge (meistens zwischen 4 und 6) und einen Ausgang. Sie sind so konfigurierbar, dass sie eine beliebige Binärfunktion umsetzen. Zu diesem Zweck enthält jede LUT $2^n$ Speicherzellen, in denen die Werte für jede beliebige Eingangssignalkombination abgelegt werden können. Sie sind so verschaltet, dass eine bestimmte Eingangskombination zur Ausgabe des Wertes der dazugehörigen Speicherzelle führt. \cite[S. 12f.]{Chu} Durch Neubelegung dieser Speicherzellen kann die umgesetzte Logik des FPGA's beliebig verändert werden. 
+\paragraph{Look-Up Tables.} Look-Up Tables haben $n$ Eingänge (meistens zwischen 4 und 6) und einen Ausgang. Sie sind so konfigurierbar, dass sie eine beliebige Binärfunktion umsetzen. Zu diesem Zweck enthält jede LUT $2^n$ Speicherzellen, in denen die Werte für jede beliebige Eingangssignalkombination abgelegt werden können. Sie sind so verschaltet, dass eine bestimmte Eingangskombination zur Ausgabe des Wertes der dazugehörigen Speicherzelle führt. \cite[S. 12f.]{Chu} Durch Neubelegung dieser Speicherzellen kann die umgesetzte Logik des FPGA's beliebig verändert werden.
 
 \paragraph{Flipflops.} Durch den fest verbauten D-Flipflop kann die Ausgabe des Logikblocks nicht nur direkt weitergegeben, sondern auch zwischengespeichert werden. Dadurch lassen sich rückgekoppelte Logiken (Schaltwerke) realisieren. \cite[S. 13]{Chu}
 
