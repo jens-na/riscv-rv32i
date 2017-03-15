@@ -46,13 +46,13 @@ Um einen weiteren Schreibzugriff im nächsten Takt zu verhindern, setzt der RAM-
 
 
 
-\subsection{Erweiterungen des Befehlssatz}
+\section{Erweiterungen des Befehlssatz}
 
 Aufgrund der flexiblen Erweiterbarkeit der RISC-V-Architektur (siehe Kapitel \ref{sec:erweiterung} und des modularen Aufbaus dieses Projekts sind zusätzliche Instruktionen, die über den RISC-V Basisbefehlssatz hinausgehen, verhältnismäßig einfach hinzuzufügen. In der RISC-V Spezifikation sind beispielsweise Befehlssatzerweiterungen für Gleitkommaarithmetik, mehrere Privilegierungsebenen, atomare Befehle für Multikernprozessoren, aber auch für Bitmanipulation und Vektoroperationen vorgesehen. \cite[S. 4f.]{RISC} Diese Erweiterungen können je nach indvidueller Anforderungen dem Basisbfehlssatz hinzugefügt werden.
  
 Denkbar wäre es außerdem, das CPU-Design über RISC-V Standards hinaus individuell zu erweitern, indem eigene Maschinenbefehle definiert werden, die auf spezielle Anwendungsgebiete zugeschnitten sind.
 
-\subsection{Pipelining}
+\section{Pipelining}
 In der vorliegenden Implementierung wurde aus Zeitgründen auf die Umsetung des sog. Pipelining verzichtet. 
 Trotzdem soll hier kurz auf die Grundlagen dieser Technik und deren Voraussetzungen eingegangen werden.
 Für eine detaillierte Auseinandersetzung mit diesem Thema wird an dieser Stelle auf weiterführende Literatur verwiesen~\cite[A-2 ff.]{Hennessy}
@@ -73,7 +73,7 @@ aber auch andere Phasen sind denkbar.
 Um Pipelining in das vorliegende CPU-Design zu integrieren, wäre es also notwendig die Bearbeitung eines Maschinenbefehls in eindeutig abgegrenzte Stufen zu unterteilen. 
 Außerdem müssten die Ergebnisse jeder Stufe in dafür vorgesehene Register zwischengespeichert werden, um diese der jeweils nächsten Phase zur Verfügung zu stellen.
 
-\subsection{Übersetzen von C-Programmen}
+\section{Übersetzen von C-Programmen}
 Für die vorliegende CPU ist es zwar möglich Assemblerprogramme zu übersetzen und in den RAM zu laden~(\ref{sec:testumgebung}), allerdings muss dabei manuell für die korrekte Anordnung der Daten gesorgt werden.
 Aus diesem Grund wurde über die Möglichkeit diskutiert C-Programme zu übersetzen und ohne zusätzliche Vorkehrungen in den Speicher zu laden und auszuführen.
 Tatsächlich existiert mit dem RISC-V-GCC\footnote{https://github.com/riscv/riscv-gnu-toolchain (08.03.2017)} bereits ein Compiler für die vorliegende Architektur, allerdings fehlt für das erwähnte Vorhaben eine Ausführungsumgebung (z.B. ein Betriebssystem), die die kompilierte Datei korrekt in den Speicher lädt.
