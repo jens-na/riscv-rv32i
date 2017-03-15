@@ -16,7 +16,7 @@ Sonstiges:
 \label{sec:komponenten}
 
 Unter Anhang~\ref{schaltplan} findet man einen skizzenhaften Aufbau der CPU, der die einzelnen Komponenten und deren Verbindungen untereinander darstellt.
-Diese Skizze wurde während der Implementierungsphase sukzessive erweitert und stellte ein wichtiges Hilfsmittel dar, das erheblich zur Übersicht und zum Verständnis über das Zusammenwirkens der Bauteile beigetragen hat.
+Diese Skizze wurde während der Implementierungsphase sukzessive erweitert und stellte ein wichtiges Hilfsmittel dar, das erheblich zur Übersicht und zum Verständnis über das Zusammenwirken der Bauteile beigetragen hat.
 In vorliegendem Kapitel sollen die Funktionsweise und der Aufbau der einzelnen Komponenten und einige implementierungsspezifische Details erläutert werden.
 
 \subsection{Decode}
@@ -32,10 +32,10 @@ In dieser Komponente wird der aktuelle Maschinenbefehl, nachdem er aus dem Speic
 \end{itemize}
 Es werden also alle Informationen, die zur Ausführung eines Maschinenbefehls nötig sind, von der Dekodiereinheit extrahiert und an die zugehörige Stelle übertragen. 
 
-Bei der Umsetzung dieser Aufgabe erweist sich der Aufbau der Maschinenbefehle (siehe Anhang~\ref{Maschinenbefehle}) als sehr hilfreich:
-Vergleichbare Informationen belegen innerhalb der 32-Bit- Instruktionen die gleichen Positionen.
-Enthält ein Maschinenbefehl z.B. ein Zielregister in das ein Ergebnis geschrieben werden soll, so befindet sich die Adresse dieses Zielrgisters an der gleichen Position, an der es sich auch bei anderen Befehlen befindet.
-Das erleichtert zum einen die Implementierung, da einem Ausgangsport über mehrer Befehle hinweg die gleichen Bits eines Eingangsports zugeordnet werden können, und verringert zum anderen die Komplexität der daraus resultierenden Schaltungen. 
+Bei der Umsetzung dieser Aufgabe erweist sich der Aufbau der Maschinenbefehle (siehe Anhang~\ref{Maschinenbefehle}) als sehr hilfreich.
+Vergleichbare Informationen belegen innerhalb der 32-Bit-Instruktionen die gleichen Positionen.
+Enthält ein Maschinenbefehl z. B. ein Zielregister, in das ein Ergebnis geschrieben werden soll, so befindet sich die Adresse dieses Zielregisters an der gleichen Position, an der es sich auch bei anderen Befehlen befindet.
+Das erleichtert zum einen die Implementierung, da einem Ausgangsport über mehrere Befehle hinweg die gleichen Bits eines Eingangsports zugeordnet werden können, und verringert zum anderen die Komplexität der daraus resultierenden Schaltungen. 
 Ein Blick in den Quellcode (siehe \code{decode.vhd}) zeigt, dass eine verschachtelte \textit{Case}-Abfrage den Ausgangsports die passenden Signale zuweist, die ohne den vorteilhaften Aufbau der Maschinenbefehle wesentlich komplexer geraten wäre.
 
 \subsection{Program Counter}
@@ -43,7 +43,7 @@ Ein Blick in den Quellcode (siehe \code{decode.vhd}) zeigt, dass eine verschacht
 Beim sog. \textit{Program Counter} (kurz: \textit{PC}) handelt es sich um ein flankengesteuertes 32-Bit-Register mit asynchronem Reset, das die Adresse enthält, unter der der nächste abzuarbeitende Maschinenbefehl im Hauptspeicher zu finden ist. 
 Wie der Name schon vermuten lässt, ist der PC als Zählregister implementiert:
 Alle zwei Takte wird der aktuelle Registerwert um vier erhöht, um damit den nächsten 32-Bit-Maschinenbefehl zu adressieren.
-Ein Flag (\textit{enable}), das nur alle zwei Takte gesetzt ist, verhindert, dass dieser Vorgang jeden Takt zur Ausführung kommt.
+Ein Flag (\textit{enable}), das nur alle zwei Takte gesetzt ist, verhindert, dass dieser Vorgang jeden Takt zur Ausführung kommt. Dies ist erforderlich, da bei der vorliegenden Implementierung zwei Takte zur Ausführung eines Maschinenbefehls notwendig sind.
 
 Soll ein Sprungbefehl ausgeführt werden, muss der Wert des PCs auf eine neue Adresse gesetzt oder ein Offset auf den aktuellen Zählerstand addiert werden.
 Beide Funktionialitäten wurden direkt im PC implementiert, um einen Umweg über die \textit{ALU} zu vermeiden.
@@ -51,59 +51,59 @@ Hierfür stehen die Eingangsports \textit{set}, \textit{set\_value} und \textit{
 
 Am Ausgangsport \textit{value\_out\_next} liegt die Adresse des nächsten Maschinenbefehls (\textit{PC + 4}) an, die als Rücksprungadresse optional in der Registerbank abgespeichert werden kann, um zu einem späteren Zeitpunkt zum ürsprünglichen Ausführungsstrang zurückkehren zu können.
 
-Die Implementierung des Program Counters unterliegt den Prinzipien des \textit{synchronen Designs}:~\cite[S. 72 ff.]{Chu}
+Die Implementierung des Program Counters unterliegt den Prinzipien des \textit{synchronen Designs}.~\cite[S. 72 ff.]{Chu}
 Der nächste Registerwert wird unabhängig vom Taktsignal berechnet (\textit{cnt\_next}) und dem Ausgangsport erst bei steigender Taktflanke zugewiesen. 
 
 \subsection{Registerbank}
 
 Bevor die CPU eine Rechenoperationen durchführen kann, müssen die passenden Operanden aus dem Hauptspeicher geladen und in der \textit{Registerbank} zwischengespeichert werden.
-Diese besteht aus 32 Registern der Länge 32 Bit, wobei es sich bei der vorliegenden Implementierung eigentlich um ein Array aus nur 31 Registern handelt, da das \textit{Register 0} konstant den Wert $0$ enthält und nicht überschrieben werden kann~(\ref{subsec:Register}).
+Diese besteht aus 32 Registern der Länge 32-Bit, wobei es sich bei der vorliegenden Implementierung eigentlich um ein Array aus nur 31 Registern handelt, da das \textit{Register 0} konstant den Wert $0$ enthält und nicht überschrieben werden kann~(siehe Kapitel \ref{subsec:Register}).
 
 Ein asynchroner Leseprozess versorgt die beiden Datenausgänge mit den Inhalten der beiden Register, die durch die Eingänge \textit{rs1} und \textit{rs2} ausgewählt werden.
 Beide Ausgänge leiten die Werte an die ALU weiter, während eine zusätzliche Verbindung zum RAM die Ausführung einer \textit{Store}-Instruktion erleichtert.
 Ein Schreibprozess in das Register mit dem Index \textit{rd} ist nur bei steigender Taktflanke und gleichzeitig gesetztem Eingangsport \textit{en\_write} möglich, womit ein unkontrolliertes Speichern verhindert wird.
 Dieser Vorgang benötigt zwei Takte, da bei steigender Taktflanke des ersten Taktes noch nicht gewährleistet werden kann, dass alle Signale in definiertem Zustand anliegen.
-Der Dateneingang kann mittels eines vorgeschalteten Multiplexers Werte aus den RAM, der ALU oder dem PC empfangen.
+Der Dateneingang kann mittels eines vorgeschalteten Multiplexers Werte aus dem RAM, der ALU oder dem PC empfangen.
 
 
 
-\subsection{Arithmetisch Logische Einheit}
+\subsection{Arithmetisch-logische Einheit}
 
 Die eigentlichen Rechenoperationen werden in der arithmetisch-logischen Einheit (kurz: \textit{ALU} für \textit{arithmetic logic unit}) durchgeführt.
 Wie der Name bereits andeutet, führt diese Einheit arithmetische und logische Funktionen auf zwei 32-Bit-Zahlen aus.
 Neben den beiden Dateneingängen enthält die ALU einen weiteren Eingang (\textit{op\_in}), über den sie von der Decode-Einheit den auszuführenden Funktionstypen erhält.
 Das Ergebnis der Berechnung wird, abhängig vom Maschinenbefehl, entweder an die Registerbank, den Hauptspeicher oder den Program Counter weitergeleitet.
-Ein weiterer Ausgangsport (\textit{zero\_flag}) versorgt die Dekodiereinheit bei bedingten Sprungbefehlen mit der Information, ob ein Sprung genommen werden muss. 
+Ein weiterer Ausgangsport (\textit{zero\_\,flag}) versorgt die Dekodiereinheit bei bedingten Sprungbefehlen mit der Information, ob ein Sprung durchgeführt werden muss. 
 
 Bei der Implementierung wurde eine einfache \textit{Case}-Anweisung verwendet, die den Funktionstypen abfragt, woraufhin die entsprechende Funktion zur Anwendung kommt.
 
 \subsection{Random Access Memory}
 \label{subsec:RAM}
 
-Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt), werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgespeichert.
-Für die Erstellung dieser Komponente gibt es eine Reihe von vorgegebenen Templates an die man sich halten sollte, wenn man sicherstellen möchte, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
+Im \textit{RAM} (kurz für: \textit{Random Access Memory}, auch \textit{Hauptspeicher} genannt) werden die Maschinenbefehle und sonstige, zur Programmausführung benötigte Daten, abgespeichert.
+Für die Erstellung dieser Komponente gibt es eine Reihe von vorgegebenen Templates, an die man sich halten sollte, um sicherzustellen, dass die Synthese das gewünschte Ergebnis liefert.~\cite[S. 243 ff.]{Chu}
 
-Grundsätzlich unterscheidet man zwei Arten von RAM, die auf dem vorliegenden FPGA implementiert werden können:
-Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logigblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs~\ref{}
+Grundsätzlich unterscheidet man zwei Arten von RAM, die auf dem vorliegenden FPGA implementiert werden können.
+Während der sog. \textit{Distributed RAM} auf die Look-Up-Tables und Logikblöcke des FPGAs zugreift, handelt es sich beim sog. \textit{Block RAM} um ein internes Speichermodul des FPGAs.
 Benötigt man viel Speicherplatz, ist es ratsam eher den Block RAM zu verwenden, da dieser keine Logikzellen belegt, wohingegen Distributed RAM flexibler konfiguriert werden kann.
-Bei resourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welche Art von RAM man letztendlich verwendet, sicherlich einer eingehenden Analyse, bei der vorliegenden Implementierung wurde dies als nicht notwendig erachtet.
+Bei ressourcen- und zeitkritischeren Projekten bedarf die Entscheidung, welche Art von RAM man letztendlich verwendet, einer eingehenden Analyse. Bei der vorliegenden Implementierung wurde dies als nicht notwendig erachtet.
 
 
 In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{asynchronem Lesezugriff} konfiguriert, was von den Synthesetools automatisch als Distributed RAM erkannt und umgesetzt wird.
 Der Begriff Dual-Port bezieht sich auf den Umstand, dass die Komponente je zwei Ein- und Ausgangsports besitzt.
 Da zusätzlich zwei separate Adressleitungen zur Verfügung stehen, kann simultan auf Maschinenbefehle und Daten zugegriffen werden.
-Somit ist es möglich den aktuell zu bearbeitenden Maschinenbefehl an die Dekodiereinheit weiterzuleiten, ohne diesen in ein Register zwischenzuspeichern und gleichzeitg Daten, die gelesen werden müssen, an den Datenausgang anzulegen.
-Die ansychronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
+Somit ist es möglich, den aktuell zu bearbeitenden Maschinenbefehl an die Dekodiereinheit weiterzuleiten, ohne diesen in ein Register zwischenzuspeichern und gleichzeitig Daten, die gelesen werden müssen, an den Datenausgang anzulegen.
+Die asychronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
 Der Schreibzugriff ist, ähnlich wie bei der Registerbank, taktflankengesteuert und von einem zusätzlichen Flag abhängig.
 %TODO: Größe RAM
 
-\paragraph{RAM-Control.} Der RISC-V-Instruktionssatz sieht eine Byte-Adressierung für den Hauptspeicher vor, d.h. mit einer Speicheradresse ist es möglich genau ein Byte zu adressieren.
-Zusätzlich erfordern bestimmte Instruktionen, wie z.B. \textit{load halfword} oder \textit{load word} einen Zugriff auf 16 oder 32 Bit.
+\paragraph{RAM-Control.} Der RISC-V-Instruktionssatz sieht eine Byte-Adressierung für den Hauptspeicher vor, d.h. mit einer Speicheradresse ist es möglich, genau ein Byte zu adressieren.
+Zusätzlich erfordern bestimmte Instruktionen, wie z. B. \textit{load halfword} oder \textit{load word} einen Zugriff auf 16- oder 32-Bit.
 Möchte man diese Unterscheidung der Bitbreite eines Zugriffs direkt im RAM implementieren, läuft man Gefahr, dass das Ergebnis nicht mehr dem vorgegebenen Template entspricht und der RAM bei der Synthese nicht mehr als solcher erkannt wird.
-Aus diesem Grund wurde eine zusätzliche \textit{RAM-Control}-Einheit erstellt, die die Zugriffslogik abstrahiert und sicherstellt, dass auf den Hauptspeicher nur mit der Breite von 32 Bit zugegriffen wird.
+Aus diesem Grund wurde eine zusätzliche \textit{RAM-Control}-Einheit erstellt, die die Zugriffslogik abstrahiert und sicherstellt, dass auf den Hauptspeicher nur mit der Breite von 32-Bit zugegriffen wird.
 
 \paragraph{Adressierung.} Wird nun ein bestimmtes Byte im Speicher adressiert, muss die Kontrolleinheit die Adresse umwandeln, um die Position des zugehörigen Wortes im RAM zu erhalten. 
-Dieses Wort wird anschließend gelesen um daraus über die beiden niederwertigsten Bits der ursprünglichen Adresse das passende Byte zu extrahieren.
+Dieses Wort wird anschließend gelesen, um daraus über die beiden niederwertigsten Bits der ursprünglichen Adresse das passende Byte zu extrahieren.
 
 Ein Beispiel soll diesen Vorgang verdeutlichen:\\
 Angenommen der Hauptspeicher enthält das Wort $00184421_{16}$ an der Adresse $2_{16}$,
@@ -119,9 +119,10 @@ und es erfolgt ein Zugriff auf ein Byte über die Adresse $A_{16}$.
         \caption{Speicherinhalt an der Adresse $2_{16}$}
 \end{figure}
 \\                                                        
-Da sich die Adresse $A_{16}$ auf ein Byte bezieht, muss sie von der Kontrolleinheit durch vier geteilt werden um an das Wort im Speicher, das das gewünschte Byte enthält, zu gelangen.
+Da sich die Adresse $A_{16}$ auf ein Byte bezieht, muss sie von der Kontrolleinheit durch vier geteilt werden, um an das Wort im Speicher, das das gewünschte Byte enthält, zu gelangen.
 Unter der resultierenden Adresse $2_{16}$ wird folglich das oben dargestellte Wort gelesen.
-Anschließend wird über die niederwertigsten Bits der ursprünglichen Adresse, in diesem Fall also $10_2$, das passende Byte mit dem Inhalt $18_{16}$ aus diesem Wort extrahiert.\\
+Anschließend wird über die niederwertigsten Bits der ursprünglichen Adresse, in diesem Fall also $10_2$, das passende Byte mit dem Inhalt $18_{16}$ aus diesem Wort extrahiert.
+
 Handelt es sich um einen Lesezugriff wird dieses Byte zu einem Wort umgeformt und an den Datenausgang angelegt:\\
 \begin{figure} [htpb]
     \centering
@@ -134,7 +135,7 @@ Handelt es sich um einen Lesezugriff wird dieses Byte zu einem Wort umgeformt un
         \caption{Der Wert am Datenausgang nach dem Lesezugriff}
 \end{figure}\\
 In diesem Fall wird das Wort mit Nullen aufgefüllt. 
-Bei einem \textit{sign extended Load}-Befehl kann dies auch mit Einsen geschehen, abhängig vom höchstwertigsten Bit des zu ladenden Byte.
+Bei einem \textit{sign extended Load}-Befehl kann dies auch mit Einsen geschehen, abhängig vom höchstwertigsten Bit des zu ladenden Bytes.
 
 Wird schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
 \begin{figure} [htpb]
@@ -147,7 +148,7 @@ Wird schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, mu
         \end{tabular}
         \caption{Speicherinhalt an der Adresse $2_{16}$ nach dem Schreibzugriff}
 \end{figure}\\
-Dieser Vorgang kommt ebenso bei Speicherzugriffen der Breite 16 Bit zur Anwendung.
+Dieser Vorgang kommt ebenso bei Speicherzugriffen der Breite 16-Bit zur Anwendung.
 Wird dagegen auf ein 32-Bit-Wort zugegriffen, muss lediglich die Adresse übersetzt werden.
 
 

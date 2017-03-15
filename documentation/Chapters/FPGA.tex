@@ -11,7 +11,7 @@ flexibel. FPGAs eignen sich somit insbesondere für die Prototyping- und
 Testphase von Hardwareprojekten.~\cite[S. 8]{SynthesisFPGA}
 
 \section{Technik}
-\paragraph{Configurable Logic Blocks.} FPGAs bestehen aus einem zweidimensionalen Array von programmierbaren Logikblöcken, den \emph{Configurable Logic Blocks} (CLB). \cite[S. 11]{Chu} Der genaue Aufbau ist dabei herstellerabhängig, sie bestehen aber mindestens aus einer Look-Up Table (LUT) und einem Flipflop. \cite[S. 8]{SynthesisFPGA}
+\paragraph{Configurable Logic Blocks.} FPGAs bestehen aus einem zweidimensionalen Array von programmierbaren Logikblöcken, den \emph{Configurable Logic Blocks} (CLB). \cite[S. 11]{Chu} Der genaue Aufbau ist dabei herstellerabhängig, sie bestehen aber mindestens aus einer Look-Up-Table (LUT) und einem Flipflop. \cite[S. 8]{SynthesisFPGA}
 
 \begin{figure} [ht]
   \centering
@@ -20,7 +20,7 @@ Testphase von Hardwareprojekten.~\cite[S. 8]{SynthesisFPGA}
   \label{fig:clb}
 \end{figure}
 
-\paragraph{Look-Up Tables.} Look-Up Tables haben $n$ Eingänge (meistens zwischen 4 und 6) und einen Ausgang. Sie sind so konfigurierbar, dass sie eine beliebige Binärfunktion umsetzen. Zu diesem Zweck enthält jede LUT $2^n$ Speicherzellen, in denen die Werte für jede beliebige Eingangssignalkombination abgelegt werden können. Sie sind so verschaltet, dass eine bestimmte Eingangskombination zur Ausgabe des Wertes der dazugehörigen Speicherzelle führt. \cite[S. 12f.]{Chu} Durch Neubelegung dieser Speicherzellen kann die umgesetzte Logik des FPGAs beliebig verändert werden.
+\paragraph{Look-Up-Tables.} Look-Up-Tables haben $n$ Eingänge (meistens zwischen 4 und 6) und einen Ausgang. Sie sind so konfigurierbar, dass sie eine beliebige Binärfunktion umsetzen. Zu diesem Zweck enthält jede LUT $2^n$ Speicherzellen, in denen die Werte für jede beliebige Eingangssignalkombination abgelegt werden können. Sie sind so verschaltet, dass eine bestimmte Eingangskombination zur Ausgabe des Wertes der dazugehörigen Speicherzelle führt. \cite[S. 12f.]{Chu} Durch Neubelegung dieser Speicherzellen kann die umgesetzte Logik des FPGAs beliebig verändert werden.
 
 \paragraph{Flipflops.} Durch den fest verbauten D-Flipflop kann die Ausgabe des Logikblocks nicht nur direkt weitergegeben, sondern auch zwischengespeichert werden. Dadurch lassen sich rückgekoppelte Logiken (Schaltwerke) realisieren. \cite[S. 13]{Chu}
 

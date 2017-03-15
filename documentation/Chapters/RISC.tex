@@ -23,7 +23,7 @@ Maschinenbefehlen. Außerdem erfordern RISC-Architekturen in der Regel eine weni
 Instruktionen greifen daher nicht auf den Speicher zu, stattdessen
 werden alle Operanden und Operationsergebnisse in der Registerbank
 abgelegt zwischengespeichert.
-Speicherzugriffe werden ausschließlich mit speziellen \textit{load} bzw. \textit{store}-Befehlen realisiert.
+Speicherzugriffe werden ausschließlich mit speziellen \textit{Load}- bzw. \textit{Store}-Befehlen realisiert.
 
 \paragraph{Register.} Die RISC-V-Spezifikation definiert $31$
 Integer-Register $x1 - x31$. Zusätzlich existiert das
@@ -46,7 +46,7 @@ $32, 64$ oder $128$-Bit vorgesehen.
 \paragraph{Mindeststandard.} Um die RISC-V-Anforderungen zu erfüllen,
 muss eine Implementierung zumindest den Basisbefehlssatz umsetzen
 (Bezeichnung nach \mbox{RISC-V}-Konvention: \textit{I}). Dieser enthält
-neben Befehlen zur Integer-Arithmetik auch Integer load- und store-Befehle, sowie die notwendigen Befehle zur Manipulation des Kontrollflusses.
+neben Befehlen zur Integer-Arithmetik auch Integer Load- und Store-Befehle, sowie die notwendigen Befehle zur Manipulation des Kontrollflusses.
 
 \paragraph{Erweiterungen.} Die allgemeine -- als \textit{General
 Purpose} bezeichnete -- Architektur enthält neben diesem Mindeststandard auch Befehle für Gleitkommaarithmetik (F) mit Double (D) oder Quad-Präzision (Q), für die Handhabung verschiedener Privilegierungen (P), für die Verwaltung von Nebenläufigkeit (A) und seit der neusten Version 2.1 auch für Bitmanipulation (B), Vectoroperationen (V) und einigen mehr. \cite[p. 4f.]{RISC}
