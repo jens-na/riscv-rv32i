@@ -49,7 +49,7 @@ Soll ein Sprungbefehl ausgeführt werden, muss der Wert des PCs auf eine neue Ad
 Beide Funktionialitäten wurden direkt im PC implementiert, um einen Umweg über die \textit{ALU} zu vermeiden.
 Hierfür stehen die Eingangsports \textit{set}, \textit{set\_value} und \textit{set\_jalr} zur Verfügung.
 
-Am Ausgangsport \textit{value\_out\_next} liegt die Adresse des nächsten Maschinenbefehls (\textit{PC + 4}) an, die als Rücksprungadresse optional in der Registerbank abgespeichert werden kann, um zu einem späteren Zeitpunkt zum ürsprünglichen Ausführungsstrang zurückkehren zu können.
+Am Ausgangsport \textit{value\_out\_next} liegt die Adresse des nächsten Maschinenbefehls (\textit{PC + 4}) an, die als Rücksprungadresse optional in der Registerbank abgespeichert werden kann, um zu einem späteren Zeitpunkt zum ursprünglichen Ausführungsstrang zurückkehren zu können.
 
 Die Implementierung des Program Counters unterliegt den Prinzipien des \textit{synchronen Designs}.~\cite[S. 72 ff.]{Chu}
 Der nächste Registerwert wird unabhängig vom Taktsignal berechnet (\textit{cnt\_next}) und dem Ausgangsport erst bei steigender Taktflanke zugewiesen. 
@@ -93,7 +93,7 @@ In diesem Fall wurde der Hauptspeicher als \textit{Dual-Port RAM} mit \textit{as
 Der Begriff Dual-Port bezieht sich auf den Umstand, dass die Komponente je zwei Ein- und Ausgangsports besitzt.
 Da zusätzlich zwei separate Adressleitungen zur Verfügung stehen, kann simultan auf Maschinenbefehle und Daten zugegriffen werden.
 Somit ist es möglich, den aktuell zu bearbeitenden Maschinenbefehl an die Dekodiereinheit weiterzuleiten, ohne diesen in ein Register zwischenzuspeichern und gleichzeitig Daten, die gelesen werden müssen, an den Datenausgang anzulegen.
-Die asychronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
+Die asynchronen Lesezugriffe haben den Vorteil, dass die Daten nach einer kurzen Verzögerung zur Verfügung stehen, anstatt einen weiteren Takt darauf warten zu müssen.
 Der Schreibzugriff ist, ähnlich wie bei der Registerbank, taktflankengesteuert und von einem zusätzlichen Flag abhängig.
 %TODO: Größe RAM
 
@@ -137,7 +137,7 @@ Handelt es sich um einen Lesezugriff wird dieses Byte zu einem Wort umgeformt un
 In diesem Fall wird das Wort mit Nullen aufgefüllt. 
 Bei einem \textit{sign extended Load}-Befehl kann dies auch mit Einsen geschehen, abhängig vom höchstwertigsten Bit des zu ladenden Bytes.
 
-Wird schreibend, z.B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
+Wird schreibend, z. B. mit dem Wert FF$_{16}$,  auf diese Adresse zugegriffen, muss das Byte $18_{16}$ im ursprünglichen Wort ersetzt und das modifizierte Wort wieder an die Adresse 0x2 in den Speicher zurückgeschrieben werden:
 \begin{figure} [htpb]
     \centering
         \begin{tabular}{|c|c|c|c|c|}
