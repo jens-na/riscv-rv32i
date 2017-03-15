@@ -12,7 +12,7 @@ basiert auf der RISC (reduced instruction set computing) Designphilosophie.
 Auch wenn der Begriff \textit{reduced instruction} sich
 eigentlich nicht auf die Menge der verfügbaren Maschineninstruktionen
 bezieht, bestehen RISC-Designs in der Praxis dennoch meist aus weniger
-Maschinenbefehlen. Außerdem erfordern RISC-Architekturen in der Regel eine weniger komplizierte Verschaltung. \footnote{\url{https://www.elektronik-kompendium.de/sites/com/0412281.htm}} Der Vorteil von RISC-Designs ist somit, insbesondere im Hinblick auf dieses Projekt, dass sie einfacher zu implementieren sind.
+Maschinenbefehlen. Außerdem erfordern RISC-Architekturen in der Regel eine weniger komplizierte Verschaltung. \cite{DBLP:conf/sipew/IsenJJ09} Der Vorteil von RISC-Designs ist somit, insbesondere im Hinblick auf dieses Projekt, dass sie einfacher zu implementieren sind.
 
 %----------------------------------------------------------------------------------------
 \section{Architektur}
@@ -72,19 +72,19 @@ in der Instruktion enthalten ist, ist dieser jeweils in den
 höchstwertigst verfügbaren Bits der Instruktion enkodiert. Die Einteilung in 
 Instruktionstypen erleichtert die Dekodierung der Instruktionen und führt zu einer simpleren Verschaltung.
 
-\begin{figure} [ht]
-  \centering
-  \includegraphics[width=\textwidth]{Figures/instruction_formats}
-  \caption{Instruktionsformate. Quelle: \citep[S. 11]{RISC}}
-  \label{fig:instr_types}
-\end{figure}
-
 \begin{itemize}  
 \item Als R-Type sind Register-Instruktionen enkodiert, bei denen beide Operanden in Registern liegen. 
 \item Die I-Type-Kodierung ist für Instruktionen vorgesehen, bei denen ein konstanter Wert (\textit{Immediate}) mit einem Wert im Register verrechnet wird.
 \item U-Type Befehle umfassen bedingte und unbedingte Sprungbefehle.
 \item Der S-Type wird für schreibende Zugriffe auf den Speicher (store) verwendet. 
 \end{itemize}
+
+\begin{figure} [h]
+  \centering
+  \includegraphics[width=\textwidth]{Figures/instruction_formats}
+  \caption{Instruktionsformate. Quelle: \citep[S. 11]{RISC}}
+  \label{fig:instr_types}
+\end{figure}
 
 \subsection{Immediate-Varianten.} Außerdem existieren mehrere Varianten,
 um Immediates aus den Instruktionen zu extrahieren (siehe Abbildung
